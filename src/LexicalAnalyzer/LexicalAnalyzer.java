@@ -1,4 +1,7 @@
 package LexicalAnalyzer;
 
-public class LexicalAnalyzer {
+import utils.Token;
+
+public interface LexicalAnalyzer {
+    Token nextToken();
 }
