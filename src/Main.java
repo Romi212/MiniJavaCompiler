@@ -11,6 +11,8 @@ public class Main {
 
         String fileName = args[0];
 
+        System.out.println(fileName);
+
         SourceManagerImpl sourceManager = new SourceManagerImpl();
         LexicalAnalyzerImp lexicalAnalyzer = new LexicalAnalyzerImp(sourceManager);
         try {
@@ -20,6 +22,8 @@ public class Main {
         }
 
         System.out.println(lexicalAnalyzer.nextToken());
+
+        System.out.println("[SinErrores]");
 
     }
 }
