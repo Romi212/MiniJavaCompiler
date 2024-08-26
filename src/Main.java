@@ -1,4 +1,5 @@
 import LexicalAnalyzer.LexicalAnalyzerImp;
+import utils.LexicalErrorException;
 import utils.Token;
 import utils.sourcemanager.SourceManagerImpl;
 
@@ -22,13 +23,24 @@ public class Main {
             e.printStackTrace();
         }
         Token token;
+        boolean error = false;
        do{
-            token = lexicalAnalyzer.nextToken();
-              System.out.println(token);
+           try {
+                token = lexicalAnalyzer.nextToken();
+                System.out.println(token);
+
+              } catch (LexicalErrorException e) {
+                System.out.println(e.getMessage());
+                error = true;
+                break;
+
+           }
+
+
        }while(token.getToken() != "EOF");
 
 
-        System.out.println("[SinErrores]");
+      if(!error)  System.out.println("[SinErrores]");
 
     }
 }

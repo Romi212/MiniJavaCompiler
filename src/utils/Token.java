@@ -35,6 +35,6 @@ public class Token {
     }
 
     public String toString() {
-        return "(" + token + ", " + lexeme + ", " + line + ")";
+        return "(" + token + "," + lexeme + "," + line + ")";
     }
 }
