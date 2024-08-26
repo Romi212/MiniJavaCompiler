@@ -1,4 +1,5 @@
 import LexicalAnalyzer.LexicalAnalyzerImp;
+import utils.Token;
 import utils.sourcemanager.SourceManagerImpl;
 
 public class Main {
@@ -20,8 +21,12 @@ public class Main {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        Token token;
+       do{
+            token = lexicalAnalyzer.nextToken();
+              System.out.println(token);
+       }while(token.getToken() != "EOF");
 
-        System.out.println(lexicalAnalyzer.nextToken());
 
         System.out.println("[SinErrores]");
 
