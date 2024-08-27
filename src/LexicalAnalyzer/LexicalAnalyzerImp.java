@@ -28,7 +28,7 @@ public class LexicalAnalyzerImp implements LexicalAnalyzer {
         try {
             token = start();
         } catch (IOException e) {
-            throw new LexicalErrorException(lexeme,sourceManager.getLineNumber(), "Error reading file");
+            throw new LexicalErrorException(lexeme,sourceManager.getLineNumber(), sourceManager.getLineIndexNumber(), sourceManager.getCurrentLine(),"Error reading file");
 
         }
         return token;
@@ -116,7 +116,8 @@ public class LexicalAnalyzerImp implements LexicalAnalyzer {
         }
 
         lexeme += currentChar;
-        throw new LexicalErrorException(lexeme,sourceManager.getLineNumber(), "Invalid character");
+        currentChar = sourceManager.getNextChar();
+        throw new LexicalErrorException(lexeme,sourceManager.getLineNumber(), sourceManager.getLineIndexNumber(),sourceManager.getCurrentLine(),"Invalid character");
     }
 
     private Token possibleString() throws LexicalErrorException, IOException{
@@ -134,7 +135,8 @@ public class LexicalAnalyzerImp implements LexicalAnalyzer {
         if(currentChar == '"'){
             return finalState("lit_string");
         }else {
-            throw new LexicalErrorException(lexeme,sourceManager.getLineNumber(), "String not closed");
+            currentChar = sourceManager.getNextChar();
+            throw new LexicalErrorException(lexeme,sourceManager.getLineNumber(), sourceManager.getLineIndexNumber(), sourceManager.getCurrentLine(),"String not closed");
         }
 
     }
@@ -142,7 +144,8 @@ public class LexicalAnalyzerImp implements LexicalAnalyzer {
     private Token possibleChar() throws LexicalErrorException, IOException{
         currentChar = sourceManager.getNextChar();
         if (currentChar == '\''){
-            throw new LexicalErrorException(lexeme,sourceManager.getLineNumber(), "invalid character");
+            currentChar = sourceManager.getNextChar();
+            throw new LexicalErrorException(lexeme,sourceManager.getLineNumber(),sourceManager.getLineIndexNumber(), sourceManager.getCurrentLine(), "invalid character");
         }
         if(currentChar == '\\'){
             lexeme += currentChar;
@@ -151,7 +154,7 @@ public class LexicalAnalyzerImp implements LexicalAnalyzer {
 
         lexeme += currentChar;
         if(currentChar == SourceManager.END_OF_FILE){
-            throw new LexicalErrorException(lexeme,sourceManager.getLineNumber(), "expected a character but found EOF");
+            throw new LexicalErrorException(lexeme,sourceManager.getLineNumber(), sourceManager.getLineIndexNumber(), sourceManager.getCurrentLine(), "expected a character but found EOF");
         }
         currentChar = sourceManager.getNextChar();
 
@@ -159,8 +162,8 @@ public class LexicalAnalyzerImp implements LexicalAnalyzer {
             return finalState("lit_char");
         }
         else {
-            //TODO ERROR Y CHEQUEAR EOF EN EL MEDIO
-            throw new LexicalErrorException(lexeme,sourceManager.getLineNumber(), "expected a character but found more than one");
+            currentChar = sourceManager.getNextChar();
+            throw new LexicalErrorException(lexeme,sourceManager.getLineNumber(), sourceManager.getLineIndexNumber(), sourceManager.getCurrentLine(), "expected a character but found more than one");
         }
     }
 
@@ -198,7 +201,7 @@ public class LexicalAnalyzerImp implements LexicalAnalyzer {
 
         } while (currentChar >= '0' && currentChar <= '9' && digits < 10);
         if(digits<10) return new Token("lit_int",lexeme,sourceManager.getLineNumber());
-        else throw new LexicalErrorException(lexeme,sourceManager.getLineNumber(), "Integer too long");
+        else throw new LexicalErrorException(lexeme,sourceManager.getLineNumber(), sourceManager.getLineIndexNumber(), sourceManager.getCurrentLine(), "Integer too long");
     }
 
     private Token possibleOr() throws LexicalErrorException,IOException{
@@ -208,7 +211,9 @@ public class LexicalAnalyzerImp implements LexicalAnalyzer {
             lexeme += currentChar;
             return finalState("op_or");
         }
-        throw new LexicalErrorException(lexeme,sourceManager.getLineNumber(), "expected || but found |");
+        currentChar = sourceManager.getNextChar();
+        errorState("expected || but found |");
+        return null;
     }
 
     private Token possibleAnd() throws LexicalErrorException,IOException{
@@ -218,7 +223,9 @@ public class LexicalAnalyzerImp implements LexicalAnalyzer {
             lexeme += currentChar;
             return finalState("op_and");
         }
-        throw new LexicalErrorException(lexeme,sourceManager.getLineNumber(), "expected && but found &");
+        currentChar = sourceManager.getNextChar();
+        errorState("expected && but found &");
+        return null;
     }
 
     private Token possibleNot() throws IOException {
@@ -310,9 +317,9 @@ public class LexicalAnalyzerImp implements LexicalAnalyzer {
         } while (currentChar != '*' && currentChar != SourceManager.END_OF_FILE);
 
         if(currentChar == SourceManager.END_OF_FILE){
-            throw new LexicalErrorException(lexeme,sourceManager.getLineNumber(), "Comment not closed");
+            errorState("Comment not closed");
         }
-        else return closingBlockComment();
+        return closingBlockComment();
     }
 
     private Token closingBlockComment() throws  IOException,LexicalErrorException{
@@ -332,5 +339,9 @@ public class LexicalAnalyzerImp implements LexicalAnalyzer {
 
         } while (currentChar != '\n' && currentChar != SourceManager.END_OF_FILE);
         return start();
+    }
+
+    private void errorState(String message) throws LexicalErrorException {
+        throw new LexicalErrorException(lexeme,sourceManager.getLineNumber(), sourceManager.getLineIndexNumber(), sourceManager.getCurrentLine(), message);
     }
 }

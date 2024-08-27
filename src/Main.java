@@ -22,7 +22,7 @@ public class Main {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        Token token;
+        Token token = null;
         boolean error = false;
        do{
            try {
@@ -30,14 +30,14 @@ public class Main {
                 System.out.println(token);
 
               } catch (LexicalErrorException e) {
+                System.out.println(e.getLongMessage());
                 System.out.println(e.getMessage());
                 error = true;
-                break;
 
            }
 
 
-       }while(token.getToken() != "EOF");
+       }while(token == null || token.getToken() != "EOF");
 
 
       if(!error)  System.out.println("[SinErrores]");

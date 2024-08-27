@@ -61,4 +61,15 @@ public class SourceManagerImpl implements SourceManager{
         return lineNumber;
     }
 
+    @Override
+    public int getLineIndexNumber() {
+        return lineIndexNumber;
+    }
+
+    @Override
+    public String getCurrentLine() {
+        return currentLine;
+    }
+
+
 }
