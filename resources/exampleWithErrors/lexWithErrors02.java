@@ -1,4 +1,8 @@
 ///[Error:"hola|3]
 
-"hola
+"hola\" "
 chau"
+
+
+" hola soy \"cary\ " +
+        " quenaj "

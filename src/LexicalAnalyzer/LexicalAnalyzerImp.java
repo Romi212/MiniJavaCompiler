@@ -121,6 +121,7 @@ public class LexicalAnalyzerImp implements LexicalAnalyzer {
     }
 
     private Token possibleString() throws LexicalErrorException, IOException{
+        lexeme += currentChar;
         currentChar = sourceManager.getNextChar();
         while (currentChar != '"' && currentChar != SourceManager.END_OF_FILE && currentChar != '\n'&& currentChar != '\t' && currentChar != '\r') {
             if (currentChar == '\\') {
@@ -133,6 +134,7 @@ public class LexicalAnalyzerImp implements LexicalAnalyzer {
             }
         }
         if(currentChar == '"'){
+            lexeme += currentChar;
             return finalState("lit_string");
         }else {
             currentChar = sourceManager.getNextChar();
@@ -313,7 +315,6 @@ public class LexicalAnalyzerImp implements LexicalAnalyzer {
     private Token blockComment() throws IOException,LexicalErrorException{
         do{
             currentChar = sourceManager.getNextChar();
-            lexeme += currentChar;
         } while (currentChar != '*' && currentChar != SourceManager.END_OF_FILE);
 
         if(currentChar == SourceManager.END_OF_FILE){
