@@ -17,8 +17,8 @@ public class LexicalErrorException extends Exception{
     }
 
     public String getLongMessage(){
-        String longMessage = "Error Léxico en line "+line+", "+explanation;
-        longMessage += "\nDetalle: "+ codeLine;
+        String longMessage = "Lexical error in line: "+line+", "+explanation;
+        longMessage += "\nDetail: "+ codeLine;
         longMessage += "\n"+"        "+ " ".repeat(column-1) + "^";
         return longMessage;
     }

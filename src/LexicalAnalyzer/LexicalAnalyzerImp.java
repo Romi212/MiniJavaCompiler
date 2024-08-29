@@ -123,12 +123,12 @@ public class LexicalAnalyzerImp implements LexicalAnalyzer {
     private Token possibleString() throws LexicalErrorException, IOException{
         lexeme += currentChar;
         currentChar = sourceManager.getNextChar();
-        while (currentChar != '"' && currentChar != SourceManager.END_OF_FILE && currentChar != '\n'&& currentChar != '\t' && currentChar != '\r') {
+        while (currentChar != '"' && currentChar != SourceManager.END_OF_FILE && currentChar != '\n' && currentChar != '\r') {
             if (currentChar == '\\') {
                 lexeme += currentChar;
                 currentChar = sourceManager.getNextChar();
             }
-            if (currentChar != SourceManager.END_OF_FILE) {
+            if (currentChar != SourceManager.END_OF_FILE && currentChar != '\n'&&  currentChar != '\r') {
                 lexeme += currentChar;
                 currentChar = sourceManager.getNextChar();
             }
@@ -136,7 +136,10 @@ public class LexicalAnalyzerImp implements LexicalAnalyzer {
         if(currentChar == '"'){
             lexeme += currentChar;
             return finalState("lit_string");
-        }else {
+        }else if(currentChar == '\n'){
+            throw new LexicalErrorException(lexeme,sourceManager.getLineNumber(), sourceManager.getLineIndexNumber(), sourceManager.getCurrentLine(),"String was interrupted by a line break.");
+        }
+        else {
             currentChar = sourceManager.getNextChar();
             throw new LexicalErrorException(lexeme,sourceManager.getLineNumber(), sourceManager.getLineIndexNumber(), sourceManager.getCurrentLine(),"String not closed");
         }
