@@ -16,6 +16,7 @@ public class ReservedWords {
         reservedWords.put("boolean", "rw_boolean");
         reservedWords.put("char", "rw_char");
         reservedWords.put("int", "rw_int");
+        reservedWords.put("float", "rw_float");
         reservedWords.put("if", "rw_if");
         reservedWords.put("else", "rw_else");
         reservedWords.put("while", "rw_while");

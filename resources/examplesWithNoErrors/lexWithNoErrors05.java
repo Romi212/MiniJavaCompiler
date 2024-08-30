@@ -7,7 +7,8 @@ class extends public static void
         switch case break
         this new null true false
 
-/* identificadores: */
+/* identifica
+dores: */
 
 identVar IdentClass
 
@@ -16,6 +17,8 @@ identVar IdentClass
 123
 "hola"
 'c' '\n'  '\\' '\''
+
+        /* Operadores **/
         ( ) { } ; , . :
 
         > < !
