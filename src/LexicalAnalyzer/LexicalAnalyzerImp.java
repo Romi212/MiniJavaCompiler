@@ -130,9 +130,9 @@ public class LexicalAnalyzerImp implements LexicalAnalyzer {
                 currentChar = sourceManager.getNextChar();
             }
 
-            if(lexeme.length()>10) throw new LexicalErrorException(lexeme,sourceManager.getLineNumber(), sourceManager.getLineIndexNumber(), sourceManager.getCurrentLine(), "Invalid float number, too many digits.");
+            //if(lexeme.length()>10) throw new LexicalErrorException(lexeme,sourceManager.getLineNumber(), sourceManager.getLineIndexNumber(), sourceManager.getCurrentLine(), "Invalid float number, too many digits.");
 
-            if(currentChar == 'e') {
+            if(currentChar == 'e' || currentChar == 'E') {
                 lexeme += currentChar;
                 return floatExponent();
             }
@@ -150,7 +150,7 @@ public class LexicalAnalyzerImp implements LexicalAnalyzer {
     private Token floatExponent() throws IOException,LexicalErrorException{
         int exponent = 0;
         currentChar = sourceManager.getNextChar();
-        if( currentChar == '-'){
+        if( currentChar == '-' || currentChar == '+'){
             lexeme += currentChar;
             currentChar = sourceManager.getNextChar();
         }
@@ -160,8 +160,10 @@ public class LexicalAnalyzerImp implements LexicalAnalyzer {
             currentChar = sourceManager.getNextChar();
         }
         if (lexeme.charAt(lexeme.length()-1) == 'e' ||lexeme.charAt(lexeme.length()-1) == '-' ) throw new LexicalErrorException(lexeme,sourceManager.getLineNumber(), sourceManager.getLineIndexNumber(), sourceManager.getCurrentLine(), "Invalid float number, exponent not found.");
-        if( exponent< 39) return new Token("lit_float",lexeme,sourceManager.getLineNumber());
-        throw new LexicalErrorException(lexeme,sourceManager.getLineNumber(), sourceManager.getLineIndexNumber(), sourceManager.getCurrentLine(), "Invalid float number, exponent too big.");
+
+        return new Token("lit_float",lexeme,sourceManager.getLineNumber());
+
+        //throw new LexicalErrorException(lexeme,sourceManager.getLineNumber(), sourceManager.getLineIndexNumber(), sourceManager.getCurrentLine(), "Invalid float number, exponent too big.");
     }
 
     private Token possibleString() throws LexicalErrorException, IOException{
@@ -256,7 +258,14 @@ public class LexicalAnalyzerImp implements LexicalAnalyzer {
         } while (currentChar >= '0' && currentChar <= '9' && digits < 10);
 
         if(digits<10) {
-            if(currentChar == '.') return possibleFloat();
+            if(currentChar == '.') {
+                lexeme += currentChar;
+                return possibleFloat();
+            }
+            if(currentChar == 'e' || currentChar == 'E'){
+                lexeme += currentChar;
+                return floatExponent();
+            }
             return new Token("lit_int",lexeme,sourceManager.getLineNumber());
         }
         else throw new LexicalErrorException(lexeme,sourceManager.getLineNumber(), sourceManager.getLineIndexNumber(), sourceManager.getCurrentLine(), "Max int length exceeded.");
@@ -269,9 +278,9 @@ public class LexicalAnalyzerImp implements LexicalAnalyzer {
             lexeme += currentChar;
             return finalState("op_or");
         }
+        int column = sourceManager.getLineIndexNumber();
         currentChar = sourceManager.getNextChar();
-        errorState("Invalid character |, expected ||.");
-        return null;
+        throw new LexicalErrorException(lexeme,sourceManager.getLineNumber(), column , sourceManager.getCurrentLine(), "Invalid character |, expected ||.");
     }
 
     private Token possibleAnd() throws LexicalErrorException,IOException{
@@ -281,9 +290,9 @@ public class LexicalAnalyzerImp implements LexicalAnalyzer {
             lexeme += currentChar;
             return finalState("op_and");
         }
+        int column = sourceManager.getLineIndexNumber();
         currentChar = sourceManager.getNextChar();
-        errorState("Invalid character &, expected &&.");
-        return null;
+        throw new LexicalErrorException(lexeme,sourceManager.getLineNumber(), column , sourceManager.getCurrentLine(), "Invalid character &, expected &&.");
     }
 
     private Token possibleNot() throws IOException {
