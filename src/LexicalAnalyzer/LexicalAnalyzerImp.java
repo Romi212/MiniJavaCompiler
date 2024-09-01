@@ -116,8 +116,9 @@ public class LexicalAnalyzerImp implements LexicalAnalyzer {
         }
 
         lexeme += currentChar;
+        int column = sourceManager.getLineIndexNumber();
         currentChar = sourceManager.getNextChar();
-        throw new LexicalErrorException(lexeme,sourceManager.getLineNumber(), sourceManager.getLineIndexNumber(),sourceManager.getCurrentLine(),"Invalid character.");
+        throw new LexicalErrorException(lexeme,sourceManager.getLineNumber(), column,sourceManager.getCurrentLine(),"Invalid character.");
     }
 
     private Token possibleFloat() throws IOException, LexicalErrorException {
@@ -141,6 +142,12 @@ public class LexicalAnalyzerImp implements LexicalAnalyzer {
         else{
             if(lexeme.charAt(0) == '.'){
                 return new Token("pm_period",lexeme,sourceManager.getLineNumber());
+            }
+            else {
+                if(currentChar == 'e' || currentChar == 'E') {
+                    lexeme += currentChar;
+                    return floatExponent();
+                }
             }
         }
         throw new LexicalErrorException(lexeme,sourceManager.getLineNumber(), sourceManager.getLineIndexNumber(), sourceManager.getCurrentLine(), "Invalid float number.");
@@ -218,7 +225,6 @@ public class LexicalAnalyzerImp implements LexicalAnalyzer {
             if(currentChar == SourceManager.END_OF_FILE){
                 throw new LexicalErrorException(lexeme,sourceManager.getLineNumber(), sourceManager.getLineIndexNumber(), sourceManager.getCurrentLine(), "Char literal not closed correctly.");
             }
-            currentChar = sourceManager.getNextChar();
             throw new LexicalErrorException(lexeme,sourceManager.getLineNumber(), sourceManager.getLineIndexNumber(), sourceManager.getCurrentLine(), "Invalid char literal, more than one char detected.");
         }
     }
@@ -278,9 +284,7 @@ public class LexicalAnalyzerImp implements LexicalAnalyzer {
             lexeme += currentChar;
             return finalState("op_or");
         }
-        int column = sourceManager.getLineIndexNumber();
-        currentChar = sourceManager.getNextChar();
-        throw new LexicalErrorException(lexeme,sourceManager.getLineNumber(), column , sourceManager.getCurrentLine(), "Invalid character |, expected ||.");
+        throw new LexicalErrorException(lexeme,sourceManager.getLineNumber(), sourceManager.getLineIndexNumber() , sourceManager.getCurrentLine(), "Invalid character |, expected ||.");
     }
 
     private Token possibleAnd() throws LexicalErrorException,IOException{
@@ -290,9 +294,7 @@ public class LexicalAnalyzerImp implements LexicalAnalyzer {
             lexeme += currentChar;
             return finalState("op_and");
         }
-        int column = sourceManager.getLineIndexNumber();
-        currentChar = sourceManager.getNextChar();
-        throw new LexicalErrorException(lexeme,sourceManager.getLineNumber(), column , sourceManager.getCurrentLine(), "Invalid character &, expected &&.");
+        throw new LexicalErrorException(lexeme,sourceManager.getLineNumber(),sourceManager.getLineIndexNumber(), sourceManager.getCurrentLine(), "Invalid character &, expected &&.");
     }
 
     private Token possibleNot() throws IOException {

@@ -13,6 +13,7 @@ fufu =    // Decimal con parte entera y fraccionaria
         0e4,        // Notación científica con 0
         0.456e-2,   // Decimal con notación científica
         .456e3,     // Decimal sin parte entera, con notación científica
+        123.e-4,
         0e4,        // CASO ESPECIAL
         1e03,      // CASO ESPECIAL
         24e04,     // CASO ESPECIAL
