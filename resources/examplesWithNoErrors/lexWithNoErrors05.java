@@ -26,3 +26,6 @@ identVar IdentClass
         + - * /
         && || %
         += y -=
+
+
+123.e-4

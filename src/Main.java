@@ -41,6 +41,10 @@ public class Main {
 
 
       if(!error)  System.out.println("[SinErrores]");
-
+        try {
+            sourceManager.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
