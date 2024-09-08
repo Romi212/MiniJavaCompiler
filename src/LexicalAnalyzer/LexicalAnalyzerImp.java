@@ -12,12 +12,11 @@ public class LexicalAnalyzerImp implements LexicalAnalyzer {
     private char currentChar;
     private SourceManager sourceManager;
 
-    private ReservedWords reservedWords;
+    //private ReservedWords reservedWords;
 
     public LexicalAnalyzerImp(SourceManager sourceManager) {
         this.sourceManager = sourceManager;
         currentChar = ' ';
-        reservedWords = new ReservedWords();
     }
 
     @Override
@@ -231,8 +230,8 @@ public class LexicalAnalyzerImp implements LexicalAnalyzer {
     }
 
     private Token checkReservedWord() {
-        if(reservedWords.isReservedWord(lexeme)) {
-            return new Token(reservedWords.getReservedWord(lexeme),lexeme,sourceManager.getLineNumber());
+        if(ReservedWords.isReservedWord(lexeme)) {
+            return new Token(ReservedWords.getReservedWord(lexeme),lexeme,sourceManager.getLineNumber());
         }
         else return new Token("id_met_var",lexeme,sourceManager.getLineNumber());
     }

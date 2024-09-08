@@ -4,10 +4,10 @@ import java.util.HashMap;
 
 public class ReservedWords {
 
-    private HashMap<String, String> reservedWords;
+    static HashMap<String, String> reservedWords = createMap();
 
-    public ReservedWords(){
-        reservedWords = new HashMap<>();
+    static HashMap<String,String> createMap(){
+        HashMap<String, String> reservedWords = new HashMap<>();
         reservedWords.put("class", "rw_class");
         reservedWords.put("extends", "rw_extends");
         reservedWords.put("public", "rw_public");
@@ -30,14 +30,15 @@ public class ReservedWords {
         reservedWords.put("null", "rw_null");
         reservedWords.put("true", "rw_true");
         reservedWords.put("false", "rw_false");
+        return reservedWords;
 
     }
 
-    public boolean isReservedWord(String word){
+    static boolean isReservedWord(String word){
         return reservedWords.containsKey(word);
     }
 
-    public String getReservedWord(String word){
+    static String getReservedWord(String word){
         return reservedWords.get(word);
     }
 }
