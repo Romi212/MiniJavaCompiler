@@ -1,5 +1,8 @@
 import LexicalAnalyzer.LexicalAnalyzerImp;
+import SyntaxAnalyzer.SyntaxAnalyzer;
+import SyntaxAnalyzer.SyntaxAnalyzerImp;
 import utils.LexicalErrorException;
+import utils.SyntaxErrorException;
 import utils.Token;
 import utils.sourcemanager.SourceManagerImpl;
 
@@ -22,6 +25,7 @@ public class Main {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        /*
         Token token = null;
         boolean error = false;
        do{
@@ -45,6 +49,16 @@ public class Main {
             sourceManager.close();
         } catch (Exception e) {
             e.printStackTrace();
+        }*/
+
+        SyntaxAnalyzer syntaxAnalyzer = new SyntaxAnalyzerImp(lexicalAnalyzer);
+        try {
+            System.out.println(syntaxAnalyzer.analyzeSintax());
+        } catch (LexicalErrorException e) {
+            throw new RuntimeException(e);
+        } catch (SyntaxErrorException e) {
+            throw new RuntimeException(e);
         }
     }
+
 }
