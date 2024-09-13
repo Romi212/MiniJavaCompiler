@@ -1,4 +1,4 @@
 ///[SinErrores]
 "hola"
-v1+chau
+V1{Chau{
 if class }

@@ -250,7 +250,7 @@ public class LexicalAnalyzerImp implements LexicalAnalyzer {
             currentChar = sourceManager.getNextChar();
 
         } while ((currentChar >= 'a' && currentChar <= 'z') || (currentChar >= 'A' && currentChar <= 'Z') || (currentChar >= '0' && currentChar <= '9') || currentChar == '_' );
-        return finalState("id_class");
+        return new Token("id_class",lexeme,sourceManager.getLineNumber());
     }
 
     private Token possibleInt() throws LexicalErrorException,IOException{
