@@ -55,9 +55,9 @@ public class Main {
         try {
             System.out.println(syntaxAnalyzer.analyzeSintax());
         } catch (LexicalErrorException e) {
-            throw new RuntimeException(e);
+            System.out.println(e.getLongMessage());
         } catch (SyntaxErrorException e) {
-            throw new RuntimeException(e);
+            System.out.println(e.getMessage());
         }
     }
 
