@@ -30,6 +30,7 @@ public class ReservedWords {
         reservedWords.put("null", "rw_null");
         reservedWords.put("true", "rw_true");
         reservedWords.put("false", "rw_false");
+        reservedWords.put("default", "rw_default");
         return reservedWords;
 
     }

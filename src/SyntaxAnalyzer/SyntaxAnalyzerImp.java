@@ -48,6 +48,15 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         match("pm_brace_close");
     }
 
+    private void parents() throws LexicalErrorException, SyntaxErrorException{
+        if(currentToken.getToken().equals("rw_extends")){
+            match("rw_extends");
+            match("id_class");
+        }
+        else{
+            //TODO: check follows
+        }
+    }
     private void memberList() throws  LexicalErrorException, SyntaxErrorException {
         if(Firsts.isFirst("Member", currentToken.getToken())){
             member();
@@ -71,11 +80,6 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         }
     }
 
-    private void constructor() {
-    }
-
-    private void body() {
-    }
 
     private void declaration() throws LexicalErrorException, SyntaxErrorException {
         staticT();
@@ -83,12 +87,31 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         match("id_met_var");
     }
 
+
+    private void body() throws LexicalErrorException, SyntaxErrorException {
+        if(currentToken.getToken().equals("pm_semicolon")){
+            match("pm_semicolon");
+        }
+        else{
+            formalArgs();
+            block();
+        }
+
+    }
+
+    private void constructor() throws LexicalErrorException, SyntaxErrorException{
+        match("rw_public");
+        match("id_class");
+        formalArgs();
+        block();
+    }
+
     private void memberType() throws   LexicalErrorException, SyntaxErrorException {
         if(Firsts.isFirst("Type", currentToken.getToken())){
             type();
         }
         else {
-            match("id_void");
+            match("rw_void");
 
         }
     }
@@ -124,15 +147,412 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         }
     }
 
-    private void parents() throws LexicalErrorException, SyntaxErrorException{
-        if(currentToken.getToken().equals("rw_extends")){
-            match("rw_extends");
-            match("id_class");
+
+    private void formalArgs() throws LexicalErrorException, SyntaxErrorException {
+        match("pm_par_open");
+        formalArgsList();
+        match("pm_par_close");
+    }
+
+    private void formalArgsList() throws LexicalErrorException, SyntaxErrorException {
+        if(Firsts.isFirst("FormalArg",currentToken.getToken())){
+            formalArg();
+            formalArgsList();
         }
         else{
-            //TODO: check follows
+            //TODO Check follows
         }
     }
+
+    private void formalArg() throws LexicalErrorException, SyntaxErrorException {
+        type();
+        match("id_met_var");
+    }
+
+    private void block() throws LexicalErrorException, SyntaxErrorException {
+        match("pm_brace_open");
+        statementsList();
+        match("pm_brace_close");
+    }
+
+    private void statementsList() throws LexicalErrorException, SyntaxErrorException {
+        if(Firsts.isFirst("Statement", currentToken.getToken())){
+            statement();
+            statementsList();
+        }
+        else{
+            //TODO Check follows
+        }
+    }
+
+    private void statement() throws LexicalErrorException, SyntaxErrorException {
+        if(currentToken.getToken().equals("pm_semicolon")){
+            match("pm_semicolon");
+        }
+        else if(Firsts.isFirst("Expression", currentToken.getToken())){
+            expression();
+        }
+        else if(Firsts.isFirst("LocalVar", currentToken.getToken())){
+            localVar();
+        }
+        else if(Firsts.isFirst("Return", currentToken.getToken())){
+            returnT();
+        }
+        else if(Firsts.isFirst("Break", currentToken.getToken())){
+            breakT();
+        }
+        else if(Firsts.isFirst("If", currentToken.getToken())){
+            ifT();
+        }
+        else if(Firsts.isFirst("While", currentToken.getToken())){
+            whileT();
+        }
+        else if(Firsts.isFirst("Switch", currentToken.getToken())){
+            switchT();
+        }
+        else {
+            block();
+        }
+
+    }
+
+    private void localVar() throws LexicalErrorException, SyntaxErrorException {
+        match("rw_var");
+        match("id_met_var");
+        match("op_assign");
+        complexExpression();
+    }
+
+    private void returnT() throws LexicalErrorException, SyntaxErrorException {
+        match("rw_return");
+        expressionOp();
+    }
+
+    private void breakT() throws LexicalErrorException, SyntaxErrorException {
+        match("rw_break");
+    }
+
+    private void expressionOp() throws LexicalErrorException, SyntaxErrorException {
+        if(Firsts.isFirst("Expression", currentToken.getToken())){
+            expression();
+        }
+        else{
+            //TODO Check follows
+        }
+    }
+
+    private void ifT() throws LexicalErrorException, SyntaxErrorException {
+        match("rw_if");
+        match("pm_par_open");
+        expression();
+        match("pm_par_close");
+        statement();
+        possibleElse();
+    }
+
+    private void possibleElse() throws LexicalErrorException, SyntaxErrorException {
+        if(currentToken.getToken().equals("rw_else")){
+            match("rw_else");
+            statement();
+        }
+        else{
+            //TODO Check follows
+        }
+    }
+
+    private void whileT() throws LexicalErrorException, SyntaxErrorException {
+        match("rw_while");
+        match("pm_par_open");
+        expression();
+        match("pm_par_close");
+        statement();
+    }
+
+    private void switchT() throws LexicalErrorException, SyntaxErrorException {
+        match("rw_switch");
+        match("pm_par_open");
+        expression();
+        match("pm_par_close");
+        match("pm_brace_open");
+        switchStateList();
+        match("pm_brace_close");
+    }
+
+    private void switchStateList() throws LexicalErrorException, SyntaxErrorException {
+        if(Firsts.isFirst("SwitchStatement", currentToken.getToken())){
+            switchStatement();
+            switchStateList();
+        }
+        else{
+            //TODO Check follows
+        }
+    }
+
+    private void switchStatement() throws LexicalErrorException, SyntaxErrorException {
+        if(currentToken.getToken().equals("rw_case")){
+            match("rw_case");
+            primitiveLiteral();
+            match("pm_colon");
+            statementOp();
+        }
+        else{
+            match("rw_default");
+            match("pm_colon");
+            statement();
+        }
+    }
+
+    private void statementOp() throws LexicalErrorException, SyntaxErrorException {
+        if(Firsts.isFirst("Statement", currentToken.getToken())){
+            statement();
+        }
+        else{
+            //TODO Check follows
+        }
+    }
+
+
+    private void expression() throws LexicalErrorException, SyntaxErrorException {
+        complexExpression();
+        possibleExp();
+    }
+
+    private void possibleExp() throws LexicalErrorException, SyntaxErrorException {
+        if(Firsts.isFirst("AssignmentOp", currentToken.getToken())){
+            assignmentOp();
+            complexExpression();
+        }
+        else{
+            //TODO Check follows
+        }
+    }
+
+    private void assignmentOp() throws LexicalErrorException, SyntaxErrorException {
+        if(currentToken.getToken().equals("op_assign")){
+            match("op_assign");
+        }
+        else if(currentToken.getToken().equals("op_add")){
+            match("op_add");
+        }
+        else{
+            match("op_sub");
+        }
+    }
+
+    private void complexExpression() throws LexicalErrorException, SyntaxErrorException {
+        basicExpression();
+        possibleOp();
+    }
+
+    private void possibleOp() throws LexicalErrorException, SyntaxErrorException {
+        if(Firsts.isFirst("BinaryOp", currentToken.getToken())){
+            binaryOp();
+            complexExpression();
+        }
+        else{
+            //TODO Check follows Y CHECKEAR GRAMTIA
+        }
+    }
+
+    private void binaryOp() throws LexicalErrorException, SyntaxErrorException {
+        if(currentToken.getToken().equals("op_and")){
+            match("op_and");
+        }
+        else if(currentToken.getToken().equals("op_or")){
+            match("op_or");
+        }
+        else if(currentToken.getToken().equals("op_equal")){
+            match("op_equal");
+        }
+        else if(currentToken.getToken().equals("op_not_equal")){
+            match("op_not_equal");
+        }
+        else if(currentToken.getToken().equals("op_less")){
+            match("op_less");
+        }
+        else if(currentToken.getToken().equals("op_greater")){
+            match("op_greater");
+        }
+        else if(currentToken.getToken().equals("op_less_equal")){
+            match("op_less_equal");
+        }
+        else if(currentToken.getToken().equals("op_greater_equal")){
+            match("op_greater_equal");
+        }
+        else if(currentToken.getToken().equals("op_add")){
+            match("op_add");
+        }
+        else if(currentToken.getToken().equals("op_sub")){
+            match("op_sub");
+        }
+        else if(currentToken.getToken().equals("op_mult")){
+            match("op_mul");
+        }
+        else if(currentToken.getToken().equals("op_div")){
+            match("op_div");
+        }
+        else{
+            match("op_mod");
+        }
+
+    }
+
+    private void basicExpression() throws LexicalErrorException, SyntaxErrorException {
+        if(Firsts.isFirst("UnaryOp", currentToken.getToken())){
+            unaryOp();
+            operand();
+        }
+        else{
+            operand();
+        }
+    }
+
+    private void unaryOp() throws LexicalErrorException, SyntaxErrorException {
+        if(currentToken.getToken().equals("op_add")){
+            match("op_add");
+        }
+        else if(currentToken.getToken().equals("op_sub")){
+            match("op_sub");
+        }
+        else{
+            match("op_not");
+        }
+    }
+
+    private void operand() throws LexicalErrorException, SyntaxErrorException {
+        if(Firsts.isFirst("Literal", currentToken.getToken())){
+            literal();
+        }
+        else{
+            access();
+        }
+    }
+
+    private void literal() throws LexicalErrorException, SyntaxErrorException {
+
+       if(Firsts.isFirst("PrimitiveLiteral", currentToken.getToken())){
+            primitiveLiteral();
+        }
+        else{
+            objectLiteral();
+        }
+    }
+
+    private void primitiveLiteral() throws LexicalErrorException, SyntaxErrorException {
+        if(currentToken.getToken().equals("rw_true")){
+            match("rw_true");
+        }
+        else if(currentToken.getToken().equals("rw_false")){
+            match("rw_false");
+        }
+        else if(currentToken.getToken().equals("lit_int")){
+            match("lit_int");
+        }
+        else{
+            match("lit_char");
+        }
+    }
+
+    private void objectLiteral() throws LexicalErrorException, SyntaxErrorException {
+        if(currentToken.getToken().equals("rw_null")){
+            match("rw_null");
+
+        }
+        else{
+            match("lit_string");
+        }
+
+    }
+
+    private void access() throws LexicalErrorException, SyntaxErrorException {
+        primary();
+        chainedOp();
+    }
+
+    private void primary() throws LexicalErrorException, SyntaxErrorException {
+        if(Firsts.isFirst("AccessThis", currentToken.getToken())){
+            accessThis();
+        }
+        else if(Firsts.isFirst("AccessConstructor", currentToken.getToken())){
+            accessConstructor();
+        }
+        else if(Firsts.isFirst("AccessStaticMethod", currentToken.getToken())){
+            accessStaticMethod();
+        }
+        else if(Firsts.isFirst("PExpression", currentToken.getToken())){
+            pExpression();
+        }
+        else{
+            accessVarMethod();
+        }
+    }
+
+    private void accessThis() throws LexicalErrorException, SyntaxErrorException {
+        match("rw_this");
+    }
+
+    private void accessConstructor() throws LexicalErrorException, SyntaxErrorException {
+        match("rw_new");
+        match("id_class");
+        actualArgs();
+    }
+
+    private void accessStaticMethod() throws LexicalErrorException, SyntaxErrorException {
+        match("id_class");
+        match("pm_period");
+        match("id_met_var");
+        actualArgs();
+    }
+
+    private void pExpression() throws LexicalErrorException, SyntaxErrorException {
+        match("pm_par_open");
+        expression();
+        match("pm_par_close");
+    }
+
+    private void accessVarMethod() throws LexicalErrorException, SyntaxErrorException {
+        match("id_met_var");
+        possibleArgs();
+    }
+
+    private void possibleArgs() throws LexicalErrorException, SyntaxErrorException {
+        if(Firsts.isFirst("ActualArgs", currentToken.getToken())){
+            actualArgs();
+        }
+        else{
+            //TODO Check follows
+        }
+    }
+
+    private void actualArgs() throws LexicalErrorException, SyntaxErrorException {
+        match("pm_par_open");
+        expressionList();
+        match("pm_par_close");
+    }
+
+    private void expressionList() throws LexicalErrorException, SyntaxErrorException {
+        if(Firsts.isFirst("Expression", currentToken.getToken())){
+            expression();
+            match("pm_comma");
+            expressionList();
+        }
+        else{
+            //TODO Check follows
+        }
+    }
+
+    private void chainedOp() throws LexicalErrorException, SyntaxErrorException {
+        if(currentToken.getToken().equals("pm_period")){
+            match("pm_period");
+            match("id_met_var");
+            possibleArgs();
+            chainedOp();
+        }
+        else{
+            //TODO Check follows
+        }
+    }
+
 
     private void match(String terminal) throws LexicalErrorException, SyntaxErrorException {
         if (currentToken.getToken().equals(terminal)) {
