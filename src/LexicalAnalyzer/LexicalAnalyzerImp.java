@@ -136,6 +136,7 @@ public class LexicalAnalyzerImp implements LexicalAnalyzer {
                 lexeme += currentChar;
                 return floatExponent();
             }
+            else return new Token("lit_float",lexeme,sourceManager.getLineNumber());
 
         }
         else{
