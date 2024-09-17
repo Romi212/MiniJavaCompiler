@@ -221,10 +221,22 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
     }
 
     private void localVar() throws LexicalErrorException, SyntaxErrorException {
-        match("rw_var");
+        type();
         match("id_met_var");
+        chainedVar();
         match("op_assign");
         complexExpression();
+    }
+
+    private void chainedVar() throws LexicalErrorException, SyntaxErrorException {
+        if(currentToken.getToken().equals("pm_comma")){
+            match("pm_comma");
+            match("id_met_var");
+            chainedVar();
+        }
+        else{
+            //TODO Check follows
+        }
     }
 
     private void returnT() throws LexicalErrorException, SyntaxErrorException {
