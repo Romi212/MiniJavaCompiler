@@ -22,7 +22,10 @@ public class Firsts {
         memberFirst.add("rw_int");
         memberFirst.add("rw_boolean");
         memberFirst.add("rw_char");
-        firsts.put("Member", memberFirst);
+        HashSet<String> memberTrue = new HashSet<>();
+        memberTrue.addAll(memberFirst);
+        memberTrue.add("rw_public");
+        firsts.put("Member", memberTrue);
         firsts.put("Declaration", memberFirst);
         firsts.put("Static", new HashSet<String>() {{ add("rw_static"); }});
         firsts.put("MemberType", new HashSet<String>() {{ add("rw_char"); add("rw_int"); add("rw_boolean"); add("rw_void"); add("id_class"); }});
@@ -60,7 +63,7 @@ public class Firsts {
         litFirst.addAll(primFirst);
         firsts.put("PrimitiveLiteral", primFirst);
         //      Object
-        litFirst.add("id_null");
+        litFirst.add("rw_null");
         litFirst.add("lit_string");
         firsts.put("Literal", litFirst);
         expFirst.addAll(litFirst);
@@ -88,7 +91,7 @@ public class Firsts {
         firsts.put("AccessThis", new HashSet<String>() {{ add("rw_this"); }});
         firsts.put("AccessConstructor", new HashSet<String>() {{ add("rw_new"); }});
         firsts.put("AccessStaticMethod", new HashSet<String>() {{ add("id_class"); }});
-        firsts.put("AccessPExpression", new HashSet<String>() {{ add("pm_par_open"); }});
+        firsts.put("PExpression", new HashSet<String>() {{ add("pm_par_open"); }});
 
         firsts.put("ActualArgs", new HashSet<String>() {{ add("pm_par_open"); }});
 

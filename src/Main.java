@@ -58,6 +58,7 @@ public class Main {
             System.out.println(e.getLongMessage());
         } catch (SyntaxErrorException e) {
             System.out.println(e.getMessage());
+            System.out.println(e.getLongMessage());
         }
     }
 

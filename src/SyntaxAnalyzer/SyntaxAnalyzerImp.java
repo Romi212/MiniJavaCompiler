@@ -191,15 +191,19 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         }
         else if(Firsts.isFirst("Expression", currentToken.getToken())){
             expression();
+            match("pm_semicolon");
         }
         else if(Firsts.isFirst("LocalVar", currentToken.getToken())){
             localVar();
+            match("pm_semicolon");
         }
         else if(Firsts.isFirst("Return", currentToken.getToken())){
             returnT();
+            match("pm_semicolon");
         }
         else if(Firsts.isFirst("Break", currentToken.getToken())){
             breakT();
+            match("pm_semicolon");
         }
         else if(Firsts.isFirst("If", currentToken.getToken())){
             ifT();
@@ -328,8 +332,8 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
     }
 
     private void assignmentOp() throws LexicalErrorException, SyntaxErrorException {
-        if(currentToken.getToken().equals("op_assign")){
-            match("op_assign");
+        if(currentToken.getToken().equals("assign")){
+            match("assign");
         }
         else if(currentToken.getToken().equals("op_add")){
             match("op_add");
@@ -559,7 +563,7 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
             getNewToken();
         }
         else{
-            throw new SyntaxErrorException(terminal, currentToken.getToken(), currentToken.getLine(), currentToken.getColumn());
+            throw new SyntaxErrorException(terminal, currentToken);
         }
     }
 
