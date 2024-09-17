@@ -41,17 +41,44 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
 
     private void classT() throws SyntaxErrorException, LexicalErrorException {
         match("rw_class");
-        match("id_class");
+        className();
         parents();
         match("pm_brace_open");
         memberList();
         match("pm_brace_close");
     }
 
+    private void className() throws LexicalErrorException, SyntaxErrorException {
+        match("id_class");
+        generic();
+    }
+
+    private void generic() throws LexicalErrorException, SyntaxErrorException {
+        if(currentToken.getToken().equals("op_less")){
+            match("op_less");
+            match("id_class");
+            pTypesList();
+            match("op_greater");
+        }
+        else{
+            //TODO Check follows
+        }
+    }
+
+    private void pTypesList() throws LexicalErrorException, SyntaxErrorException {
+        if(currentToken.getToken().equals("pm_comma")){
+            match("pm_comma");
+            match("id_class");
+            pTypesList();
+        }
+        else{
+            //TODO Check follows
+        }
+    }
     private void parents() throws LexicalErrorException, SyntaxErrorException{
         if(currentToken.getToken().equals("rw_extends")){
             match("rw_extends");
-            match("id_class");
+            className();
         }
         else{
             //TODO: check follows
@@ -101,6 +128,7 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
 
     private void constructor() throws LexicalErrorException, SyntaxErrorException{
         match("rw_public");
+        //TODO CONSTRUCTOR GENERIC
         match("id_class");
         formalArgs();
         block();
@@ -121,7 +149,7 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
             primitiveType();
         }
         else{
-            match("id_class");
+            className();
         }
     }
 
@@ -509,11 +537,12 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
 
     private void accessConstructor() throws LexicalErrorException, SyntaxErrorException {
         match("rw_new");
-        match("id_class");
+        className();
         actualArgs();
     }
 
     private void accessStaticMethod() throws LexicalErrorException, SyntaxErrorException {
+        //TODO CHECK Q NO PUEDE SER GENERICA
         match("id_class");
         match("pm_period");
         match("id_met_var");
