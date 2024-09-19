@@ -40,6 +40,7 @@ public class Firsts {
         firsts.put("Return", new HashSet<String>() {{ add("rw_return"); }});
         firsts.put("Break", new HashSet<String>() {{ add("rw_break"); }});
         firsts.put("If", new HashSet<String>() {{ add("rw_if"); }});
+        firsts.put("For", new HashSet<String>() {{ add("rw_for"); }});
         firsts.put("While", new HashSet<String>() {{ add("rw_while"); }});
         firsts.put("Switch", new HashSet<String>() {{ add("rw_switch"); }});
         HashSet<String> expFirst = new HashSet<>();

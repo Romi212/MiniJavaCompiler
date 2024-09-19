@@ -242,6 +242,10 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         else if(Firsts.isFirst("Switch", currentToken.getToken())){
             switchT();
         }
+        else if(Firsts.isFirst("For", currentToken.getToken())){
+            forT();
+        }
+
         else {
             block();
         }
@@ -293,7 +297,6 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         statement();
         possibleElse();
     }
-
     private void possibleElse() throws LexicalErrorException, SyntaxErrorException {
         if(currentToken.getToken().equals("rw_else")){
             match("rw_else");
@@ -302,6 +305,59 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         else{
             //TODO Check follows
         }
+    }
+
+    private void forT() throws LexicalErrorException, SyntaxErrorException {
+        match("rw_for");
+        match("pm_par_open");
+        forExpression();
+        match("pm_par_close");
+        block();
+    }
+
+    private void forExpression() throws LexicalErrorException, SyntaxErrorException {
+        if(Firsts.isFirst("Type", currentToken.getToken())){
+            type();
+            match("id_met_var");
+            forSecondPart();
+        }
+        else{
+            expression();
+            forRest();
+        }
+    }
+
+    private void forSecondPart() throws LexicalErrorException, SyntaxErrorException {
+        if(currentToken.getToken().equals("pm_colon")){
+            match("pm_colon");
+            match("id_met_var");
+
+        }
+        else{
+            initialize();
+            forRest();
+        }
+    }
+
+    private void initialize() throws LexicalErrorException, SyntaxErrorException {
+        if(currentToken.getToken().equals("op_assign")){
+            match("op_assign");
+            expression();
+        }
+        else {
+            //TODO Check follows
+        }
+    }
+    private void forRest() throws LexicalErrorException, SyntaxErrorException {
+        //if(currentToken.getToken().equals("pm_semicolon")){
+            match("pm_semicolon");
+            expression();
+        match("pm_semicolon");
+        expression();
+        //}
+        //else{
+            //TODO Check follows
+       // }
     }
 
     private void whileT() throws LexicalErrorException, SyntaxErrorException {

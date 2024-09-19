@@ -20,6 +20,7 @@ public class ReservedWords {
         reservedWords.put("if", "rw_if");
         reservedWords.put("else", "rw_else");
         reservedWords.put("while", "rw_while");
+        reservedWords.put("for", "rw_for");
         reservedWords.put("return", "rw_return");
         reservedWords.put("var", "rw_var");
         reservedWords.put("switch", "rw_switch");
