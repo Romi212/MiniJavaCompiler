@@ -1,7 +1,7 @@
 ///[SinErrores]
 public class sintCorrecto05 {
     void metodo(){
-        int a,b = 15;
+        int a,b = 15 +  +13;
         int c = 3;
         char d,e,f,g,h = 'a';
         Clase c = new Clase();

@@ -28,7 +28,7 @@ Clase1 metodo(int v1){}
 public void metodoStatic(){}
 public  void metodoStatic(int a, Clase4 c){}
 private  int metodoStatic(int b, char s){}
-private  Clase4 metidiStaticPriv(){}
+private  Clase4<String> metidiStaticPriv(){}
 char metodoS(int a){}
 void metodoS2(){}
 
