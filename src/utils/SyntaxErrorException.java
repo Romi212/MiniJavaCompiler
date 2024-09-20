@@ -13,7 +13,7 @@ public class SyntaxErrorException extends Throwable {
     }
 
     public String getLongMessage(){
-        String longMessage = "Syntax error in line "+foundtoken.getLine()+", column "+foundtoken.getColumn()+": Expected ["+expectedToken+"] but found ["+foundtoken.getLexeme()+"]";
+        String longMessage = "Syntax error in line "+foundtoken.getLine()+", column "+foundtoken.getColumn()+": Expected ["+expectedToken+"] but found ["+foundtoken.getLexeme()+"("+foundtoken.getToken()+")]";
         return longMessage;
     }
 }

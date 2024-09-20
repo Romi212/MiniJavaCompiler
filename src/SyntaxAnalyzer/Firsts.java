@@ -83,7 +83,7 @@ public class Firsts {
         firsts.put("Expression", expFirst);
         firsts.put("ComplexExpression", expFirst);
         firsts.put("BasicExpression", expFirst);
-        firsts.put("Statement", new HashSet<String>() {{ addAll(expFirst); add("rw_var"); add("rw_return"); add("rw_break"); add("rw_if"); add("rw_while"); add("rw_switch"); add("pm_semicolon"); add("pm_brace_open"); }});
+        firsts.put("Statement", new HashSet<String>() {{ addAll(expFirst); add("rw_var"); add("rw_for"); add("rw_return"); add("rw_break"); add("rw_if"); add("rw_while"); add("rw_switch"); add("pm_semicolon"); add("pm_brace_open"); }});
 
         firsts.put("SwitchStatement", new HashSet<String>() {{ add("rw_case"); add("rw_default"); }});
 

@@ -340,8 +340,8 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
     }
 
     private void initialize() throws LexicalErrorException, SyntaxErrorException {
-        if(currentToken.getToken().equals("op_assign")){
-            match("op_assign");
+        if(currentToken.getToken().equals("assign")){
+            match("assign");
             expression();
         }
         else {
@@ -431,11 +431,11 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         if(currentToken.getToken().equals("assign")){
             match("assign");
         }
-        else if(currentToken.getToken().equals("op_add")){
-            match("op_add");
+        else if(currentToken.getToken().equals("assign_add")){
+            match("assign_add");
         }
         else{
-            match("op_sub");
+            match("assign_sub");
         }
     }
 
