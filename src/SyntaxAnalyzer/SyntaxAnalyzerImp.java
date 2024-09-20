@@ -5,8 +5,6 @@ import utils.LexicalErrorException;
 import utils.SyntaxErrorException;
 import utils.Token;
 
-import java.sql.SQLSyntaxErrorException;
-
 public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
 
     private LexicalAnalyzer lexicalAnalyzer;
@@ -131,7 +129,7 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         }
         else if( currentToken.getToken().equals("id_class")){
             match("id_class");
-            possibleConstructor();
+            possibleCtor();
         }
         else{
             nonObjectType();
@@ -152,7 +150,7 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         body();
     }
 
-    private void possibleConstructor() throws LexicalErrorException, SyntaxErrorException {
+    private void possibleCtor() throws LexicalErrorException, SyntaxErrorException {
         if(currentToken.getToken().equals("pm_par_open")){
             constructor();
         }
@@ -184,7 +182,7 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
             match("rw_void");
         }
         else{
-            type();
+            primitiveType();
         }
     }
     private void memberType() throws   LexicalErrorException, SyntaxErrorException {
