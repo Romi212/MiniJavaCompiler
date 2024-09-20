@@ -40,12 +40,22 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
     }
 
     private void classT() throws SyntaxErrorException, LexicalErrorException {
+        abstractT();
         match("rw_class");
         className();
         parents();
         match("pm_brace_open");
         memberList();
         match("pm_brace_close");
+    }
+
+    private void abstractT() throws LexicalErrorException, SyntaxErrorException {
+        if(currentToken.getToken().equals("rw_abstract")){
+            match("rw_abstract");
+        }
+        else{
+            //TODO Check follows
+        }
     }
 
     private void className() throws LexicalErrorException, SyntaxErrorException {
@@ -86,7 +96,7 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
     }
     private void memberList() throws  LexicalErrorException, SyntaxErrorException {
         if(Firsts.isFirst("Member", currentToken.getToken())){
-            member();
+            visibleMember();
             memberList();
         }
         else{
@@ -94,46 +104,89 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         }
     }
 
-    private void member() throws LexicalErrorException, SyntaxErrorException {
-        if(Firsts.isFirst("Declaration", currentToken.getToken())){
-            declaration();
-            body();
+    private void visibleMember() throws LexicalErrorException, SyntaxErrorException {
+        visibility();
+        member();
+    }
+
+    private void visibility() throws LexicalErrorException, SyntaxErrorException {
+        if(currentToken.getToken().equals("rw_public")){
+            match("rw_public");
         }
-        else if(Firsts.isFirst("Constructor", currentToken.getToken())){
-            constructor();
+        else if(currentToken.getToken().equals("rw_private")){
+            match("rw_private");
         }
         else{
             //TODO Check follows
         }
     }
-
-
-    private void declaration() throws LexicalErrorException, SyntaxErrorException {
-        staticT();
-        memberType();
-        match("id_met_var");
-    }
-
-
-    private void body() throws LexicalErrorException, SyntaxErrorException {
-        if(currentToken.getToken().equals("pm_semicolon")){
-            match("pm_semicolon");
+    private void member() throws LexicalErrorException, SyntaxErrorException {
+        if(currentToken.getToken().equals("rw_abstract")){
+            abstractMethod();
+        }
+        else if(currentToken.getToken().equals("rw_static")){
+            match("rw_static");
+            memberType();
+            declaration();
+        }
+        else if( currentToken.getToken().equals("id_class")){
+            match("id_class");
+            possibleConstructor();
         }
         else{
+            nonObjectType();
+            declaration();
+        }
+    }
+
+    private void abstractMethod() throws LexicalErrorException, SyntaxErrorException {
+        match("rw_abstract");
+        memberType();
+        match("id_met_var");
+        formalArgs();
+        match("pm_semicolon");
+    }
+
+    private void declaration() throws LexicalErrorException, SyntaxErrorException {
+        match("id_met_var");
+        body();
+    }
+
+    private void possibleConstructor() throws LexicalErrorException, SyntaxErrorException {
+        if(currentToken.getToken().equals("pm_par_open")){
+            constructor();
+        }
+        else {
+            declaration();
+        }
+    }
+
+    private void body() throws LexicalErrorException, SyntaxErrorException {
+        if(currentToken.getToken().equals("pm_par_open")){
             formalArgs();
             block();
+
+        }
+        else{
+            initialize();
+            match("pm_semicolon");
         }
 
     }
 
     private void constructor() throws LexicalErrorException, SyntaxErrorException{
-        match("rw_public");
-        //TODO CONSTRUCTOR GENERIC
-        match("id_class");
         formalArgs();
         block();
     }
 
+    private void nonObjectType() throws LexicalErrorException, SyntaxErrorException {
+        if(currentToken.getToken().equals("rw_void")){
+            match("rw_void");
+        }
+        else{
+            type();
+        }
+    }
     private void memberType() throws   LexicalErrorException, SyntaxErrorException {
         if(Firsts.isFirst("Type", currentToken.getToken())){
             type();
@@ -164,15 +217,6 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
             match("rw_boolean");
         }
 
-    }
-
-    private void staticT() throws LexicalErrorException, SyntaxErrorException {
-        if (currentToken.getToken().equals("rw_static")) {
-            match("rw_static");
-        }
-        else{
-            //TODO Check follows
-        }
     }
 
 
@@ -342,7 +386,7 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
     private void initialize() throws LexicalErrorException, SyntaxErrorException {
         if(currentToken.getToken().equals("assign")){
             match("assign");
-            expression();
+            complexExpression();
         }
         else {
             //TODO Check follows

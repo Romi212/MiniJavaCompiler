@@ -10,6 +10,8 @@ public class ReservedWords {
         HashMap<String, String> reservedWords = new HashMap<>();
         reservedWords.put("class", "rw_class");
         reservedWords.put("extends", "rw_extends");
+        reservedWords.put("private", "rw_private");
+        reservedWords.put("abstract", "rw_abstract");
         reservedWords.put("public", "rw_public");
         reservedWords.put("static", "rw_static");
         reservedWords.put("void", "rw_void");
