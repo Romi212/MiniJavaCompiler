@@ -63,6 +63,10 @@ public class Firsts {
         primFirst.add("lit_char");
         litFirst.addAll(primFirst);
         firsts.put("PrimitiveLiteral", primFirst);
+        HashSet<String> localVarFirst = new HashSet<>();
+        localVarFirst.addAll(primFirst);
+        localVarFirst.add("id_var");
+        firsts.put("PrimitiveVar", localVarFirst);
         //      Object
         litFirst.add("rw_null");
         litFirst.add("lit_string");
@@ -73,13 +77,17 @@ public class Firsts {
         expFirst.add("rw_this");
         //      Constructor
         expFirst.add("rw_new");
-        //      SMethod
-        expFirst.add("id_class");
+
         //      PExpression
         expFirst.add("pm_par_open");
         //      VarMet
         expFirst.add("id_met_var");
 
+        HashSet<String> NSExp = new HashSet<>();
+        NSExp.addAll(expFirst);
+        //      SMethod
+        expFirst.add("id_class");
+        firsts.put("NonStaticExp", NSExp);
         firsts.put("Expression", expFirst);
         firsts.put("ComplexExpression", expFirst);
         firsts.put("BasicExpression", expFirst);

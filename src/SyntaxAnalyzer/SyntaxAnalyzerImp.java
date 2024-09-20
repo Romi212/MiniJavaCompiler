@@ -259,12 +259,16 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         if(currentToken.getToken().equals("pm_semicolon")){
             match("pm_semicolon");
         }
-        else if(Firsts.isFirst("Expression", currentToken.getToken())){
-            expression();
+        else if(currentToken.getToken().equals("id_class")){
+            match("id_class");
+            object();
+        }
+        else if(Firsts.isFirst("NonStaticExp", currentToken.getToken())){
+            nonStaticExp();
             match("pm_semicolon");
         }
-        else if(Firsts.isFirst("LocalVar", currentToken.getToken())){
-            localVar();
+        else if(Firsts.isFirst("PrimitiveVar", currentToken.getToken())){
+            primitiveVar();
             match("pm_semicolon");
         }
         else if(Firsts.isFirst("Return", currentToken.getToken())){
@@ -294,13 +298,30 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
 
     }
 
+    private void object() throws LexicalErrorException, SyntaxErrorException {
+        if (currentToken.getToken().equals("pm_period")) {
+            staticCall();
+            possibleExp();
+        }
+        else {
+            generic();
+            localVar();
+        }
+    }
     private void localVar() throws LexicalErrorException, SyntaxErrorException {
-        type();
         match("id_met_var");
         chainedVar();
-        match("op_assign");
-        complexExpression();
+        initialize();
     }
+
+    private void staticCall() throws LexicalErrorException, SyntaxErrorException {
+        match("pm_period");
+        match("id_met_var");
+        actualArgs();
+        chainedOp();
+        possibleOp();
+    }
+
 
     private void chainedVar() throws LexicalErrorException, SyntaxErrorException {
         if(currentToken.getToken().equals("pm_comma")){
@@ -313,6 +334,29 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         }
     }
 
+    private void primitiveVar() throws LexicalErrorException, SyntaxErrorException {
+        localType();
+        localVar();
+    }
+
+    private void localType() throws LexicalErrorException, SyntaxErrorException {
+        if(Firsts.isFirst("PrimitiveType", currentToken.getToken())){
+            primitiveType();
+        }
+        else{
+            match("rw_var");
+        }
+    }
+
+    private void nonStaticExp() throws LexicalErrorException, SyntaxErrorException {
+        nSComplexExpression();
+        possibleExp();
+    }
+
+    private void nSComplexExpression() throws LexicalErrorException, SyntaxErrorException {
+        basicExpression();
+        possibleOp();
+    }
     private void returnT() throws LexicalErrorException, SyntaxErrorException {
         match("rw_return");
         expressionOp();
@@ -482,8 +526,14 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
     }
 
     private void complexExpression() throws LexicalErrorException, SyntaxErrorException {
-        basicExpression();
-        possibleOp();
+        if(currentToken.getToken().equals("id_class")){
+            match("id_class");
+            staticCall();
+        }
+        else{
+            basicExpression();
+            possibleOp();
+        }
     }
 
     private void possibleOp() throws LexicalErrorException, SyntaxErrorException {
@@ -618,9 +668,6 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         else if(Firsts.isFirst("AccessConstructor", currentToken.getToken())){
             accessConstructor();
         }
-        else if(Firsts.isFirst("AccessStaticMethod", currentToken.getToken())){
-            accessStaticMethod();
-        }
         else if(Firsts.isFirst("PExpression", currentToken.getToken())){
             pExpression();
         }
@@ -639,13 +686,6 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         actualArgs();
     }
 
-    private void accessStaticMethod() throws LexicalErrorException, SyntaxErrorException {
-        //TODO CHECK Q NO PUEDE SER GENERICA
-        match("id_class");
-        match("pm_period");
-        match("id_met_var");
-        actualArgs();
-    }
 
     private void pExpression() throws LexicalErrorException, SyntaxErrorException {
         match("pm_par_open");
