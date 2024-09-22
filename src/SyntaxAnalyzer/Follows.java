@@ -81,6 +81,10 @@ public class Follows {
         follows.put("PTypesList", new HashSet<>(){{add("pm_comma"); add("op_greater");}});
         follows.put("Parents", new HashSet<>(){{add("pm_brace_open");}});
         follows.put("Visibility", new HashSet<>(){{add("rw_class");}});
+
+        follows.put("ChainedVar", new HashSet<>(){{add("assign"); add("pm_semicolon");}});
+
+        follows.put("PossibleExp", new HashSet<>(){{add("pm_semicolon"); add("pm_par_close");}});
         return follows;
     }
 

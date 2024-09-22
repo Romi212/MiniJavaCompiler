@@ -39,32 +39,45 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
             //TODO: poner que EOF sea ''
         }
         else{
-            throw new SyntaxErrorException("EOF", currentToken, "a class or end of file");
+            throw new SyntaxErrorException( currentToken, "a class or end of file");
         }
 
     }
 
     private void classT() throws SyntaxErrorException, LexicalErrorException {
-        abstractT();
-        match("rw_class");
-        className();
-        parents();
+        if(currentToken.getToken().equals("rw_class")){
+            normalClass();
+        }
+        else if(currentToken.getToken().equals("rw_abstract")){
+            abstractClass();
+        }
+        else{
+            throw new SyntaxErrorException( currentToken, "reserved word 'class' or 'abstract'");
+        }
+    }
+
+    private void normalClass() throws SyntaxErrorException, LexicalErrorException {
+        classSignature();
         match("pm_brace_open");
         memberList();
         match("pm_brace_close");
     }
 
-    private void abstractT() throws LexicalErrorException, SyntaxErrorException {
-        if(currentToken.getToken().equals("rw_abstract")){
-            match("rw_abstract");
-        }
-        else if(Follows.itFollows("Abstract", currentToken.getToken())){
-            //TODO Check follows
-        }
-        else{
-            throw new SyntaxErrorException("rw_class", currentToken, "reserved word 'class'");
-        }
+    private void abstractClass() throws SyntaxErrorException, LexicalErrorException {
+        match("rw_abstract");
+        classSignature();
+        match("pm_brace_open");
+        abstractMemberList();
+        match("pm_brace_close");
     }
+
+    private void classSignature() throws SyntaxErrorException, LexicalErrorException {
+        match("rw_class");
+        className();
+        parents();
+    }
+
+
 
     private void className() throws LexicalErrorException, SyntaxErrorException {
         match("id_class");
@@ -81,7 +94,7 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         else if(Follows.itFollows("Generic", currentToken.getToken())){
             //TODO Check follows
         }else{
-            throw new SyntaxErrorException("generic", currentToken, "reserved word extends or ( or {");
+            throw new SyntaxErrorException( currentToken, "reserved word extends or ( or {");
         }
     }
 
@@ -94,7 +107,7 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         else if(Follows.itFollows("PTypesList", currentToken.getToken())){
             //TODO Check follows
         }else{
-            throw new SyntaxErrorException("pm_greater", currentToken, "another parametric Type or >");
+            throw new SyntaxErrorException( currentToken, "another parametric Type or >");
         }
     }
     private void parents() throws LexicalErrorException, SyntaxErrorException{
@@ -105,7 +118,7 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         else if(Follows.itFollows("Parents", currentToken.getToken())){
             //TODO: check follows
         }else{
-            throw new SyntaxErrorException("rw_brace_open", currentToken, "{");
+            throw new SyntaxErrorException( currentToken, "{");
         }
     }
     private void memberList() throws  LexicalErrorException, SyntaxErrorException {
@@ -120,11 +133,36 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         }*/
     }
 
+    private void abstractMemberList() throws SyntaxErrorException, LexicalErrorException {
+        if(Firsts.isFirst("Member", currentToken.getToken())){
+            abstractVisibleMember();
+            abstractMemberList();
+        }/*
+        else if(Follows.itFollows("AbstractMemberList", currentToken.getToken())){
+            //TODO Check follows
+        }else{
+            throw new SyntaxErrorException("rw_brace_close", currentToken, "end of class declaration }");
+        }*/
+    }
+
     private void visibleMember() throws LexicalErrorException, SyntaxErrorException {
         visibility();
         member();
     }
 
+    private void abstractVisibleMember() throws LexicalErrorException, SyntaxErrorException {
+        visibility();
+        abstractMember();
+    }
+
+    private void abstractMember() throws LexicalErrorException, SyntaxErrorException {
+        if(currentToken.getToken().equals("rw_abstract")){
+            abstractMethod();
+        }
+        else{
+            member();
+        }
+    }
     private void visibility() throws LexicalErrorException, SyntaxErrorException {
         if(currentToken.getToken().equals("rw_public")){
             match("rw_public");
@@ -139,10 +177,7 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
        // }
     }
     private void member() throws LexicalErrorException, SyntaxErrorException {
-        if(currentToken.getToken().equals("rw_abstract")){
-            abstractMethod();
-        }
-        else if(currentToken.getToken().equals("rw_static")){
+        if(currentToken.getToken().equals("rw_static")){
             match("rw_static");
             memberType();
             declaration();
@@ -151,9 +186,12 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
             match("id_class");
             possibleCtor();
         }
-        else{
+        else if(Firsts.isFirst("NonObjectType", currentToken.getToken())){
             nonObjectType();
             declaration();
+        }
+        else {
+            throw new SyntaxErrorException( currentToken, "attribute or non abstract method declaration");
         }
     }
 
@@ -174,8 +212,11 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         if(currentToken.getToken().equals("pm_par_open")){
             constructor();
         }
-        else {
+        else if(currentToken.getToken().equals("id_met_var")) {
             declaration();
+        }
+        else{
+            throw new SyntaxErrorException(currentToken, "constructor or method declaration");
         }
     }
 
@@ -185,9 +226,12 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
             block();
 
         }
-        else{
+        else if(currentToken.getToken().equals("pm_semicolon")|| currentToken.getToken().equals("assign")){
             initialize();
             match("pm_semicolon");
+        }
+        else{
+            throw new SyntaxErrorException( currentToken, "method declaration or attribute initialization");
         }
 
     }
@@ -201,17 +245,22 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         if(currentToken.getToken().equals("rw_void")){
             match("rw_void");
         }
-        else{
+        else if(Firsts.isFirst("PrimitiveType", currentToken.getToken())){
             primitiveType();
+        }
+        else {
+            throw new SyntaxErrorException(currentToken, "primitive type or void");
         }
     }
     private void memberType() throws   LexicalErrorException, SyntaxErrorException {
         if(Firsts.isFirst("Type", currentToken.getToken())){
             type();
         }
-        else {
+        else if( currentToken.getToken().equals("rw_void")){
             match("rw_void");
 
+        }else{
+            throw new SyntaxErrorException( currentToken, "type or void");
         }
     }
 
@@ -219,8 +268,10 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         if(Firsts.isFirst("PrimitiveType", currentToken.getToken())){
             primitiveType();
         }
-        else{
+        else if( currentToken.getToken().equals("id_class")){
             className();
+        }else{
+            throw new SyntaxErrorException(currentToken, "primitive type or class name");
         }
     }
 
@@ -231,8 +282,10 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         else if(currentToken.getToken().equals("rw_char")){
             match("rw_char");
         }
-        else{
+        else if(currentToken.getToken().equals("rw_boolean")){
             match("rw_boolean");
+        } else{
+            throw new SyntaxErrorException(currentToken, "int, char or boolean");
         }
 
     }
@@ -249,9 +302,13 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
             formalArg();
             formalArgsList();
         }
-        else{
+        else if(currentToken.getToken().equals("pm_par_close")){
             //TODO Check follows
         }
+        else{
+            throw new SyntaxErrorException(currentToken, "formal argument or )");
+        }
+
     }
 
     private void formalArg() throws LexicalErrorException, SyntaxErrorException {
@@ -270,8 +327,11 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
             statement();
             statementsList();
         }
-        else{
+        else if(currentToken.getToken().equals("pm_brace_close")){
             //TODO Check follows
+        }
+        else{
+            throw new SyntaxErrorException(currentToken, "statement or }");
         }
     }
 
@@ -312,8 +372,11 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
             forT();
         }
 
-        else {
+        else if (currentToken.getToken().equals("pm_brace_open")){
             block();
+        }
+        else{
+            throw new SyntaxErrorException(currentToken, "valid statement");
         }
 
     }
@@ -323,9 +386,12 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
             staticCall();
             possibleExp();
         }
-        else {
+        else if(currentToken.getToken().equals("op_greater")|| currentToken.getToken().equals("id_met_var")){
             generic();
             localVar();
+        }
+        else{
+            throw new SyntaxErrorException(currentToken, "static call or local object declaration");
         }
     }
     private void localVar() throws LexicalErrorException, SyntaxErrorException {
@@ -349,8 +415,10 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
             match("id_met_var");
             chainedVar();
         }
-        else{
-            //TODO Check follows
+        else if(Follows.itFollows("ChainedVar", currentToken.getToken())){
+            //TODO Check follows = o ;?
+        }else{
+            throw new SyntaxErrorException(currentToken, "another var, initialization or ;");
         }
     }
 
@@ -363,8 +431,11 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         if(Firsts.isFirst("PrimitiveType", currentToken.getToken())){
             primitiveType();
         }
-        else{
+        else if(currentToken.getToken().equals("id_var")){
             match("rw_var");
+        }
+        else{
+            throw new SyntaxErrorException(currentToken, "local var type");
         }
     }
 
@@ -390,8 +461,10 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         if(Firsts.isFirst("Expression", currentToken.getToken())){
             expression();
         }
-        else{
+        else if (currentToken.getToken().equals("pm_semicolon")){
             //TODO Check follows
+        }else{
+            throw new SyntaxErrorException(currentToken, "expression or ;");
         }
     }
 
@@ -408,8 +481,11 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
             match("rw_else");
             statement();
         }
-        else{
+        else if(Firsts.isFirst("Statement", currentToken.getToken())|| currentToken.getToken().equals("pm_brace_close")){
             //TODO Check follows
+        }
+        else{
+            throw new SyntaxErrorException(currentToken, "else, valid statement, or }");
         }
     }
 
@@ -427,9 +503,12 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
             match("id_met_var");
             forSecondPart();
         }
-        else{
+        else if(Firsts.isFirst("Expression", currentToken.getToken())){
             expression();
             forRest();
+        }
+        else {
+            throw new SyntaxErrorException(currentToken, "first expression of for, or iterator variable declaration");
         }
     }
 
@@ -439,9 +518,12 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
             match("id_met_var");
 
         }
-        else{
+        else if (currentToken.getToken().equals("pm_semicolon") || currentToken.getToken().equals("assign")){
             initialize();
             forRest();
+        }
+        else{
+            throw new SyntaxErrorException(currentToken, "second part of for");
         }
     }
 
@@ -450,20 +532,20 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
             match("assign");
             complexExpression();
         }
-        else {
+        else if (currentToken.getToken().equals("pm_semicolon")){
             //TODO Check follows
+        }
+        else{
+            throw new SyntaxErrorException(currentToken, "var initialization or ;");
         }
     }
     private void forRest() throws LexicalErrorException, SyntaxErrorException {
-        //if(currentToken.getToken().equals("pm_semicolon")){
-            match("pm_semicolon");
-            expression();
+
         match("pm_semicolon");
         expression();
-        //}
-        //else{
-            //TODO Check follows
-       // }
+        match("pm_semicolon");
+        expression();
+
     }
 
     private void whileT() throws LexicalErrorException, SyntaxErrorException {
@@ -489,8 +571,11 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
             switchStatement();
             switchStateList();
         }
-        else{
+        else if(currentToken.getToken().equals("pm_brace_close")){
             //TODO Check follows
+        }
+        else{
+            throw new SyntaxErrorException(currentToken, "switch statement or }");
         }
     }
 
@@ -501,10 +586,12 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
             match("pm_colon");
             statementOp();
         }
-        else{
+        else if(currentToken.getToken().equals("rw_default")){
             match("rw_default");
             match("pm_colon");
             statement();
+        }else{
+            throw new SyntaxErrorException(currentToken, "case or default");
         }
     }
 
@@ -512,8 +599,10 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         if(Firsts.isFirst("Statement", currentToken.getToken())){
             statement();
         }
-        else{
+        else if(currentToken.getToken().equals("rw_case")|| currentToken.getToken().equals("rw_default")|| currentToken.getToken().equals("pm_brace_close")){
             //TODO Check follows
+        }else{
+            throw new SyntaxErrorException(currentToken, "valid statement or case or default");
         }
     }
 
@@ -528,8 +617,10 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
             assignmentOp();
             complexExpression();
         }
-        else{
+        else if(Follows.itFollows("PossibleExp", currentToken.getToken())){
             //TODO Check follows
+        }else{
+            throw new SyntaxErrorException(currentToken, "assignment operator or ;");
         }
     }
 
@@ -540,8 +631,11 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         else if(currentToken.getToken().equals("assign_add")){
             match("assign_add");
         }
-        else{
+        else if(currentToken.getToken().equals("assign_sub")){
             match("assign_sub");
+        }
+        else{
+            throw new SyntaxErrorException(currentToken, "assignment operator");
         }
     }
 
@@ -550,9 +644,12 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
             match("id_class");
             staticCall();
         }
-        else{
+        else if(Firsts.isFirst("BasicExpression", currentToken.getToken())){
             basicExpression();
             possibleOp();
+        }
+        else{
+            throw new SyntaxErrorException(currentToken, "basic expression");
         }
     }
 
@@ -561,8 +658,11 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
             binaryOp();
             complexExpression();
         }
-        else{
+        else if(Follows.itFollows("PossibleExp", currentToken.getToken()) || Firsts.isFirst("AssignmentOp", currentToken.getToken())){
             //TODO Check follows Y CHECKEAR GRAMTIA
+        }
+        else{
+            throw new SyntaxErrorException(currentToken, "binary operation, assignment or end of expression");
         }
     }
 
@@ -603,8 +703,11 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         else if(currentToken.getToken().equals("op_div")){
             match("op_div");
         }
-        else{
+        else if ( currentToken.getToken().equals("op_mod")){
             match("op_mod");
+        }
+        else{
+            throw new SyntaxErrorException(currentToken, "binary operator");
         }
 
     }
@@ -614,8 +717,11 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
             unaryOp();
             operand();
         }
-        else{
+        else if(Firsts.isFirst("Operand", currentToken.getToken())){
             operand();
+        }
+        else{
+            throw new SyntaxErrorException(currentToken, "unary operator or operand");
         }
     }
 
@@ -626,8 +732,11 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         else if(currentToken.getToken().equals("op_sub")){
             match("op_sub");
         }
-        else{
+        else if(currentToken.getToken().equals("op_not")){
             match("op_not");
+        }
+        else{
+            throw new SyntaxErrorException(currentToken, "unary operator");
         }
     }
 
@@ -635,8 +744,11 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         if(Firsts.isFirst("Literal", currentToken.getToken())){
             literal();
         }
-        else{
+        else if(Firsts.isFirst("Access", currentToken.getToken())){
             access();
+        }
+        else{
+            throw new SyntaxErrorException(currentToken, "literal or access");
         }
     }
 
@@ -645,9 +757,12 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
        if(Firsts.isFirst("PrimitiveLiteral", currentToken.getToken())){
             primitiveLiteral();
         }
-        else{
+        else if(currentToken.getToken().equals("rw_null")|| currentToken.getToken().equals("lit_string")){
             objectLiteral();
         }
+        else {
+            throw new SyntaxErrorException(currentToken, "primitive or object literal");
+       }
     }
 
     private void primitiveLiteral() throws LexicalErrorException, SyntaxErrorException {
@@ -660,8 +775,11 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         else if(currentToken.getToken().equals("lit_int")){
             match("lit_int");
         }
-        else{
+        else if(currentToken.getToken().equals("lit_char")){
             match("lit_char");
+        }
+        else{
+            throw new SyntaxErrorException(currentToken,"primitive literal");
         }
     }
 
@@ -670,8 +788,11 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
             match("rw_null");
 
         }
-        else{
+        else if(currentToken.getToken().equals("lit_string")){
             match("lit_string");
+        }
+        else{
+            throw new SyntaxErrorException(currentToken,"object literal");
         }
 
     }
@@ -762,7 +883,7 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
             getNewToken();
         }
         else{
-            throw new SyntaxErrorException(terminal, currentToken, terminal);
+            throw new SyntaxErrorException( currentToken, terminal);
         }
     }
 

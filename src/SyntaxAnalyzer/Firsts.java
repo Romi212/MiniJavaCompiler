@@ -30,7 +30,8 @@ public class Firsts {
         firsts.put("Static", new HashSet<String>() {{ add("rw_static"); }});
         firsts.put("MemberType", new HashSet<String>() {{ add("rw_char"); add("rw_int"); add("rw_boolean"); add("rw_void"); add("id_class"); }});
         firsts.put("Type", new HashSet<String>() {{ add("rw_char"); add("rw_int"); add("rw_boolean"); add("id_class"); }});
-        firsts.put("PrimitiveType", new HashSet<String>() {{ add("rw_char"); add("rw_int"); add("rw_boolean"); add("rw_void");  }});
+        firsts.put("PrimitiveType", new HashSet<String>() {{ add("rw_char"); add("rw_int"); add("rw_boolean");   }});
+        firsts.put("NonObjectType", new HashSet<String>() {{ add("rw_char"); add("rw_int"); add("rw_boolean");add("rw_void");   }});
         firsts.put("Constructor", new HashSet<String>() {{ add("rw_public"); }});
 
         firsts.put("Body", new HashSet<String>() {{ add("pm_semicolon"); add("pm_par_open"); }});
@@ -45,13 +46,7 @@ public class Firsts {
         firsts.put("Switch", new HashSet<String>() {{ add("rw_switch"); }});
         HashSet<String> expFirst = new HashSet<>();
         HashSet<String> unaryOP = new HashSet<>();
-        //UNaryOP
-        unaryOP.add("op_add");
-        unaryOP.add("op_sub");
-        unaryOP.add("op_not");
 
-        firsts.put("UnaryOp", unaryOP);
-        expFirst.addAll(unaryOP);
         //Operand:
         //  Literal
         HashSet<String> litFirst = new HashSet<>();
@@ -73,20 +68,37 @@ public class Firsts {
         firsts.put("Literal", litFirst);
         expFirst.addAll(litFirst);
         //  Access = Primary
+        HashSet<String> primaryFirst = new HashSet<>();
         //      THis
-        expFirst.add("rw_this");
+        primaryFirst.add("rw_this");
         //      Constructor
-        expFirst.add("rw_new");
+        primaryFirst.add("rw_new");
 
         //      PExpression
-        expFirst.add("pm_par_open");
+        primaryFirst.add("pm_par_open");
         //      VarMet
-        expFirst.add("id_met_var");
+        primaryFirst.add("id_met_var");
+
+        expFirst.addAll(primaryFirst);
+        firsts.put("Primary", primaryFirst);
+        firsts.put("Access", primaryFirst);
 
         HashSet<String> NSExp = new HashSet<>();
         NSExp.addAll(expFirst);
         //      SMethod
         expFirst.add("id_class");
+
+        HashSet<String> operandFirst = new HashSet<>();
+        operandFirst.addAll(expFirst);
+        firsts.put("Operand", operandFirst);
+
+        //UNaryOP
+        unaryOP.add("op_add");
+        unaryOP.add("op_sub");
+        unaryOP.add("op_not");
+
+        firsts.put("UnaryOp", unaryOP);
+        expFirst.addAll(unaryOP);
         firsts.put("NonStaticExp", NSExp);
         firsts.put("Expression", expFirst);
         firsts.put("ComplexExpression", expFirst);
