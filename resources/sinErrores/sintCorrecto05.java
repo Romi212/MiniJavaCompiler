@@ -1,5 +1,5 @@
 ///[SinErrores]
-public class sintCorrecto05 {
+class SintCorrecto05 {
     void metodo(){
         int a,b = 15 +  +13;
         int c = 3;

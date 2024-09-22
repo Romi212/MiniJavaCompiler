@@ -18,7 +18,7 @@
 // instead we can simply change the
 // parameter/Datatype in braces <>
 
-public class Area<T> {
+class Area<T> {
 
     // T is the Datatype like String,
     // Integer of which Parameter type,
@@ -38,7 +38,7 @@ public class Area<T> {
 
     public void getArea() {}
 
-    public static void main(String[] args)
+    public static void main(String args)
     {
         // Object of generic class Area with parameter Type
         // as Integer

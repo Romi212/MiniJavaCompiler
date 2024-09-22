@@ -12,30 +12,37 @@ public class Firsts {
 
         HashSet<String> classFirsts = new HashSet<>();
         classFirsts.add("rw_class");
+        classFirsts.add("rw_abstract");
         firsts.put("ClassList", classFirsts);
         firsts.put("Class", classFirsts);
+
+        HashSet<String> primitiveType = new HashSet<>();
+        primitiveType.add("rw_char");
+        primitiveType.add("rw_int");
+        primitiveType.add("rw_boolean");
 
         HashSet<String> memberFirst = new HashSet<>();
         memberFirst.add("rw_static");
         memberFirst.add("rw_void");
         memberFirst.add("id_class");
-        memberFirst.add("rw_int");
-        memberFirst.add("rw_boolean");
-        memberFirst.add("rw_char");
+        memberFirst.addAll(primitiveType);
         HashSet<String> memberTrue = new HashSet<>();
         memberTrue.addAll(memberFirst);
         memberTrue.add("rw_public");
-        firsts.put("Member", memberTrue);
-        firsts.put("Declaration", memberFirst);
+        memberTrue.add("rw_private");
+        firsts.put("VisibleMember", memberTrue);
+        firsts.put("Member", memberFirst);
         firsts.put("Static", new HashSet<String>() {{ add("rw_static"); }});
-        firsts.put("MemberType", new HashSet<String>() {{ add("rw_char"); add("rw_int"); add("rw_boolean"); add("rw_void"); add("id_class"); }});
-        firsts.put("Type", new HashSet<String>() {{ add("rw_char"); add("rw_int"); add("rw_boolean"); add("id_class"); }});
-        firsts.put("PrimitiveType", new HashSet<String>() {{ add("rw_char"); add("rw_int"); add("rw_boolean");   }});
-        firsts.put("NonObjectType", new HashSet<String>() {{ add("rw_char"); add("rw_int"); add("rw_boolean");add("rw_void");   }});
+        firsts.put("MemberType", new HashSet<String>() {{ addAll(primitiveType); add("rw_void"); add("id_class"); }});
+        firsts.put("Type", new HashSet<String>() {{ addAll(primitiveType); add("id_class"); }});
+        firsts.put("PrimitiveType",primitiveType);
+        firsts.put("NonObjectType", new HashSet<String>() {{ addAll(primitiveType);add("rw_void");   }});
+
+        firsts.put("LocalType", new HashSet<String>() {{ addAll(primitiveType); add("rw_var"); }});
         firsts.put("Constructor", new HashSet<String>() {{ add("rw_public"); }});
 
         firsts.put("Body", new HashSet<String>() {{ add("pm_semicolon"); add("pm_par_open"); }});
-        firsts.put("FormalArg", new HashSet<String>() {{ add("rw_char"); add("rw_int"); add("rw_boolean"); add("id_class"); }});
+        firsts.put("FormalArg", new HashSet<String>() {{ addAll(primitiveType); add("id_class"); }});
 
         firsts.put("LocalVar", new HashSet<String>() {{ add("rw_var"); }});
         firsts.put("Return", new HashSet<String>() {{ add("rw_return"); }});
@@ -61,7 +68,7 @@ public class Firsts {
         HashSet<String> localVarFirst = new HashSet<>();
         localVarFirst.addAll(primFirst);
         localVarFirst.add("id_var");
-        firsts.put("PrimitiveVar", localVarFirst);
+
         //      Object
         litFirst.add("rw_null");
         litFirst.add("lit_string");
@@ -83,10 +90,7 @@ public class Firsts {
         firsts.put("Primary", primaryFirst);
         firsts.put("Access", primaryFirst);
 
-        HashSet<String> NSExp = new HashSet<>();
-        NSExp.addAll(expFirst);
-        //      SMethod
-        expFirst.add("id_class");
+
 
         HashSet<String> operandFirst = new HashSet<>();
         operandFirst.addAll(expFirst);
@@ -99,11 +103,13 @@ public class Firsts {
 
         firsts.put("UnaryOp", unaryOP);
         expFirst.addAll(unaryOP);
-        firsts.put("NonStaticExp", NSExp);
-        firsts.put("Expression", expFirst);
-        firsts.put("ComplexExpression", expFirst);
+        firsts.put("NonStaticExp", expFirst);
         firsts.put("BasicExpression", expFirst);
-        firsts.put("Statement", new HashSet<String>() {{ addAll(expFirst); add("rw_var"); add("rw_for"); add("rw_return"); add("rw_break"); add("rw_if"); add("rw_while"); add("rw_switch"); add("pm_semicolon"); add("pm_brace_open"); }});
+
+        firsts.put("Expression", new HashSet<String>() {{ addAll(expFirst);  add("id_class"); }});
+        firsts.put("ComplexExpression", new HashSet<String>() {{ addAll(expFirst);  add("id_class"); }});
+
+        firsts.put("Statement", new HashSet<String>() {{ addAll(expFirst); add("rw_var");addAll(primitiveType); add("id_class"); add("rw_for"); add("rw_return"); add("rw_break"); add("rw_if"); add("rw_while"); add("rw_switch"); add("pm_semicolon"); add("pm_brace_open"); }});
 
         firsts.put("SwitchStatement", new HashSet<String>() {{ add("rw_case"); add("rw_default"); }});
 

@@ -41,7 +41,7 @@ public class LexicalAnalyzerImp implements LexicalAnalyzer {
 
         switch (currentChar){
             case SourceManager.END_OF_FILE:
-                return new Token("EOF",lexeme,sourceManager.getLineNumber());
+                return new Token("EOF","",sourceManager.getLineNumber());
             case '/':
                 return possibleComment();
             case '+':

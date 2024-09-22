@@ -13,7 +13,7 @@ public class Follows {
         HashSet<String> classFollows = new HashSet<>();
         classFollows.add("EOF");
         follows.put("ClassList", classFollows);
-
+/*
         HashSet<String> classFollow = new HashSet<>();
         classFollow.add("rw_class");
         classFollow.add("rw_abstract");
@@ -71,20 +71,32 @@ public class Follows {
         HashSet<String> bodyFollow = new HashSet<>();
         bodyFollow.add("EOF");
         follows.put("Body", bodyFollow);
-
+*/
         HashSet<String> formalArgFollow = new HashSet<>();
         formalArgFollow.add("pm_comma");
 
-        follows.put("Abstract", new HashSet<>(){{add("rw_class");}});
-        follows.put("Generic", new HashSet<>(){{add("rw_extends"); add("pm_par_open"); add("pm_brace_open");}});
+       // follows.put("Abstract", new HashSet<>(){{add("rw_class");}});
+        follows.put("Generic", new HashSet<>(){{add("rw_extends"); add("pm_par_open"); add("pm_brace_open"); add("id_met_var");}});
 
-        follows.put("PTypesList", new HashSet<>(){{add("pm_comma"); add("op_greater");}});
+        follows.put("PTypesList", new HashSet<>(){{ add("op_greater");}});
         follows.put("Parents", new HashSet<>(){{add("pm_brace_open");}});
+
+        follows.put("MemberList", new HashSet<>(){{add("pm_brace_close");}});
         follows.put("Visibility", new HashSet<>(){{add("rw_class");}});
 
         follows.put("ChainedVar", new HashSet<>(){{add("assign"); add("pm_semicolon");}});
 
         follows.put("PossibleExp", new HashSet<>(){{add("pm_semicolon"); add("pm_par_close");}});
+
+        HashSet<String> chainedOP = new HashSet<>();
+        chainedOP.addAll(Firsts.firsts.get("BinaryOp"));
+        chainedOP.addAll(Firsts.firsts.get("AssignmentOp"));
+        chainedOP.add("pm_semicolon");
+        chainedOP.add("pm_par_close");
+        chainedOP.add("pm_comma");
+        chainedOP.add("pm_period");
+
+        follows.put("ChainedOp", chainedOP);
         return follows;
     }
 

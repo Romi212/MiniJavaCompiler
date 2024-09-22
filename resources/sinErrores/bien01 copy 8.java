@@ -38,10 +38,10 @@ public Clase1 atributo;
 Clase4 atributo1;
 public char charA;
 
-static private int atributo;
-static public Clase1 atributo;
-static Clase4 atributo1;
-static public char charA;
+private static  int atributo;
+public static  Clase1 atributo;
+Clase4  static  atributo1;
+public static  char charA;
 
 private int atributo = 3+5;
 public Clase1 atributo = new Clase1<String>(3,'a');

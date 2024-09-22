@@ -5,6 +5,8 @@ import utils.LexicalErrorException;
 import utils.SyntaxErrorException;
 import utils.Token;
 
+import java.beans.Expression;
+
 public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
 
     private LexicalAnalyzer lexicalAnalyzer;
@@ -27,6 +29,11 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
     private void initial() throws LexicalErrorException, SyntaxErrorException {
         if(Firsts.isFirst("ClassList", currentToken.getToken())){
             classList();
+        }
+        else if(currentToken.getToken().equals("EOF")){
+            //TODO Check follows}
+        }else{
+            throw new SyntaxErrorException( currentToken, "a class or end of file");
         }
     }
 
@@ -122,27 +129,27 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         }
     }
     private void memberList() throws  LexicalErrorException, SyntaxErrorException {
-        if(Firsts.isFirst("Member", currentToken.getToken())){
+        if(Firsts.isFirst("VisibleMember", currentToken.getToken())){
             visibleMember();
             memberList();
-        }/*
+        }
         else if(Follows.itFollows("MemberList", currentToken.getToken())){
             //TODO Check follows
         }else{
-            throw new SyntaxErrorException("rw_brace_close", currentToken, "end of class declaration }");
-        }*/
+            throw new SyntaxErrorException(currentToken, "member or end of class declaration }");
+        }
     }
 
     private void abstractMemberList() throws SyntaxErrorException, LexicalErrorException {
-        if(Firsts.isFirst("Member", currentToken.getToken())){
+        if(Firsts.isFirst("VisibleMember", currentToken.getToken()) || currentToken.getToken().equals("rw_abstract")){
             abstractVisibleMember();
             abstractMemberList();
-        }/*
-        else if(Follows.itFollows("AbstractMemberList", currentToken.getToken())){
+        }
+        else if(Follows.itFollows("MemberList", currentToken.getToken())){
             //TODO Check follows
         }else{
-            throw new SyntaxErrorException("rw_brace_close", currentToken, "end of class declaration }");
-        }*/
+            throw new SyntaxErrorException( currentToken, " member or end of class declaration }");
+        }
     }
 
     private void visibleMember() throws LexicalErrorException, SyntaxErrorException {
@@ -159,8 +166,10 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         if(currentToken.getToken().equals("rw_abstract")){
             abstractMethod();
         }
-        else{
+        else if(Firsts.isFirst("Member", currentToken.getToken())){
             member();
+        }else{
+            throw new SyntaxErrorException( currentToken, "abstract method or member declaration");
         }
     }
     private void visibility() throws LexicalErrorException, SyntaxErrorException {
@@ -170,11 +179,11 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         else if(currentToken.getToken().equals("rw_private")){
             match("rw_private");
         }
-        //else if(Follows.itFollows("Visibility", currentToken.getToken())){
+        else if(Firsts.isFirst("Member", currentToken.getToken())){
             //TODO Check follows
-       // } else{
-       //     throw new SyntaxErrorException("rw_static", currentToken, "attribute or method declaration");
-       // }
+        } else{
+            throw new SyntaxErrorException( currentToken, "attribute or method declaration");
+        }
     }
     private void member() throws LexicalErrorException, SyntaxErrorException {
         if(currentToken.getToken().equals("rw_static")){
@@ -300,7 +309,7 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
     private void formalArgsList() throws LexicalErrorException, SyntaxErrorException {
         if(Firsts.isFirst("FormalArg",currentToken.getToken())){
             formalArg();
-            formalArgsList();
+            optionalArgsList();
         }
         else if(currentToken.getToken().equals("pm_par_close")){
             //TODO Check follows
@@ -309,6 +318,20 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
             throw new SyntaxErrorException(currentToken, "formal argument or )");
         }
 
+    }
+
+    private void optionalArgsList() throws LexicalErrorException, SyntaxErrorException {
+        if(currentToken.getToken().equals("pm_comma")){
+            match("pm_comma");
+            formalArg();
+            optionalArgsList();
+        }
+        else if(currentToken.getToken().equals("pm_par_close")){
+            //TODO Check follows
+        }
+        else{
+            throw new SyntaxErrorException(currentToken, "another formal argument or )");
+        }
     }
 
     private void formalArg() throws LexicalErrorException, SyntaxErrorException {
@@ -342,12 +365,13 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         else if(currentToken.getToken().equals("id_class")){
             match("id_class");
             object();
+            match("pm_semicolon");
         }
         else if(Firsts.isFirst("NonStaticExp", currentToken.getToken())){
             nonStaticExp();
             match("pm_semicolon");
         }
-        else if(Firsts.isFirst("PrimitiveVar", currentToken.getToken())){
+        else if(Firsts.isFirst("LocalType", currentToken.getToken())){
             primitiveVar();
             match("pm_semicolon");
         }
@@ -381,12 +405,14 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
 
     }
 
+    //VOY POR ACA
+
     private void object() throws LexicalErrorException, SyntaxErrorException {
         if (currentToken.getToken().equals("pm_period")) {
             staticCall();
             possibleExp();
         }
-        else if(currentToken.getToken().equals("op_greater")|| currentToken.getToken().equals("id_met_var")){
+        else if(currentToken.getToken().equals("op_less")|| currentToken.getToken().equals("id_met_var")){
             generic();
             localVar();
         }
@@ -431,7 +457,7 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         if(Firsts.isFirst("PrimitiveType", currentToken.getToken())){
             primitiveType();
         }
-        else if(currentToken.getToken().equals("id_var")){
+        else if(currentToken.getToken().equals("rw_var")){
             match("rw_var");
         }
         else{
@@ -494,7 +520,7 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         match("pm_par_open");
         forExpression();
         match("pm_par_close");
-        block();
+        statement();
     }
 
     private void forExpression() throws LexicalErrorException, SyntaxErrorException {
@@ -812,8 +838,11 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         else if(Firsts.isFirst("PExpression", currentToken.getToken())){
             pExpression();
         }
-        else{
+        else if(currentToken.getToken().equals("id_met_var")){
             accessVarMethod();
+        }
+        else{
+            throw new SyntaxErrorException(currentToken, "access to a value");
         }
     }
 
@@ -843,8 +872,10 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         if(Firsts.isFirst("ActualArgs", currentToken.getToken())){
             actualArgs();
         }
-        else{
+        else if(Follows.itFollows("ChainedOp", currentToken.getToken())){
             //TODO Check follows
+        } else{
+            throw new SyntaxErrorException(currentToken, "actual arguments or end of access");
         }
     }
 
@@ -860,8 +891,10 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
             match("pm_comma");
             expressionList();
         }
-        else{
+        else if(currentToken.getToken().equals("pm_par_close")){
             //TODO Check follows
+        }else{
+            throw new SyntaxErrorException(currentToken, "actual argument or )");
         }
     }
 
@@ -872,8 +905,10 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
             possibleArgs();
             chainedOp();
         }
-        else{
+        else if(Follows.itFollows("ChainedOp", currentToken.getToken())){
             //TODO Check follows
+        }else{
+            throw new SyntaxErrorException(currentToken, "chained operation or end of access");
         }
     }
 
