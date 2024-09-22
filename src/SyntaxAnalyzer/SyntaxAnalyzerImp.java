@@ -530,6 +530,7 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
             forSecondPart();
         }
         else if(Firsts.isFirst("Expression", currentToken.getToken())){
+            //TODO CHANGE PARA QUIE SEA LL1 O ACLARAR
             expression();
             forRest();
         }
@@ -646,7 +647,7 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         else if(Follows.itFollows("PossibleExp", currentToken.getToken())){
             //TODO Check follows
         }else{
-            throw new SyntaxErrorException(currentToken, "assignment operator or ;");
+            throw new SyntaxErrorException(currentToken, "assignment operator or ; or )");
         }
     }
 
@@ -888,13 +889,25 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
     private void expressionList() throws LexicalErrorException, SyntaxErrorException {
         if(Firsts.isFirst("Expression", currentToken.getToken())){
             expression();
-            match("pm_comma");
-            expressionList();
+            optionalExpList();
         }
         else if(currentToken.getToken().equals("pm_par_close")){
             //TODO Check follows
         }else{
             throw new SyntaxErrorException(currentToken, "actual argument or )");
+        }
+    }
+
+    private void optionalExpList() throws LexicalErrorException, SyntaxErrorException {
+        if(currentToken.getToken().equals("pm_comma")){
+            match("pm_comma");
+            expression();
+            optionalExpList();
+        }
+        else if(currentToken.getToken().equals("pm_par_close")){
+            //TODO Check follows
+        }else{
+            throw new SyntaxErrorException(currentToken, "another actual argument or )");
         }
     }
 

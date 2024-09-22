@@ -47,6 +47,6 @@ class Area<T> {
         // as Double
         Area<Double> circle = new Area<Double>();
         rectangle.add(10);
-        circle.add(2.5);
+        circle.add('a');
     }
 }

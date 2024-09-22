@@ -67,7 +67,7 @@ public class Firsts {
         firsts.put("PrimitiveLiteral", primFirst);
         HashSet<String> localVarFirst = new HashSet<>();
         localVarFirst.addAll(primFirst);
-        localVarFirst.add("id_var");
+        localVarFirst.add("rw_var");
 
         //      Object
         litFirst.add("rw_null");
