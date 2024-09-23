@@ -2,12 +2,12 @@
 
 abstract class Clase1<P3>{
 
-public abstract abMet();
-public abstract abMet2(int a, char b);
-private abstract abMetPriv();
-private abstract abMetPriv2(Clase3 a);
-abstract abMet5();
-abstract abMet4(char a, int c, String s);
+public abstract void abMet();
+public abstract CLass2 abMet2(int a, char b);
+private abstract int abMetPriv();
+private abstract String abMetPriv2(Clase3 a);
+abstract char abMet5();
+abstract int abMet4(char a, int c, String s);
 
 public static void metodoStatic(){}
 public static void metodoStatic(int a, Clase4 c){}
@@ -40,7 +40,7 @@ public char charA;
 
 private static  int atributo;
 public static  Clase1 atributo;
-Clase4  static  atributo1;
+static Clase4   atributo1;
 public static  char charA;
 
 private int atributo = 3+5;

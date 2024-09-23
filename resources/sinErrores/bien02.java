@@ -2,12 +2,7 @@
 
 abstract class Clase1<P3>{
 
-public abstract abMet();
-public abstract abMet2(int a, char b);
-private abstract abMetPriv();
-private abstract abMetPriv2(Clase3 a);
-abstract abMet5();
-abstract abMet4(char a, int c, String s);
+
 
 public static void metodoStatic(){
     ;
@@ -49,12 +44,12 @@ private static int metodoStatic(int b, char s){
     for(Clase1 c : clase1Iteratior){
         switch(x){
             case 1:
-                x = x + 1;
-                break;
+            {x = x + 1;
+                break;}
             case 2:
             case 3:
-                x = x + 2;
-                break;
+            {x = x + 2;
+                break;}
             default:
                 x = x + 3;
         }
@@ -87,10 +82,10 @@ public Clase1 atributo;
 Clase4 atributo1;
 public char charA;
 
-static private int atributo;
-static public Clase1 atributo;
+ private static int atributo;
+public static Clase1 atributo;
 static Clase4 atributo1;
-static public char charA;
+public static char charA;
 
 private int atributo = 3+5;
 public Clase1 atributo = new Clase1<String>(3,'a');

@@ -6,11 +6,14 @@ import utils.SyntaxErrorException;
 import utils.Token;
 
 import java.beans.Expression;
+import java.util.ArrayList;
 
 public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
 
     private LexicalAnalyzer lexicalAnalyzer;
     private Token currentToken;
+
+    private ArrayList<String> syntaxErrors = new ArrayList<>();
 
     public SyntaxAnalyzerImp(LexicalAnalyzer lexicalAnalyzer){
         this.lexicalAnalyzer = lexicalAnalyzer;
@@ -19,8 +22,22 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
     @Override
     public String analyzeSintax() throws LexicalErrorException, SyntaxErrorException{
         getNewToken();
-        initial();
-        return "[SinErrores]";
+        try{
+            initial();
+        }
+        catch (SyntaxErrorException e){
+            syntaxErrors.add(e.getMessage()+"\n"+e.getLongMessage());
+        }
+        String SyntaxOutput = "";
+        if(syntaxErrors.size() > 0){
+            for (String error: syntaxErrors){
+                SyntaxOutput += error + "\n";
+            }
+        }else{
+            SyntaxOutput = "[SinErrores]";
+        }
+
+        return SyntaxOutput;
     }
 
     private void getNewToken() throws LexicalErrorException {
@@ -94,8 +111,7 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
     private void generic() throws LexicalErrorException, SyntaxErrorException {
         if(currentToken.getToken().equals("op_less")){
             match("op_less");
-            match("id_class");
-            pTypesList();
+            optionalTypes();
             match("op_greater");
         }
         else if(Follows.itFollows("Generic", currentToken.getToken())){
@@ -103,6 +119,18 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         }else{
             throw new SyntaxErrorException( currentToken, "reserved word extends or ( or {");
         }
+    }
+
+    private void optionalTypes() throws LexicalErrorException, SyntaxErrorException {
+        if(currentToken.getToken().equals("id_class")){
+            match("id_class");
+            pTypesList();
+        }else if(currentToken.getToken().equals("op_greater")) {
+            //TODO Check follows
+        }else{
+            throw new SyntaxErrorException( currentToken, "parametric type or >");
+        }
+
     }
 
     private void pTypesList() throws LexicalErrorException, SyntaxErrorException {
@@ -179,7 +207,7 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         else if(currentToken.getToken().equals("rw_private")){
             match("rw_private");
         }
-        else if(Firsts.isFirst("Member", currentToken.getToken())){
+        else if(Firsts.isFirst("Member", currentToken.getToken()) || currentToken.getToken().equals("rw_abstract")){
             //TODO Check follows
         } else{
             throw new SyntaxErrorException( currentToken, "attribute or method declaration");
@@ -221,7 +249,8 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         if(currentToken.getToken().equals("pm_par_open")){
             constructor();
         }
-        else if(currentToken.getToken().equals("id_met_var")) {
+        else if(currentToken.getToken().equals("id_met_var")|| currentToken.getToken().equals("op_less")) {
+            generic();
             declaration();
         }
         else{
@@ -542,7 +571,7 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
     private void forSecondPart() throws LexicalErrorException, SyntaxErrorException {
         if(currentToken.getToken().equals("pm_colon")){
             match("pm_colon");
-            match("id_met_var");
+            expression();
 
         }
         else if (currentToken.getToken().equals("pm_semicolon") || currentToken.getToken().equals("assign")){
@@ -725,7 +754,7 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
             match("op_sub");
         }
         else if(currentToken.getToken().equals("op_mult")){
-            match("op_mul");
+            match("op_mult");
         }
         else if(currentToken.getToken().equals("op_div")){
             match("op_div");

@@ -86,7 +86,7 @@ public class Follows {
 
         follows.put("ChainedVar", new HashSet<>(){{add("assign"); add("pm_semicolon");}});
 
-        follows.put("PossibleExp", new HashSet<>(){{add("pm_semicolon"); add("pm_par_close");}});
+        follows.put("PossibleExp", new HashSet<>(){{add("pm_semicolon"); add("pm_par_close"); add("pm_comma"); }});
 
         HashSet<String> chainedOP = new HashSet<>();
         chainedOP.addAll(Firsts.firsts.get("BinaryOp"));

@@ -122,7 +122,7 @@ public class Firsts {
 
         firsts.put("ActualArgs", new HashSet<String>() {{ add("pm_par_open"); }});
 
-        firsts.put("BinaryOp", new HashSet<String>() {{ add("op_and"); add("op_or"); add("op_equal"); add("op_not_equal");  add("op_greater"); add("op_less"); add("op_greater_equal"); add("op_less_equal"); add("op_add"); add("op_sub"); add("op_mul"); add("op_div"); add("op_mod"); }});
+        firsts.put("BinaryOp", new HashSet<String>() {{ add("op_and"); add("op_or"); add("op_equal"); add("op_not_equal");  add("op_greater"); add("op_less"); add("op_greater_equal"); add("op_less_equal"); add("op_add"); add("op_sub"); add("op_mult"); add("op_div"); add("op_mod"); }});
 
         return firsts;
     }
