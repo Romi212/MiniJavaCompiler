@@ -158,7 +158,18 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
     }
     private void memberList() throws  LexicalErrorException, SyntaxErrorException {
         if(Firsts.isFirst("VisibleMember", currentToken.getToken())){
-            visibleMember();
+            try{
+                visibleMember();
+            } catch (SyntaxErrorException e){
+                syntaxErrors.add(e.getMessage()+"\n"+e.getLongMessage());
+                recover(new ArrayList<>(){{add("pm_brace_open"); add("pm_semicolon");}});
+                if(currentToken.getToken().equals("pm_brace_open")){
+                    block();
+                }else if(currentToken.getToken().equals("pm_semicolon")){
+                    match("pm_semicolon");
+                }
+
+            }
             memberList();
         }
         else if(Follows.itFollows("MemberList", currentToken.getToken())){

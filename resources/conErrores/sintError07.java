@@ -23,4 +23,27 @@ class Test {
         }
         return d;
     }
+    static wrong declaration(){
+        a = 5;
+        b = 10;
+        c = 5;
+        d = ---10;
+        return a;
+    }
+    static void wrongMethod(){
+        a = 5;
+        b = 10;
+        c = 5;
+        d = ---10;
+        return a;
+    }
+    public bad var = 3;
+    static CLass att = 3---5;
+    static void wrongMethod(){
+        a = 5;
+        b = 10;
+        c = 5;
+        d = ---10;
+        return a;
+    }
 }
