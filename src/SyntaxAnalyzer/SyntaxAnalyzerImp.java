@@ -48,7 +48,7 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
             classList();
         }
         else if(currentToken.getToken().equals("EOF")){
-            //TODO Check follows}
+            //Termino bien uwu
         }else{
             throw new SyntaxErrorException( currentToken, "a class or end of file");
         }
@@ -60,7 +60,7 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
             classList();
         }
         else if( Follows.itFollows("ClassList", currentToken.getToken())){
-            //TODO: poner que EOF sea ''
+            //Termino de leer el archivo correctamente
         }
         else{
             throw new SyntaxErrorException( currentToken, "a class or end of file");
@@ -126,7 +126,7 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
             match("id_class");
             pTypesList();
         }else if(currentToken.getToken().equals("op_greater")) {
-            //TODO Check follows
+            //No parametric Types inside <>
         }else{
             throw new SyntaxErrorException( currentToken, "parametric type or >");
         }
@@ -140,7 +140,7 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
             pTypesList();
         }
         else if(Follows.itFollows("PTypesList", currentToken.getToken())){
-            //TODO Check follows
+            //Only one parametric Type
         }else{
             throw new SyntaxErrorException( currentToken, "another parametric Type or >");
         }
@@ -151,7 +151,7 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
             className();
         }
         else if(Follows.itFollows("Parents", currentToken.getToken())){
-            //TODO: check follows
+            //Doenst extends any class
         }else{
             throw new SyntaxErrorException( currentToken, "{");
         }
@@ -173,7 +173,7 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
             memberList();
         }
         else if(Follows.itFollows("MemberList", currentToken.getToken())){
-            //TODO Check follows
+            //No more members
         }else{
             throw new SyntaxErrorException(currentToken, "member or end of class declaration }");
         }
@@ -181,11 +181,22 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
 
     private void abstractMemberList() throws SyntaxErrorException, LexicalErrorException {
         if(Firsts.isFirst("VisibleMember", currentToken.getToken()) || currentToken.getToken().equals("rw_abstract")){
-            abstractVisibleMember();
+            try{
+                abstractVisibleMember();
+            } catch (SyntaxErrorException e){
+                syntaxErrors.add(e.getMessage()+"\n"+e.getLongMessage());
+                recover(new ArrayList<>(){{add("pm_brace_open"); add("pm_semicolon");}});
+                if(currentToken.getToken().equals("pm_brace_open")){
+                    block();
+                }else if(currentToken.getToken().equals("pm_semicolon")){
+                    match("pm_semicolon");
+                }
+
+            }
             abstractMemberList();
         }
         else if(Follows.itFollows("MemberList", currentToken.getToken())){
-            //TODO Check follows
+            //No more members in abstract class
         }else{
             throw new SyntaxErrorException( currentToken, " member or end of class declaration }");
         }
@@ -219,7 +230,7 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
             match("rw_private");
         }
         else if(Firsts.isFirst("Member", currentToken.getToken()) || currentToken.getToken().equals("rw_abstract")){
-            //TODO Check follows
+            //No visibility explicity declared
         } else{
             throw new SyntaxErrorException( currentToken, "attribute or method declaration");
         }
@@ -352,7 +363,7 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
             optionalArgsList();
         }
         else if(currentToken.getToken().equals("pm_par_close")){
-            //TODO Check follows
+            //No formal arguments
         }
         else{
             throw new SyntaxErrorException(currentToken, "formal argument or )");
@@ -367,7 +378,7 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
             optionalArgsList();
         }
         else if(currentToken.getToken().equals("pm_par_close")){
-            //TODO Check follows
+            //No more formal args
         }
         else{
             throw new SyntaxErrorException(currentToken, "another formal argument or )");
@@ -391,7 +402,7 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
             statementsList();
         }
         else if(currentToken.getToken().equals("pm_brace_close")){
-            //TODO Check follows
+            //No more statements
         }
         else{
             throw new SyntaxErrorException(currentToken, "statement or }");
@@ -543,7 +554,7 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
             chainedVar();
         }
         else if(Follows.itFollows("ChainedVar", currentToken.getToken())){
-            //TODO Check follows = o ;?
+            //No more vars declared here
         }else{
             throw new SyntaxErrorException(currentToken, "another var, initialization or ;");
         }
@@ -594,7 +605,7 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
             }
         }
         else if (currentToken.getToken().equals("pm_semicolon")){
-            //TODO Check follows
+            //No expression after return
         }else{
             throw new SyntaxErrorException(currentToken, "expression or ;");
         }
@@ -619,7 +630,7 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
             statement();
         }
         else if(Firsts.isFirst("Statement", currentToken.getToken())|| currentToken.getToken().equals("pm_brace_close")){
-            //TODO Check follows
+            //No else clause
         }
         else{
             throw new SyntaxErrorException(currentToken, "else, valid statement, or }");
@@ -640,10 +651,10 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
             match("id_met_var");
             forSecondPart();
         }
-        else if(Firsts.isFirst("Expression", currentToken.getToken())){
+        else if(Firsts.isFirst("BasicExpression", currentToken.getToken())){
             //TODO CHANGE PARA QUIE SEA LL1 O ACLARAR
             try{
-                expression();
+                nonStaticExp();
             } catch (SyntaxErrorException e){
                 syntaxErrors.add(e.getMessage()+"\n"+e.getLongMessage());
                 recover("pm_semicolon");
@@ -686,7 +697,7 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
             }
         }
         else if (currentToken.getToken().equals("pm_semicolon")){
-            //TODO Check follows
+            //Not initialized
         }
         else{
             throw new SyntaxErrorException(currentToken, "var initialization or ;");
@@ -745,7 +756,7 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
             switchStateList();
         }
         else if(currentToken.getToken().equals("pm_brace_close")){
-            //TODO Check follows
+            //No more switch statements
         }
         else{
             throw new SyntaxErrorException(currentToken, "switch statement or }");
@@ -773,7 +784,7 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
             statement();
         }
         else if(currentToken.getToken().equals("rw_case")|| currentToken.getToken().equals("rw_default")|| currentToken.getToken().equals("pm_brace_close")){
-            //TODO Check follows
+            //No statement here
         }else{
             throw new SyntaxErrorException(currentToken, "valid statement or case or default");
         }
@@ -791,7 +802,7 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
             complexExpression();
         }
         else if(Follows.itFollows("PossibleExp", currentToken.getToken())){
-            //TODO Check follows
+            //Expression ended
         }else{
             throw new SyntaxErrorException(currentToken, "assignment operator or ; or )");
         }
@@ -832,7 +843,7 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
             complexExpression();
         }
         else if(Follows.itFollows("PossibleExp", currentToken.getToken()) || Firsts.isFirst("AssignmentOp", currentToken.getToken())){
-            //TODO Check follows Y CHECKEAR GRAMTIA
+            //End of expression
         }
         else{
             throw new SyntaxErrorException(currentToken, "binary operation, assignment or end of expression");
@@ -1025,7 +1036,7 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
             actualArgs();
         }
         else if(Follows.itFollows("ChainedOp", currentToken.getToken())){
-            //TODO Check follows
+            //No method call just variable
         } else{
             throw new SyntaxErrorException(currentToken, "actual arguments or end of access");
         }
@@ -1048,7 +1059,7 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
             optionalExpList();
         }
         else if(currentToken.getToken().equals("pm_par_close")){
-            //TODO Check follows
+            //No actual parameters
         }else{
             throw new SyntaxErrorException(currentToken, "actual argument or )");
         }
@@ -1066,7 +1077,7 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
             optionalExpList();
         }
         else if(currentToken.getToken().equals("pm_par_close")){
-            //TODO Check follows
+            //No more actual parameters
         }else{
             throw new SyntaxErrorException(currentToken, "another actual argument or )");
         }
@@ -1080,7 +1091,7 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
             chainedOp();
         }
         else if(Follows.itFollows("ChainedOp", currentToken.getToken())){
-            //TODO Check follows
+            //No more chained operations
         }else{
             throw new SyntaxErrorException(currentToken, "chained operation or end of access");
         }
