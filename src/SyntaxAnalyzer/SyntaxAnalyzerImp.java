@@ -393,40 +393,101 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         }
         else if(currentToken.getToken().equals("id_class")){
             match("id_class");
-            object();
+            try {
+                object();
+            } catch (SyntaxErrorException e) {
+                syntaxErrors.add(e.getMessage()+"\n"+e.getLongMessage());
+                recover("pm_semicolon");
+            }
             match("pm_semicolon");
         }
         else if(Firsts.isFirst("NonStaticExp", currentToken.getToken())){
-            nonStaticExp();
+
+            try{
+                nonStaticExp();
+            } catch (SyntaxErrorException e){
+                syntaxErrors.add(e.getMessage()+"\n"+e.getLongMessage());
+                recover("pm_semicolon");
+            }
             match("pm_semicolon");
         }
         else if(Firsts.isFirst("LocalType", currentToken.getToken())){
-            primitiveVar();
+            try{
+                primitiveVar();
+            } catch (SyntaxErrorException e){
+                syntaxErrors.add(e.getMessage()+"\n"+e.getLongMessage());
+                recover("pm_semicolon");
+            }
             match("pm_semicolon");
         }
         else if(Firsts.isFirst("Return", currentToken.getToken())){
-            returnT();
+            try{
+                returnT();
+            } catch (SyntaxErrorException e){
+                syntaxErrors.add(e.getMessage()+"\n"+e.getLongMessage());
+                recover("pm_semicolon");
+            }
             match("pm_semicolon");
         }
         else if(Firsts.isFirst("Break", currentToken.getToken())){
-            breakT();
+            try{
+                breakT();
+            } catch (SyntaxErrorException e){
+                syntaxErrors.add(e.getMessage()+"\n"+e.getLongMessage());
+                recover("pm_semicolon");
+            }
             match("pm_semicolon");
         }
         else if(Firsts.isFirst("If", currentToken.getToken())){
-            ifT();
+            try {
+                ifT();
+            } catch (SyntaxErrorException e){
+                syntaxErrors.add(e.getMessage()+"\n"+e.getLongMessage());
+                recover("pm_brace_close");
+                match("pm_brace_close");
+                if(currentToken.getToken().equals("rw_else")){
+                    recover("pm_brace_close");
+                    match("pm_brace_close");
+                }
+            }
         }
         else if(Firsts.isFirst("While", currentToken.getToken())){
-            whileT();
+            try{
+                whileT();
+            }catch (SyntaxErrorException e){
+                syntaxErrors.add(e.getMessage()+"\n"+e.getLongMessage());
+                recover("pm_brace_close");
+                match("pm_brace_close");
+            }
         }
         else if(Firsts.isFirst("Switch", currentToken.getToken())){
-            switchT();
+            try{
+                switchT();
+            }catch (SyntaxErrorException e){
+                syntaxErrors.add(e.getMessage()+"\n"+e.getLongMessage());
+                recover("pm_brace_close");
+                match("pm_brace_close");
+            }
         }
         else if(Firsts.isFirst("For", currentToken.getToken())){
-            forT();
+
+            try {
+                forT();
+            } catch (SyntaxErrorException e){
+                syntaxErrors.add(e.getMessage()+"\n"+e.getLongMessage());
+                recover("pm_brace_close");
+                match("pm_brace_close");
+            }
         }
 
         else if (currentToken.getToken().equals("pm_brace_open")){
-            block();
+            try{
+                block();
+            } catch (SyntaxErrorException e){
+                syntaxErrors.add(e.getMessage()+"\n"+e.getLongMessage());
+                recover("pm_brace_close");
+                match("pm_brace_close");
+            }
         }
         else{
             throw new SyntaxErrorException(currentToken, "valid statement");
@@ -514,7 +575,12 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
 
     private void expressionOp() throws LexicalErrorException, SyntaxErrorException {
         if(Firsts.isFirst("Expression", currentToken.getToken())){
-            expression();
+            try{
+                expression();
+            } catch (SyntaxErrorException e){
+                syntaxErrors.add(e.getMessage()+"\n"+e.getLongMessage());
+                recover("pm_semicolon");
+            }
         }
         else if (currentToken.getToken().equals("pm_semicolon")){
             //TODO Check follows
@@ -526,7 +592,12 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
     private void ifT() throws LexicalErrorException, SyntaxErrorException {
         match("rw_if");
         match("pm_par_open");
-        expression();
+        try{
+            expression();
+        } catch (SyntaxErrorException e){
+            syntaxErrors.add(e.getMessage()+"\n"+e.getLongMessage());
+            recover("pm_par_close");
+        }
         match("pm_par_close");
         statement();
         possibleElse();
@@ -560,7 +631,12 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         }
         else if(Firsts.isFirst("Expression", currentToken.getToken())){
             //TODO CHANGE PARA QUIE SEA LL1 O ACLARAR
-            expression();
+            try{
+                expression();
+            } catch (SyntaxErrorException e){
+                syntaxErrors.add(e.getMessage()+"\n"+e.getLongMessage());
+                recover("pm_semicolon");
+            }
             forRest();
         }
         else {
@@ -571,7 +647,12 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
     private void forSecondPart() throws LexicalErrorException, SyntaxErrorException {
         if(currentToken.getToken().equals("pm_colon")){
             match("pm_colon");
-            expression();
+            try{
+                expression();
+            } catch (SyntaxErrorException e){
+                syntaxErrors.add(e.getMessage()+"\n"+e.getLongMessage());
+                recover("pm_par_close");
+            }
 
         }
         else if (currentToken.getToken().equals("pm_semicolon") || currentToken.getToken().equals("assign")){
@@ -586,7 +667,12 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
     private void initialize() throws LexicalErrorException, SyntaxErrorException {
         if(currentToken.getToken().equals("assign")){
             match("assign");
-            complexExpression();
+            try{
+                complexExpression();
+            } catch (SyntaxErrorException e){
+                syntaxErrors.add(e.getMessage()+"\n"+e.getLongMessage());
+                recover("pm_semicolon");
+            }
         }
         else if (currentToken.getToken().equals("pm_semicolon")){
             //TODO Check follows
@@ -598,16 +684,31 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
     private void forRest() throws LexicalErrorException, SyntaxErrorException {
 
         match("pm_semicolon");
-        expression();
+        try{
+            expression();
+        } catch (SyntaxErrorException e){
+            syntaxErrors.add(e.getMessage()+"\n"+e.getLongMessage());
+            recover("pm_semicolon");
+        }
         match("pm_semicolon");
-        expression();
+        try{
+            expression();
+        } catch (SyntaxErrorException e){
+            syntaxErrors.add(e.getMessage()+"\n"+e.getLongMessage());
+            recover("pm_par_close");
+        }
 
     }
 
     private void whileT() throws LexicalErrorException, SyntaxErrorException {
         match("rw_while");
         match("pm_par_open");
-        expression();
+        try{
+            expression();
+        } catch (SyntaxErrorException e){
+            syntaxErrors.add(e.getMessage()+"\n"+e.getLongMessage());
+            recover("pm_par_close");
+        }
         match("pm_par_close");
         statement();
     }
@@ -615,7 +716,12 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
     private void switchT() throws LexicalErrorException, SyntaxErrorException {
         match("rw_switch");
         match("pm_par_open");
-        expression();
+        try{
+            expression();
+        } catch (SyntaxErrorException e){
+            syntaxErrors.add(e.getMessage()+"\n"+e.getLongMessage());
+            recover("pm_par_close");
+        }
         match("pm_par_close");
         match("pm_brace_open");
         switchStateList();
@@ -889,7 +995,12 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
 
     private void pExpression() throws LexicalErrorException, SyntaxErrorException {
         match("pm_par_open");
-        expression();
+        try{
+            expression();
+        } catch (SyntaxErrorException e){
+            syntaxErrors.add(e.getMessage()+"\n"+e.getLongMessage());
+            recover("pm_par_close");
+        }
         match("pm_par_close");
     }
 
@@ -917,7 +1028,12 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
 
     private void expressionList() throws LexicalErrorException, SyntaxErrorException {
         if(Firsts.isFirst("Expression", currentToken.getToken())){
-            expression();
+            try{
+                expression();
+            } catch (SyntaxErrorException e){
+                syntaxErrors.add(e.getMessage()+"\n"+e.getLongMessage());
+                recover(new ArrayList<>(){{add("pm_par_close");add("pm_comma");}});
+            }
             optionalExpList();
         }
         else if(currentToken.getToken().equals("pm_par_close")){
@@ -930,7 +1046,12 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
     private void optionalExpList() throws LexicalErrorException, SyntaxErrorException {
         if(currentToken.getToken().equals("pm_comma")){
             match("pm_comma");
-            expression();
+            try{
+                expression();
+            } catch (SyntaxErrorException e){
+                syntaxErrors.add(e.getMessage()+"\n"+e.getLongMessage());
+                recover(new ArrayList<>(){{add("pm_par_close");add("pm_comma");}});
+            }
             optionalExpList();
         }
         else if(currentToken.getToken().equals("pm_par_close")){
@@ -962,6 +1083,28 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         else{
             throw new SyntaxErrorException( currentToken, terminal);
         }
+    }
+
+    private boolean recover(String terminal) throws LexicalErrorException {
+        while (!currentToken.getToken().equals(terminal) && !currentToken.getToken().equals("EOF")){
+            try {
+                getNewToken();
+            } catch (LexicalErrorException e) {
+                syntaxErrors.add(e.getMessage()+"\n"+e.getLongMessage());
+            }
+        }
+        return !currentToken.getToken().equals("EOF");
+    }
+
+    private boolean recover(ArrayList<String> terminals) throws LexicalErrorException {
+        while (!terminals.contains(currentToken.getToken()) && !currentToken.getToken().equals("EOF")){
+            try {
+                getNewToken();
+            } catch (LexicalErrorException e) {
+                syntaxErrors.add(e.getMessage()+"\n"+e.getLongMessage());
+            }
+        }
+        return !currentToken.getToken().equals("EOF");
     }
 
 }
