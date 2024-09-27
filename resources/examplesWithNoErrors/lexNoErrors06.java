@@ -4,6 +4,9 @@ float = fufu;
 fufu =    // Decimal con parte entera y fraccionaria
             // Decimal sin parte entera
          // Decimal sin parte fraccionaria
+        1.1,
+        .54,
+        23.,
         1.23e4,     // Notación científica
         1.23E4,     // Notación científica con 'E'
         1.23e-4,    // Notación científica con exponente negativo

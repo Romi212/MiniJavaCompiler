@@ -3,10 +3,9 @@ import SyntaxAnalyzer.SyntaxAnalyzer;
 import SyntaxAnalyzer.SyntaxAnalyzerImp;
 import utils.LexicalErrorException;
 import utils.SyntaxErrorException;
-import utils.Token;
 import utils.sourcemanager.SourceManagerImpl;
 
-public class Main {
+public class MainSintactico {
     public static void main(String[] args) {
 
         if (args.length == 0) {

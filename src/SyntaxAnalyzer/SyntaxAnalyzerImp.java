@@ -1,6 +1,8 @@
 package SyntaxAnalyzer;
 
 import LexicalAnalyzer.LexicalAnalyzer;
+import SemanticAnalyzer.ClassDeclaration;
+import SemanticAnalyzer.SymbolTable;
 import utils.LexicalErrorException;
 import utils.SyntaxErrorException;
 import utils.Token;
@@ -81,7 +83,7 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
     }
 
     private void normalClass() throws SyntaxErrorException, LexicalErrorException {
-        classSignature();
+        SymbolTable.addClass(classSignature());
         match("pm_brace_open");
         memberList();
         match("pm_brace_close");
@@ -89,23 +91,30 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
 
     private void abstractClass() throws SyntaxErrorException, LexicalErrorException {
         match("rw_abstract");
-        classSignature();
+        ClassDeclaration newClass = classSignature();
+        newClass.makeAbstract();
+        SymbolTable.addClass(newClass);
         match("pm_brace_open");
         abstractMemberList();
         match("pm_brace_close");
     }
 
-    private void classSignature() throws SyntaxErrorException, LexicalErrorException {
+    private ClassDeclaration classSignature() throws SyntaxErrorException, LexicalErrorException {
         match("rw_class");
-        className();
-        parents();
+        ClassDeclaration newClass = className();
+        String parent = parents();
+        newClass.setParent(parent);
+        return newClass;
     }
 
 
 
-    private void className() throws LexicalErrorException, SyntaxErrorException {
+    private ClassDeclaration className() throws LexicalErrorException, SyntaxErrorException {
+        ClassDeclaration newClass = new ClassDeclaration(currentToken.getLexeme());
         match("id_class");
         generic();
+        //TODO VER GENERIC
+        return newClass;
     }
 
     private void generic() throws LexicalErrorException, SyntaxErrorException {
@@ -122,6 +131,7 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
     }
 
     private void optionalTypes() throws LexicalErrorException, SyntaxErrorException {
+
         if(currentToken.getToken().equals("id_class")){
             match("id_class");
             pTypesList();
@@ -145,16 +155,19 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
             throw new SyntaxErrorException( currentToken, "another parametric Type or >");
         }
     }
-    private void parents() throws LexicalErrorException, SyntaxErrorException{
+    private String parents() throws LexicalErrorException, SyntaxErrorException{
+        String parentClass;
         if(currentToken.getToken().equals("rw_extends")){
             match("rw_extends");
-            className();
+            parentClass = className().getName();
         }
         else if(Follows.itFollows("Parents", currentToken.getToken())){
+            parentClass = "Object";
             //Doenst extends any class
         }else{
             throw new SyntaxErrorException( currentToken, "{");
         }
+        return parentClass;
     }
     private void memberList() throws  LexicalErrorException, SyntaxErrorException {
         if(Firsts.isFirst("VisibleMember", currentToken.getToken())){
@@ -238,16 +251,16 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
     private void member() throws LexicalErrorException, SyntaxErrorException {
         if(currentToken.getToken().equals("rw_static")){
             match("rw_static");
-            memberType();
-            declaration();
+            String type = memberType();
+            declaration(type);
         }
         else if( currentToken.getToken().equals("id_class")){
             match("id_class");
             possibleCtor();
         }
         else if(Firsts.isFirst("NonObjectType", currentToken.getToken())){
-            nonObjectType();
-            declaration();
+            String type = nonObjectType();
+            declaration(type);
         }
         else {
             throw new SyntaxErrorException( currentToken, "attribute or non abstract method declaration");
@@ -262,9 +275,10 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         match("pm_semicolon");
     }
 
-    private void declaration() throws LexicalErrorException, SyntaxErrorException {
+    private void declaration(String type) throws LexicalErrorException, SyntaxErrorException {
+        String name = currentToken.getLexeme();
         match("id_met_var");
-        body();
+        body(name, type);
     }
 
     private void possibleCtor() throws LexicalErrorException, SyntaxErrorException {
@@ -280,13 +294,14 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         }
     }
 
-    private void body() throws LexicalErrorException, SyntaxErrorException {
+    private void body(String name, String type) throws LexicalErrorException, SyntaxErrorException {
         if(currentToken.getToken().equals("pm_par_open")){
             formalArgs();
             block();
 
         }
         else if(currentToken.getToken().equals("pm_semicolon")|| currentToken.getToken().equals("assign")){
+            SymbolTable.addAttribute(name, type);
             initialize();
             match("pm_semicolon");
         }

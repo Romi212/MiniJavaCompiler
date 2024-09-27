@@ -136,7 +136,7 @@ public class LexicalAnalyzerImp implements LexicalAnalyzer {
                 lexeme += currentChar;
                 return floatExponent();
             }
-            else return new Token("lit_float",lexeme,sourceManager.getLineNumber());
+
 
         }
         else{
@@ -150,8 +150,7 @@ public class LexicalAnalyzerImp implements LexicalAnalyzer {
                 }
             }
         }
-        throw new LexicalErrorException(lexeme,sourceManager.getLineNumber(), sourceManager.getLineIndexNumber(), sourceManager.getCurrentLine(), "Invalid float number.");
-
+        return new Token("lit_float",lexeme,sourceManager.getLineNumber());
     }
 
     private Token floatExponent() throws IOException,LexicalErrorException{
