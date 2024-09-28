@@ -1,5 +1,5 @@
 import LexicalAnalyzer.LexicalAnalyzerImp;
-import SemanticAnalyzer.SymbolTable;
+import SymbolTable.SymbolTable;
 import SyntaxAnalyzer.SyntaxAnalyzer;
 import SyntaxAnalyzer.SyntaxAnalyzerImp;
 import utils.LexicalErrorException;
@@ -51,6 +51,7 @@ public class MainSemantico {
             e.printStackTrace();
         }*/
 
+        SymbolTable.createTable();
         SyntaxAnalyzer syntaxAnalyzer = new SyntaxAnalyzerImp(lexicalAnalyzer);
         try {
             System.out.println(syntaxAnalyzer.analyzeSintax());
