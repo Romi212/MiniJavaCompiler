@@ -4,9 +4,9 @@ import utils.Token;
 
 public abstract class MemberType {
 
-    protected String name;
+    protected Token name;
 
     public String getName(){
-        return name;
+        return name.getLexeme();
     }
 }

@@ -1,15 +1,10 @@
 package SymbolTable.Types;
 
-public class IntegerType extends MemberPrimitiveType {;
-    private static IntegerType instance = null;
-    private IntegerType() {
-        name = "rw_int";
-    }
+import utils.Token;
 
-    public static IntegerType getInstance() {
-        if (instance == null) {
-            instance = new IntegerType();
+public class IntegerType extends MemberPrimitiveType {;
+
+        public IntegerType(Token name){
+            this.name = name;
         }
-        return instance;
-    }
 }

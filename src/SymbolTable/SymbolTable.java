@@ -81,23 +81,27 @@ public class SymbolTable {
         return print;
     }
 
-    public static MemberType decideType(String type){
+    public static MemberType decideType(Token type){
         MemberType memberType ;
-        switch (type){
+        switch (type.getLexeme()){
             case "int":{
-                memberType = IntegerType.getInstance();
+                memberType = new IntegerType(type);
                 break;
             }
             case "char":{
-                memberType = CharacterType.getInstance();
+                memberType = new CharacterType(type);
                 break;
             }
             case "boolean":{
-                memberType = BooleanType.getInstance();
+                memberType = new BooleanType(type);
                 break;
             }
             case "String":{
-                memberType = new MemberObjectType("String");
+                memberType = new MemberObjectType(type);
+                break;
+            }
+            case "void":{
+                memberType = new VoidType(type);
                 break;
             }
 

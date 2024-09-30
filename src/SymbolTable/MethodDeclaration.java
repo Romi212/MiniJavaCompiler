@@ -28,7 +28,7 @@ public class MethodDeclaration {
 
     public void addParameter(Token argName, Token argType) {
 
-        parameters.put(argName.getLexeme(), new ParameterDeclaration(argName, SymbolTable.decideType(argType.getLexeme())));
+        parameters.put(argName.getLexeme(), new ParameterDeclaration(argName, SymbolTable.decideType(argType)));
 
     }
 }

@@ -42,15 +42,14 @@ public class ClassDeclaration {
 
 
     public void addAttribute(Token attribute, Token typeT){
-        String type = typeT.getLexeme();
 
-        AttributeDeclaration newAtr = new AttributeDeclaration(attribute, SymbolTable.decideType(type));
+        AttributeDeclaration newAtr = new AttributeDeclaration(attribute, SymbolTable.decideType(typeT));
         this.attributes.put(attribute.getLexeme(), newAtr);
     }
 
     public MethodDeclaration addMethod(Token method, Token returnType){
 
-        MethodDeclaration newMethod = new MethodDeclaration(method, SymbolTable.decideType(returnType.getLexeme()));
+        MethodDeclaration newMethod = new MethodDeclaration(method, SymbolTable.decideType(returnType));
 
         this.methods.put(method.getLexeme(), newMethod);
 
@@ -73,7 +72,7 @@ public class ClassDeclaration {
     }
 
     public MethodDeclaration addConstructor(Token name) {
-        this.constructor = new MethodDeclaration(name, new MemberObjectType("Void"));
+        this.constructor = new MethodDeclaration(name, new VoidType(name));
         return this.constructor;
     }
 }

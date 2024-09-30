@@ -1,15 +1,9 @@
 package SymbolTable.Types;
 
-public class BooleanType extends MemberPrimitiveType{
-    private static BooleanType instance = null;
-    private BooleanType() {
-        name = "rw_bool";
-    }
+import utils.Token;
 
-    public static BooleanType getInstance() {
-        if (instance == null) {
-            instance = new BooleanType();
-        }
-        return instance;
+public class BooleanType extends MemberPrimitiveType{
+    public BooleanType(Token name){
+        this.name = name;
     }
 }

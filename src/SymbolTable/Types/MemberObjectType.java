@@ -1,8 +1,10 @@
 package SymbolTable.Types;
 
+import utils.Token;
+
 public class MemberObjectType extends MemberType{
 
-    public MemberObjectType(String name){
+    public MemberObjectType(Token name){
         this.name = name;
     }
 }

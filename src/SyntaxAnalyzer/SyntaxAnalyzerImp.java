@@ -274,7 +274,7 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         match("rw_abstract");
         memberType();
         match("id_met_var");
-        formalArgs(new MethodDeclaration(new Token("id_met_var", "rw_void", 0), new MemberObjectType("A")));
+        formalArgs(new MethodDeclaration(new Token("id_met_var", "rw_void", 0), new MemberObjectType(new Token("id_met_var", "rw_void", 0))));
         match("pm_semicolon");
     }
 
