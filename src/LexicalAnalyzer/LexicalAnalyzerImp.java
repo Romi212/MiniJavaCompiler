@@ -165,8 +165,9 @@ public class LexicalAnalyzerImp implements LexicalAnalyzer {
             exponent = exponent *10 + (currentChar - '0');
             currentChar = sourceManager.getNextChar();
         }
-        if (lexeme.charAt(lexeme.length()-1) == 'e' ||lexeme.charAt(lexeme.length()-1) == '-' ) throw new LexicalErrorException(lexeme,sourceManager.getLineNumber(), sourceManager.getLineIndexNumber(), sourceManager.getCurrentLine(), "Invalid float number, exponent not found.");
+        if (lexeme.charAt(lexeme.length()-1) == 'e' ||lexeme.charAt(lexeme.length()-1) == '-' || lexeme.charAt(lexeme.length()-1) == '+' ) throw new LexicalErrorException(lexeme,sourceManager.getLineNumber(), sourceManager.getLineIndexNumber(), sourceManager.getCurrentLine(), "Invalid float number, exponent not found.");
 
+        if(exponent > 38) throw new LexicalErrorException(lexeme,sourceManager.getLineNumber(), sourceManager.getLineIndexNumber(), sourceManager.getCurrentLine(), "Invalid float number, exponent too big.");
         return new Token("lit_float",lexeme,sourceManager.getLineNumber());
 
         //throw new LexicalErrorException(lexeme,sourceManager.getLineNumber(), sourceManager.getLineIndexNumber(), sourceManager.getCurrentLine(), "Invalid float number, exponent too big.");

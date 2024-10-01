@@ -125,7 +125,8 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
     private void generic() throws CompilerException {
         if(currentToken.getToken().equals("op_less")){
             match("op_less");
-            optionalTypes();
+            match("id_class");
+            pTypesList();
             match("op_greater");
         }
         else if(Follows.itFollows("Generic", currentToken.getToken())){
@@ -135,18 +136,7 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         }
     }
 
-    private void optionalTypes() throws CompilerException {
 
-        if(currentToken.getToken().equals("id_class")){
-            match("id_class");
-            pTypesList();
-        }else if(currentToken.getToken().equals("op_greater")) {
-            //No parametric Types inside <>
-        }else{
-            throw new SyntaxErrorException( currentToken, "parametric type or >");
-        }
-
-    }
 
     private void pTypesList() throws CompilerException {
         if(currentToken.getToken().equals("pm_comma")){
@@ -1060,10 +1050,35 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
 
     private void accessConstructor() throws CompilerException {
         match("rw_new");
-        className();
+        match("id_class");
+        optionalGeneric();
         actualArgs();
     }
 
+    private void optionalGeneric() throws CompilerException {
+        if(currentToken.getToken().equals("op_less")){
+            match("op_less");
+            optionalTypes();
+            match("op_greater");
+        }
+        else if(currentToken.getToken().equals("pm_par_open")){
+            //No generic
+        }else{
+            throw new SyntaxErrorException(currentToken, "generic or (");
+        }
+    }
+    private void optionalTypes() throws CompilerException {
+
+        if(currentToken.getToken().equals("id_class")){
+            match("id_class");
+            pTypesList();
+        }else if(currentToken.getToken().equals("op_greater")) {
+            //No parametric Types inside <>
+        }else{
+            throw new SyntaxErrorException( currentToken, "parametric type or >");
+        }
+
+    }
 
     private void pExpression() throws CompilerException {
         match("pm_par_open");

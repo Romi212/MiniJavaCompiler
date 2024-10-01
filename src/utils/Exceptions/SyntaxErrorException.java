@@ -2,6 +2,8 @@ package utils.Exceptions;
 
 import utils.Token;
 
+import java.util.ArrayList;
+
 public class SyntaxErrorException extends CompilerException {
 
 
@@ -14,6 +16,7 @@ public class SyntaxErrorException extends CompilerException {
         personalizedMessage = expected;
 
     }
+
 
     public String getLongMessage(){
         String longMessage = "Syntax error in line "+foundtoken.getLine()+":" +
