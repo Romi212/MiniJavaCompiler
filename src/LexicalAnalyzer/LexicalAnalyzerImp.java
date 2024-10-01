@@ -86,10 +86,13 @@ public class LexicalAnalyzerImp implements LexicalAnalyzer {
                 lexeme += currentChar;
                 return firstEqual();
             case '<':
+                lexeme += currentChar;
                 return possibleLess();
             case '>':
+                lexeme += currentChar;
                 return possibleGreater();
             case '!':
+                lexeme += currentChar;
                 return possibleNot();
             case '&':
                 lexeme += currentChar;
