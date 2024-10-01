@@ -1,6 +1,6 @@
 package LexicalAnalyzer;
 
-import utils.LexicalErrorException;
+import utils.Exceptions.LexicalErrorException;
 import utils.Token;
 import utils.sourcemanager.SourceManager;
 

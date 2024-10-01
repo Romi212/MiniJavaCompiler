@@ -1,15 +1,18 @@
 package SyntaxAnalyzer;
 
 import LexicalAnalyzer.LexicalAnalyzer;
+import SymbolTable.Attributes.AttributeDeclaration;
 import SymbolTable.ClassDeclaration;
 import SymbolTable.MethodDeclaration;
+import SymbolTable.MemberDeclaration;
 import SymbolTable.SymbolTable;
 import SymbolTable.Types.MemberObjectType;
-import SymbolTable.Types.MemberType;
-import utils.LexicalErrorException;
-import utils.SyntaxErrorException;
+import utils.Exceptions.CompilerException;
+import utils.Exceptions.LexicalErrorException;
+import utils.Exceptions.SyntaxErrorException;
 import utils.Token;
 
+import java.lang.reflect.Member;
 import java.util.ArrayList;
 
 public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
@@ -24,7 +27,7 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
     }
 
     @Override
-    public String analyzeSintax() throws LexicalErrorException, SyntaxErrorException{
+    public String analyzeSintax() throws CompilerException{
         getNewToken();
         try{
             initial();
@@ -47,7 +50,7 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
     private void getNewToken() throws LexicalErrorException {
         currentToken = lexicalAnalyzer.nextToken();
     }
-    private void initial() throws LexicalErrorException, SyntaxErrorException {
+    private void initial() throws CompilerException {
         if(Firsts.isFirst("ClassList", currentToken.getToken())){
             classList();
         }
@@ -58,7 +61,7 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         }
     }
 
-    private void classList() throws SyntaxErrorException, LexicalErrorException {
+    private void classList() throws CompilerException {
         if (Firsts.isFirst("Class", currentToken.getToken())) {
             classT();
             classList();
@@ -72,7 +75,7 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
 
     }
 
-    private void classT() throws SyntaxErrorException, LexicalErrorException {
+    private void classT() throws CompilerException{
         if(currentToken.getToken().equals("rw_class")){
             normalClass();
         }
@@ -84,14 +87,14 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         }
     }
 
-    private void normalClass() throws SyntaxErrorException, LexicalErrorException {
+    private void normalClass() throws CompilerException {
         SymbolTable.addClass(classSignature());
         match("pm_brace_open");
         memberList();
         match("pm_brace_close");
     }
 
-    private void abstractClass() throws SyntaxErrorException, LexicalErrorException {
+    private void abstractClass() throws CompilerException{
         match("rw_abstract");
         ClassDeclaration newClass = classSignature();
         newClass.makeAbstract();
@@ -101,7 +104,7 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         match("pm_brace_close");
     }
 
-    private ClassDeclaration classSignature() throws SyntaxErrorException, LexicalErrorException {
+    private ClassDeclaration classSignature() throws CompilerException {
         match("rw_class");
         ClassDeclaration newClass = new ClassDeclaration(className());
         Token parent = parents();
@@ -111,7 +114,7 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
 
 
 
-    private Token className() throws LexicalErrorException, SyntaxErrorException {
+    private Token className() throws CompilerException {
         Token newClass = currentToken;
         match("id_class");
         generic();
@@ -119,7 +122,7 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         return newClass;
     }
 
-    private void generic() throws LexicalErrorException, SyntaxErrorException {
+    private void generic() throws CompilerException {
         if(currentToken.getToken().equals("op_less")){
             match("op_less");
             optionalTypes();
@@ -132,7 +135,7 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         }
     }
 
-    private void optionalTypes() throws LexicalErrorException, SyntaxErrorException {
+    private void optionalTypes() throws CompilerException {
 
         if(currentToken.getToken().equals("id_class")){
             match("id_class");
@@ -145,7 +148,7 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
 
     }
 
-    private void pTypesList() throws LexicalErrorException, SyntaxErrorException {
+    private void pTypesList() throws CompilerException {
         if(currentToken.getToken().equals("pm_comma")){
             match("pm_comma");
             match("id_class");
@@ -157,21 +160,21 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
             throw new SyntaxErrorException( currentToken, "another parametric Type or >");
         }
     }
-    private Token parents() throws LexicalErrorException, SyntaxErrorException{
+    private Token parents() throws CompilerException{
         Token parentClass;
         if(currentToken.getToken().equals("rw_extends")){
             match("rw_extends");
             parentClass = className();
         }
         else if(Follows.itFollows("Parents", currentToken.getToken())){
-            parentClass = new Token("rw_object", "rw_object",0);
+            parentClass = new Token("rw_object", "Object",0);
             //Doenst extends any class
         }else{
             throw new SyntaxErrorException( currentToken, "{");
         }
         return parentClass;
     }
-    private void memberList() throws  LexicalErrorException, SyntaxErrorException {
+    private void memberList() throws  CompilerException {
         if(Firsts.isFirst("VisibleMember", currentToken.getToken())){
             try{
                 visibleMember();
@@ -194,7 +197,7 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         }
     }
 
-    private void abstractMemberList() throws SyntaxErrorException, LexicalErrorException {
+    private void abstractMemberList() throws CompilerException {
         if(Firsts.isFirst("VisibleMember", currentToken.getToken()) || currentToken.getToken().equals("rw_abstract")){
             try{
                 abstractVisibleMember();
@@ -217,60 +220,69 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         }
     }
 
-    private void visibleMember() throws LexicalErrorException, SyntaxErrorException {
-        visibility();
-        member();
+    private void visibleMember() throws CompilerException {
+        Token visibility = visibility();
+        member(visibility);
     }
 
-    private void abstractVisibleMember() throws LexicalErrorException, SyntaxErrorException {
-        visibility();
-        abstractMember();
+    private void abstractVisibleMember() throws CompilerException {
+        Token vis = visibility();
+        abstractMember(vis);
     }
 
-    private void abstractMember() throws LexicalErrorException, SyntaxErrorException {
+    private void abstractMember(Token visibility) throws CompilerException {
         if(currentToken.getToken().equals("rw_abstract")){
             abstractMethod();
         }
         else if(Firsts.isFirst("Member", currentToken.getToken())){
-            member();
+            member(visibility);
         }else{
             throw new SyntaxErrorException( currentToken, "abstract method or member declaration");
         }
     }
-    private void visibility() throws LexicalErrorException, SyntaxErrorException {
+    private Token visibility() throws CompilerException {
+        Token visibility;
         if(currentToken.getToken().equals("rw_public")){
+            visibility = currentToken;
             match("rw_public");
         }
         else if(currentToken.getToken().equals("rw_private")){
+            visibility = currentToken;
             match("rw_private");
         }
         else if(Firsts.isFirst("Member", currentToken.getToken()) || currentToken.getToken().equals("rw_abstract")){
+            visibility = new Token("rw_public", "public", -1);
             //No visibility explicity declared
         } else{
             throw new SyntaxErrorException( currentToken, "attribute or method declaration");
         }
+        return visibility;
     }
-    private void member() throws LexicalErrorException, SyntaxErrorException {
+    private void member(Token visibility) throws CompilerException {
         if(currentToken.getToken().equals("rw_static")){
             match("rw_static");
             Token type = memberType();
-            declaration(type);
+            MemberDeclaration member = declaration(type);
+            member.setVisibility(visibility);
+            member.setStatic(true);
         }
         else if( currentToken.getToken().equals("id_class")){
             Token className = currentToken;
             match("id_class");
-            possibleCtor(className);
+            MemberDeclaration member = possibleCtor(className);
+            member.setVisibility(visibility);
         }
         else if(Firsts.isFirst("NonObjectType", currentToken.getToken())){
             Token type = nonObjectType();
-            declaration(type);
+            MemberDeclaration member = declaration(type);
+            member.setVisibility(visibility);
         }
         else {
             throw new SyntaxErrorException( currentToken, "attribute or non abstract method declaration");
         }
     }
 
-    private void abstractMethod() throws LexicalErrorException, SyntaxErrorException {
+    private void abstractMethod() throws CompilerException {
         match("rw_abstract");
         memberType();
         match("id_met_var");
@@ -278,51 +290,56 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         match("pm_semicolon");
     }
 
-    private void declaration(Token type) throws LexicalErrorException, SyntaxErrorException {
+    private MemberDeclaration declaration(Token type) throws CompilerException {
         Token name = currentToken;
         match("id_met_var");
-        body(name, type);
+        return body(name, type);
     }
 
-    private void possibleCtor(Token className) throws LexicalErrorException, SyntaxErrorException {
+    private MemberDeclaration possibleCtor(Token className) throws CompilerException {
         if(currentToken.getToken().equals("pm_par_open")){
-            constructor(className);
+            return constructor(className);
         }
         else if(currentToken.getToken().equals("id_met_var")|| currentToken.getToken().equals("op_less")) {
             generic();
-            declaration(className);
+            return declaration(className);
         }
         else{
             throw new SyntaxErrorException(currentToken, "constructor or method declaration");
         }
     }
 
-    private void body(Token name, Token type) throws LexicalErrorException, SyntaxErrorException {
+    private MemberDeclaration body(Token name, Token type) throws CompilerException {
         if(currentToken.getToken().equals("pm_par_open")){
             MethodDeclaration newMethod = SymbolTable.addMethod(name, type);
             formalArgs(newMethod);
             block();
-
+            return newMethod;
         }
         else if(currentToken.getToken().equals("pm_semicolon")|| currentToken.getToken().equals("assign")){
-            SymbolTable.addAttribute(name, type);
+            AttributeDeclaration newAtt = SymbolTable.addAttribute(name, type);
             initialize();
             match("pm_semicolon");
+
+            return newAtt;
         }
         else{
             throw new SyntaxErrorException( currentToken, "method declaration or attribute initialization");
         }
 
+
+
     }
 
-    private void constructor(Token name) throws LexicalErrorException, SyntaxErrorException{
+    private MemberDeclaration constructor(Token name) throws CompilerException{
         //TODO cambiar si hay mas de un constructor
         MethodDeclaration newMethod = SymbolTable.addConstructor(name);
         formalArgs(newMethod);
         block();
+        return newMethod;
     }
 
-    private Token nonObjectType() throws LexicalErrorException, SyntaxErrorException {
+    private Token nonObjectType() throws CompilerException {
         Token toReturn = currentToken;
         if(currentToken.getToken().equals("rw_void")){
             match("rw_void");
@@ -335,7 +352,7 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         }
         return toReturn;
     }
-    private Token memberType() throws   LexicalErrorException, SyntaxErrorException {
+    private Token memberType() throws   CompilerException {
         Token toReturn;
         if(Firsts.isFirst("Type", currentToken.getToken())){
             toReturn = type();
@@ -350,7 +367,7 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         return toReturn;
     }
 
-    private Token type() throws LexicalErrorException, SyntaxErrorException {
+    private Token type() throws CompilerException {
         Token toReturn;
         if(Firsts.isFirst("PrimitiveType", currentToken.getToken())){
             toReturn = primitiveType();
@@ -363,7 +380,7 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         return toReturn;
     }
 
-    private Token primitiveType() throws LexicalErrorException, SyntaxErrorException {
+    private Token primitiveType() throws CompilerException {
         Token toReturn = currentToken;
         if(currentToken.getToken().equals("rw_int")){
             match("rw_int");
@@ -381,13 +398,13 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
     }
 
 
-    private void formalArgs(MethodDeclaration newMethod) throws LexicalErrorException, SyntaxErrorException {
+    private void formalArgs(MethodDeclaration newMethod) throws CompilerException {
         match("pm_par_open");
         formalArgsList(newMethod);
         match("pm_par_close");
     }
 
-    private void formalArgsList(MethodDeclaration method) throws LexicalErrorException, SyntaxErrorException {
+    private void formalArgsList(MethodDeclaration method) throws CompilerException {
         if(Firsts.isFirst("FormalArg",currentToken.getToken())){
             formalArg(method);
             optionalArgsList(method);
@@ -401,7 +418,7 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
 
     }
 
-    private void optionalArgsList(MethodDeclaration method) throws LexicalErrorException, SyntaxErrorException {
+    private void optionalArgsList(MethodDeclaration method) throws CompilerException {
         if(currentToken.getToken().equals("pm_comma")){
             match("pm_comma");
             formalArg(method);
@@ -415,20 +432,20 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         }
     }
 
-    private void formalArg(MethodDeclaration method) throws LexicalErrorException, SyntaxErrorException {
+    private void formalArg(MethodDeclaration method) throws CompilerException {
         Token argType = type();
         Token argName = currentToken;
         match("id_met_var");
         method.addParameter(argName, argType);
     }
 
-    private void block() throws LexicalErrorException, SyntaxErrorException {
+    private void block() throws CompilerException {
         match("pm_brace_open");
         statementsList();
         match("pm_brace_close");
     }
 
-    private void statementsList() throws LexicalErrorException, SyntaxErrorException {
+    private void statementsList() throws CompilerException {
         if(Firsts.isFirst("Statement", currentToken.getToken())){
             statement();
             statementsList();
@@ -441,7 +458,7 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         }
     }
 
-    private void statement() throws LexicalErrorException, SyntaxErrorException {
+    private void statement() throws CompilerException {
         if(currentToken.getToken().equals("pm_semicolon")){
             match("pm_semicolon");
         }
@@ -551,7 +568,7 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
 
     //VOY POR ACA
 
-    private void object() throws LexicalErrorException, SyntaxErrorException {
+    private void object() throws CompilerException {
         if (currentToken.getToken().equals("pm_period")) {
             staticCall();
             possibleExp();
@@ -564,13 +581,13 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
             throw new SyntaxErrorException(currentToken, "static call or local object declaration");
         }
     }
-    private void localVar() throws LexicalErrorException, SyntaxErrorException {
+    private void localVar() throws CompilerException {
         match("id_met_var");
         chainedVar();
         initialize();
     }
 
-    private void staticCall() throws LexicalErrorException, SyntaxErrorException {
+    private void staticCall() throws CompilerException {
         match("pm_period");
         match("id_met_var");
         actualArgs();
@@ -579,7 +596,7 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
     }
 
 
-    private void chainedVar() throws LexicalErrorException, SyntaxErrorException {
+    private void chainedVar() throws CompilerException {
         if(currentToken.getToken().equals("pm_comma")){
             match("pm_comma");
             match("id_met_var");
@@ -592,12 +609,12 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         }
     }
 
-    private void primitiveVar() throws LexicalErrorException, SyntaxErrorException {
+    private void primitiveVar() throws CompilerException {
         localType();
         localVar();
     }
 
-    private void localType() throws LexicalErrorException, SyntaxErrorException {
+    private void localType() throws CompilerException {
         if(Firsts.isFirst("PrimitiveType", currentToken.getToken())){
             primitiveType();
         }
@@ -609,25 +626,25 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         }
     }
 
-    private void nonStaticExp() throws LexicalErrorException, SyntaxErrorException {
+    private void nonStaticExp() throws CompilerException {
         nSComplexExpression();
         possibleExp();
     }
 
-    private void nSComplexExpression() throws LexicalErrorException, SyntaxErrorException {
+    private void nSComplexExpression() throws CompilerException {
         basicExpression();
         possibleOp();
     }
-    private void returnT() throws LexicalErrorException, SyntaxErrorException {
+    private void returnT() throws CompilerException {
         match("rw_return");
         expressionOp();
     }
 
-    private void breakT() throws LexicalErrorException, SyntaxErrorException {
+    private void breakT() throws CompilerException {
         match("rw_break");
     }
 
-    private void expressionOp() throws LexicalErrorException, SyntaxErrorException {
+    private void expressionOp() throws CompilerException {
         if(Firsts.isFirst("Expression", currentToken.getToken())){
             try{
                 expression();
@@ -643,7 +660,7 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         }
     }
 
-    private void ifT() throws LexicalErrorException, SyntaxErrorException {
+    private void ifT() throws CompilerException {
         match("rw_if");
         match("pm_par_open");
         try{
@@ -656,7 +673,7 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         statement();
         possibleElse();
     }
-    private void possibleElse() throws LexicalErrorException, SyntaxErrorException {
+    private void possibleElse() throws CompilerException {
         if(currentToken.getToken().equals("rw_else")){
             match("rw_else");
             statement();
@@ -669,7 +686,7 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         }
     }
 
-    private void forT() throws LexicalErrorException, SyntaxErrorException {
+    private void forT() throws CompilerException {
         match("rw_for");
         match("pm_par_open");
         forExpression();
@@ -677,7 +694,7 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         statement();
     }
 
-    private void forExpression() throws LexicalErrorException, SyntaxErrorException {
+    private void forExpression() throws CompilerException {
         if(Firsts.isFirst("Type", currentToken.getToken())){
             type();
             match("id_met_var");
@@ -698,7 +715,7 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         }
     }
 
-    private void forSecondPart() throws LexicalErrorException, SyntaxErrorException {
+    private void forSecondPart() throws CompilerException {
         if(currentToken.getToken().equals("pm_colon")){
             match("pm_colon");
             try{
@@ -718,7 +735,7 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         }
     }
 
-    private void initialize() throws LexicalErrorException, SyntaxErrorException {
+    private void initialize() throws CompilerException {
         if(currentToken.getToken().equals("assign")){
             match("assign");
             try{
@@ -736,7 +753,7 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
             throw new SyntaxErrorException(currentToken, "var initialization or ;");
         }
     }
-    private void forRest() throws LexicalErrorException, SyntaxErrorException {
+    private void forRest() throws CompilerException {
 
         match("pm_semicolon");
         try{
@@ -755,7 +772,7 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
 
     }
 
-    private void whileT() throws LexicalErrorException, SyntaxErrorException {
+    private void whileT() throws CompilerException {
         match("rw_while");
         match("pm_par_open");
         try{
@@ -768,7 +785,7 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         statement();
     }
 
-    private void switchT() throws LexicalErrorException, SyntaxErrorException {
+    private void switchT() throws CompilerException {
         match("rw_switch");
         match("pm_par_open");
         try{
@@ -783,7 +800,7 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         match("pm_brace_close");
     }
 
-    private void switchStateList() throws LexicalErrorException, SyntaxErrorException {
+    private void switchStateList() throws CompilerException {
         if(Firsts.isFirst("SwitchStatement", currentToken.getToken())){
             switchStatement();
             switchStateList();
@@ -796,7 +813,7 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         }
     }
 
-    private void switchStatement() throws LexicalErrorException, SyntaxErrorException {
+    private void switchStatement() throws CompilerException {
         if(currentToken.getToken().equals("rw_case")){
             match("rw_case");
             primitiveLiteral();
@@ -812,7 +829,7 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         }
     }
 
-    private void statementOp() throws LexicalErrorException, SyntaxErrorException {
+    private void statementOp() throws CompilerException {
         if(Firsts.isFirst("Statement", currentToken.getToken())){
             statement();
         }
@@ -824,12 +841,12 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
     }
 
 
-    private void expression() throws LexicalErrorException, SyntaxErrorException {
+    private void expression() throws CompilerException {
         complexExpression();
         possibleExp();
     }
 
-    private void possibleExp() throws LexicalErrorException, SyntaxErrorException {
+    private void possibleExp() throws CompilerException {
         if(Firsts.isFirst("AssignmentOp", currentToken.getToken())){
             assignmentOp();
             complexExpression();
@@ -841,7 +858,7 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         }
     }
 
-    private void assignmentOp() throws LexicalErrorException, SyntaxErrorException {
+    private void assignmentOp() throws CompilerException {
         if(currentToken.getToken().equals("assign")){
             match("assign");
         }
@@ -856,7 +873,7 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         }
     }
 
-    private void complexExpression() throws LexicalErrorException, SyntaxErrorException {
+    private void complexExpression() throws CompilerException {
         if(currentToken.getToken().equals("id_class")){
             match("id_class");
             staticCall();
@@ -870,7 +887,7 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         }
     }
 
-    private void possibleOp() throws LexicalErrorException, SyntaxErrorException {
+    private void possibleOp() throws CompilerException {
         if(Firsts.isFirst("BinaryOp", currentToken.getToken())){
             binaryOp();
             complexExpression();
@@ -883,7 +900,7 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         }
     }
 
-    private void binaryOp() throws LexicalErrorException, SyntaxErrorException {
+    private void binaryOp() throws CompilerException {
         if(currentToken.getToken().equals("op_and")){
             match("op_and");
         }
@@ -929,7 +946,7 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
 
     }
 
-    private void basicExpression() throws LexicalErrorException, SyntaxErrorException {
+    private void basicExpression() throws CompilerException {
         if(Firsts.isFirst("UnaryOp", currentToken.getToken())){
             unaryOp();
             operand();
@@ -942,7 +959,7 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         }
     }
 
-    private void unaryOp() throws LexicalErrorException, SyntaxErrorException {
+    private void unaryOp() throws CompilerException {
         if(currentToken.getToken().equals("op_add")){
             match("op_add");
         }
@@ -957,7 +974,7 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         }
     }
 
-    private void operand() throws LexicalErrorException, SyntaxErrorException {
+    private void operand() throws CompilerException {
         if(Firsts.isFirst("Literal", currentToken.getToken())){
             literal();
         }
@@ -969,7 +986,7 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         }
     }
 
-    private void literal() throws LexicalErrorException, SyntaxErrorException {
+    private void literal() throws CompilerException {
 
        if(Firsts.isFirst("PrimitiveLiteral", currentToken.getToken())){
             primitiveLiteral();
@@ -982,7 +999,7 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
        }
     }
 
-    private void primitiveLiteral() throws LexicalErrorException, SyntaxErrorException {
+    private void primitiveLiteral() throws CompilerException {
         if(currentToken.getToken().equals("rw_true")){
             match("rw_true");
         }
@@ -1000,7 +1017,7 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         }
     }
 
-    private void objectLiteral() throws LexicalErrorException, SyntaxErrorException {
+    private void objectLiteral() throws CompilerException {
         if(currentToken.getToken().equals("rw_null")){
             match("rw_null");
 
@@ -1014,12 +1031,12 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
 
     }
 
-    private void access() throws LexicalErrorException, SyntaxErrorException {
+    private void access() throws CompilerException {
         primary();
         chainedOp();
     }
 
-    private void primary() throws LexicalErrorException, SyntaxErrorException {
+    private void primary() throws CompilerException {
         if(Firsts.isFirst("AccessThis", currentToken.getToken())){
             accessThis();
         }
@@ -1037,18 +1054,18 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         }
     }
 
-    private void accessThis() throws LexicalErrorException, SyntaxErrorException {
+    private void accessThis() throws CompilerException {
         match("rw_this");
     }
 
-    private void accessConstructor() throws LexicalErrorException, SyntaxErrorException {
+    private void accessConstructor() throws CompilerException {
         match("rw_new");
         className();
         actualArgs();
     }
 
 
-    private void pExpression() throws LexicalErrorException, SyntaxErrorException {
+    private void pExpression() throws CompilerException {
         match("pm_par_open");
         try{
             expression();
@@ -1059,12 +1076,12 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         match("pm_par_close");
     }
 
-    private void accessVarMethod() throws LexicalErrorException, SyntaxErrorException {
+    private void accessVarMethod() throws CompilerException {
         match("id_met_var");
         possibleArgs();
     }
 
-    private void possibleArgs() throws LexicalErrorException, SyntaxErrorException {
+    private void possibleArgs() throws CompilerException {
         if(Firsts.isFirst("ActualArgs", currentToken.getToken())){
             actualArgs();
         }
@@ -1075,13 +1092,13 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         }
     }
 
-    private void actualArgs() throws LexicalErrorException, SyntaxErrorException {
+    private void actualArgs() throws CompilerException {
         match("pm_par_open");
         expressionList();
         match("pm_par_close");
     }
 
-    private void expressionList() throws LexicalErrorException, SyntaxErrorException {
+    private void expressionList() throws CompilerException {
         if(Firsts.isFirst("Expression", currentToken.getToken())){
             try{
                 expression();
@@ -1098,7 +1115,7 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         }
     }
 
-    private void optionalExpList() throws LexicalErrorException, SyntaxErrorException {
+    private void optionalExpList() throws CompilerException {
         if(currentToken.getToken().equals("pm_comma")){
             match("pm_comma");
             try{
@@ -1116,7 +1133,7 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         }
     }
 
-    private void chainedOp() throws LexicalErrorException, SyntaxErrorException {
+    private void chainedOp() throws CompilerException {
         if(currentToken.getToken().equals("pm_period")){
             match("pm_period");
             match("id_met_var");
@@ -1131,7 +1148,7 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
     }
 
 
-    private void match(String terminal) throws LexicalErrorException, SyntaxErrorException {
+    private void match(String terminal) throws CompilerException {
         if (currentToken.getToken().equals(terminal)) {
             getNewToken();
         }

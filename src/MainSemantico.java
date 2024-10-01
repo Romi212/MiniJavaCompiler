@@ -2,8 +2,9 @@ import LexicalAnalyzer.LexicalAnalyzerImp;
 import SymbolTable.SymbolTable;
 import SyntaxAnalyzer.SyntaxAnalyzer;
 import SyntaxAnalyzer.SyntaxAnalyzerImp;
-import utils.LexicalErrorException;
-import utils.SyntaxErrorException;
+import utils.Exceptions.CompilerException;
+import utils.Exceptions.LexicalErrorException;
+import utils.Exceptions.SyntaxErrorException;
 import utils.sourcemanager.SourceManagerImpl;
 
 public class MainSemantico {
@@ -53,14 +54,15 @@ public class MainSemantico {
 
         SymbolTable.createTable();
         SyntaxAnalyzer syntaxAnalyzer = new SyntaxAnalyzerImp(lexicalAnalyzer);
+
         try {
-            System.out.println(syntaxAnalyzer.analyzeSintax());
-        } catch (LexicalErrorException e) {
-            System.out.println(e.getLongMessage());
-        } catch (SyntaxErrorException e) {
+            syntaxAnalyzer.analyzeSintax();
+            if(SymbolTable.isCorrect()) System.out.println("[SinErrores]");
+        } catch (CompilerException e) {
             System.out.println(e.getMessage());
             System.out.println(e.getLongMessage());
         }
+
 
         ;
         System.out.println(SymbolTable.showString());

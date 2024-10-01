@@ -1,5 +1,6 @@
 package SymbolTable.Types;
 
+import utils.Exceptions.SemanticalErrorException;
 import utils.Token;
 
 public abstract class MemberType {
@@ -8,5 +9,9 @@ public abstract class MemberType {
 
     public String getName(){
         return name.getLexeme();
+    }
+
+    public boolean isCorrect() throws SemanticalErrorException {
+        return true;
     }
 }

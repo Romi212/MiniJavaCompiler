@@ -1,5 +1,5 @@
 import LexicalAnalyzer.LexicalAnalyzerImp;
-import utils.LexicalErrorException;
+import utils.Exceptions.LexicalErrorException;
 import utils.Token;
 import utils.sourcemanager.SourceManagerImpl;
 

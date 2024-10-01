@@ -1,8 +1,9 @@
 import LexicalAnalyzer.LexicalAnalyzerImp;
 import SyntaxAnalyzer.SyntaxAnalyzer;
 import SyntaxAnalyzer.SyntaxAnalyzerImp;
-import utils.LexicalErrorException;
-import utils.SyntaxErrorException;
+import utils.Exceptions.CompilerException;
+import utils.Exceptions.LexicalErrorException;
+import utils.Exceptions.SyntaxErrorException;
 import utils.sourcemanager.SourceManagerImpl;
 
 public class MainSintactico {
@@ -53,9 +54,7 @@ public class MainSintactico {
         SyntaxAnalyzer syntaxAnalyzer = new SyntaxAnalyzerImp(lexicalAnalyzer);
         try {
             System.out.println(syntaxAnalyzer.analyzeSintax());
-        } catch (LexicalErrorException e) {
-            System.out.println(e.getLongMessage());
-        } catch (SyntaxErrorException e) {
+        } catch (CompilerException e) {
             System.out.println(e.getMessage());
             System.out.println(e.getLongMessage());
         }

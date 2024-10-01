@@ -1,6 +1,6 @@
-package utils;
+package utils.Exceptions;
 
-public class LexicalErrorException extends Exception{
+public class LexicalErrorException extends CompilerException{
 
     private String lexeme;
     private int line;

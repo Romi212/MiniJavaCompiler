@@ -1,6 +1,8 @@
-package utils;
+package utils.Exceptions;
 
-public class SyntaxErrorException extends Throwable {
+import utils.Token;
+
+public class SyntaxErrorException extends CompilerException {
 
 
     private String personalizedMessage;

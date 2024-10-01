@@ -1,8 +1,9 @@
 package SyntaxAnalyzer;
 
-import utils.LexicalErrorException;
-import utils.SyntaxErrorException;
+import utils.Exceptions.CompilerException;
+import utils.Exceptions.LexicalErrorException;
+import utils.Exceptions.SyntaxErrorException;
 
 public interface SyntaxAnalyzer {
-    String analyzeSintax() throws LexicalErrorException, SyntaxErrorException;
+    String analyzeSintax() throws CompilerException;
 }
