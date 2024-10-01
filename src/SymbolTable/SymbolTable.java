@@ -14,6 +14,7 @@ public class SymbolTable {
     static private ClassDeclaration currentClass;
 
     private static boolean hasMain= false;
+    private static MethodDeclaration mainMethod;
 
     public static void createTable(){
         symbolTable = new HashMap<>();
@@ -87,10 +88,16 @@ public class SymbolTable {
     }
 
     public static MethodDeclaration addMethod(Token method, Token returnType) throws SemanticalErrorException{
+
+        MethodDeclaration methodDeclaration = currentClass.addMethod(method, returnType);
         if(method.getLexeme().equals("main") && returnType.getLexeme().equals("void")){
-           hasMain = true;
+
+            if(!hasMain || mainMethod.getParametersSize() > 0) {
+                mainMethod = methodDeclaration;
+                hasMain = true;
+            }
         }
-        return currentClass.addMethod(method, returnType);
+        return methodDeclaration;
     }
 
     public static String showString(){
@@ -161,7 +168,7 @@ public class SymbolTable {
 
     public static boolean isCorrect()throws CompilerException {
 
-        if (!hasMain) throw new SemanticalErrorException(new Token("pc_object", "main", -1), "Main method not found");
+        if (!hasMain || mainMethod.getParametersSize()>0) throw new SemanticalErrorException(new Token("pc_object", "main", -1), "Main method declared correctly not found");
 
         for (HashMap.Entry<String, ClassDeclaration> entry : symbolTable.entrySet()) {
             ClassDeclaration classDeclaration = entry.getValue();

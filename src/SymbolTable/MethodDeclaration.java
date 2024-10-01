@@ -76,4 +76,8 @@ public class MethodDeclaration extends MemberDeclaration {
     private HashMap<String, ParameterDeclaration> getParameters() {
         return this.parameters;
     }
+
+    public int getParametersSize(){
+        return this.parameters.size();
+    }
 }
