@@ -2,7 +2,8 @@ package SyntaxAnalyzer;
 
 import LexicalAnalyzer.LexicalAnalyzer;
 import SymbolTable.Attributes.AttributeDeclaration;
-import SymbolTable.ClassDeclaration;
+import SymbolTable.Clases.AbstractClassDeclaration;
+import SymbolTable.Clases.ClassDeclaration;
 import SymbolTable.MethodDeclaration;
 import SymbolTable.MemberDeclaration;
 import SymbolTable.SymbolTable;
@@ -12,7 +13,6 @@ import utils.Exceptions.LexicalErrorException;
 import utils.Exceptions.SyntaxErrorException;
 import utils.Token;
 
-import java.lang.reflect.Member;
 import java.util.ArrayList;
 
 public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
@@ -97,8 +97,8 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
     private void abstractClass() throws CompilerException{
         match("rw_abstract");
         ClassDeclaration newClass = classSignature();
-        newClass.makeAbstract();
-        SymbolTable.addClass(newClass);
+        AbstractClassDeclaration newAbstractClass = new AbstractClassDeclaration(newClass);
+        SymbolTable.addClass(newAbstractClass);
         match("pm_brace_open");
         abstractMemberList();
         match("pm_brace_close");
@@ -222,7 +222,7 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
 
     private void abstractMember(Token visibility) throws CompilerException {
         if(currentToken.getToken().equals("rw_abstract")){
-            abstractMethod();
+            abstractMethod(visibility);
         }
         else if(Firsts.isFirst("Member", currentToken.getToken())){
             member(visibility);
@@ -272,11 +272,13 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         }
     }
 
-    private void abstractMethod() throws CompilerException {
+    private void abstractMethod(Token visibility) throws CompilerException {
         match("rw_abstract");
-        memberType();
+        Token type = memberType();
+        Token name = currentToken;
         match("id_met_var");
-        formalArgs(new MethodDeclaration(new Token("id_met_var", "rw_void", 0), new MemberObjectType(new Token("id_met_var", "rw_void", 0))));
+        MethodDeclaration newMethod = SymbolTable.addAbstractMethod(name, type);
+        formalArgs(newMethod);
         match("pm_semicolon");
     }
 

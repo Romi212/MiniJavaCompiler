@@ -1,6 +1,9 @@
-package SymbolTable;
+package SymbolTable.Clases;
 
 import SymbolTable.Attributes.*;
+import SymbolTable.ConstructorDeclaration;
+import SymbolTable.MethodDeclaration;
+import SymbolTable.SymbolTable;
 import SymbolTable.Types.*;
 import utils.Exceptions.SemanticalErrorException;
 import utils.Token;
@@ -9,17 +12,17 @@ import java.util.HashMap;
 
 public class ClassDeclaration {
 
-    private Token name;
-    private Token parent;
+    protected Token name;
+    protected Token parent;
 
-    private boolean visited = false;
-    private boolean isAbstract;
-    private boolean hasConstructor =false;
-    private boolean isConsolidated;
-    private HashMap<String, AttributeDeclaration> attributes;
-    private HashMap<String,MethodDeclaration> methods;
+    protected boolean visited = false;
+    protected boolean isAbstract = false;
+    protected boolean hasConstructor =false;
+    protected boolean isConsolidated;
+    protected HashMap<String, AttributeDeclaration> attributes;
+    protected HashMap<String, MethodDeclaration> methods;
 
-    private MethodDeclaration constructor;
+    protected MethodDeclaration constructor;
 
     public ClassDeclaration(Token name){
         this.name = name;
@@ -117,8 +120,13 @@ public class ClassDeclaration {
                 if(methods.containsKey(entry.getKey())) {
                     if(!methods.get(entry.getKey()).sameSignature(entry.getValue()))
                         throw new SemanticalErrorException(methods.get(entry.getKey()).getName(), "Method "+entry.getKey()+" in class "+name.getLexeme()+" cant redefine method with different signature in Parent class");
-                }else methods.put(entry.getKey(), entry.getValue());
+                }else {
+                    if(entry.getValue().isAbstract()&& !isAbstract) throw new SemanticalErrorException(entry.getValue().getName(), "Method "+entry.getKey()+" in class "+name.getLexeme()+" must be implemented!");
+                    methods.put(entry.getKey(), entry.getValue());
+                }
             }
+
+
             isConsolidated = true;
         }
         return true;
@@ -134,5 +142,17 @@ public class ClassDeclaration {
 
     public void setConsolidated(boolean b) {
         this.isConsolidated = b;
+    }
+
+    public boolean isAbstract() {
+        return isAbstract;
+    }
+
+    public MethodDeclaration addAbstractMethod(Token name, Token type) throws SemanticalErrorException{
+        throw new SemanticalErrorException(name, "Method "+name.getLexeme()+" in class "+this.name.getLexeme()+" must be declared as abstract");
+    }
+
+    protected Token getParent() {
+        return parent;
     }
 }

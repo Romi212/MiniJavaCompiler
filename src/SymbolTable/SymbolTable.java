@@ -1,6 +1,7 @@
 package SymbolTable;
 
 import SymbolTable.Attributes.AttributeDeclaration;
+import SymbolTable.Clases.ClassDeclaration;
 import SymbolTable.Types.*;
 import utils.Exceptions.CompilerException;
 import utils.Exceptions.SemanticalErrorException;
@@ -10,7 +11,7 @@ import java.util.HashMap;
 
 
 public class SymbolTable {
-    static private HashMap<String,ClassDeclaration> symbolTable = new HashMap<>();
+    static private HashMap<String, ClassDeclaration> symbolTable = new HashMap<>();
     static private ClassDeclaration currentClass;
 
     private static boolean hasMain= false;
@@ -176,5 +177,13 @@ public class SymbolTable {
         }
 
         return true;
+    }
+
+    public static MethodDeclaration addAbstractMethod(Token name, Token type) throws SemanticalErrorException {
+        return currentClass.addAbstractMethod(name, type);
+    }
+
+    public static boolean isAbstract(Token parent) {
+        return symbolTable.get(parent.getLexeme()).isAbstract();
     }
 }

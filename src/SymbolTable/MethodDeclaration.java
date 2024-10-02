@@ -11,6 +11,7 @@ public class MethodDeclaration extends MemberDeclaration {
 
     protected Token name;
     protected MemberType returnType;
+    protected boolean isAbstract = false;
     protected HashMap<String, ParameterDeclaration> parameters = new HashMap<>();
 
 
@@ -79,5 +80,13 @@ public class MethodDeclaration extends MemberDeclaration {
 
     public int getParametersSize(){
         return this.parameters.size();
+    }
+
+    public void setAbstract(boolean b) {
+        this.isAbstract = b;
+    }
+
+    public boolean isAbstract() {
+        return this.isAbstract;
     }
 }

@@ -36,11 +36,14 @@ class B extends A {
    A z;
 }
 
-class C<T>{
-    T x;
-    C<T> y;
-    C<T> meth(){
-        return y;
+abstract class Abstract{
+    int x;
+    abstract void meth();
+}
+
+class Imp extends Abstract{
+    void meth(){
+        x = 5;
     }
 }
 
