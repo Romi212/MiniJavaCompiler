@@ -104,8 +104,9 @@ public class ClassDeclaration {
     }
 
     public boolean isConsolidated() throws SemanticalErrorException{
-        if(!isCorrectlyDeclared()) return false;
+
         if( !isConsolidated){
+            if(!isCorrectlyDeclared()) return false;
             if(visited) throw new SemanticalErrorException(name, "Class "+name.getLexeme()+" has circular inheritance");
             else visited = true;
             SymbolTable.isConsolidated(parent);
@@ -121,7 +122,7 @@ public class ClassDeclaration {
                     if(!methods.get(entry.getKey()).sameSignature(entry.getValue()))
                         throw new SemanticalErrorException(methods.get(entry.getKey()).getName(), "Method "+entry.getKey()+" in class "+name.getLexeme()+" cant redefine method with different signature in Parent class");
                 }else {
-                    if(entry.getValue().isAbstract()&& !isAbstract) throw new SemanticalErrorException(entry.getValue().getName(), "Method "+entry.getKey()+" in class "+name.getLexeme()+" must be implemented!");
+                    if(entry.getValue().isAbstract()&& !isAbstract) throw new SemanticalErrorException(name, "Method "+entry.getKey()+" in class "+name.getLexeme()+" must be implemented!");
                     methods.put(entry.getKey(), entry.getValue());
                 }
             }
@@ -149,6 +150,13 @@ public class ClassDeclaration {
     }
 
     public MethodDeclaration addAbstractMethod(Token name, Token type) throws SemanticalErrorException{
+        if(isAbstract){
+            MethodDeclaration newMethod = new MethodDeclaration(name, SymbolTable.decideType(type));
+            newMethod.setAbstract(true);
+
+            this.methods.put(name.getLexeme(), newMethod);
+            return newMethod;
+        }
         throw new SemanticalErrorException(name, "Method "+name.getLexeme()+" in class "+this.name.getLexeme()+" must be declared as abstract");
     }
 

@@ -45,6 +45,8 @@ public class MethodDeclaration extends MemberDeclaration {
         for (HashMap.Entry<String, ParameterDeclaration> entry : parameters.entrySet()) {
             if(!entry.getValue().isCorrectlyDeclared()) return false;
         }
+        if(isAbstract && !visibility.getLexeme().equals("public")) throw new SemanticalErrorException(visibility, "Abstract method "+name.getLexeme()+" must be public");
+
         return returnType.isCorrect();
     }
 
@@ -89,4 +91,5 @@ public class MethodDeclaration extends MemberDeclaration {
     public boolean isAbstract() {
         return this.isAbstract;
     }
+
 }

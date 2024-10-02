@@ -7,7 +7,7 @@ public abstract class MemberDeclaration {
     public Token visibility;
     public boolean isStatic;
 
-    public void setVisibility(Token visibility){
+    public void setVisibility(Token visibility)throws  SemanticalErrorException{
         this.visibility = visibility;
     }
 

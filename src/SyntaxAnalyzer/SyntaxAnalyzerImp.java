@@ -278,6 +278,7 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         Token name = currentToken;
         match("id_met_var");
         MethodDeclaration newMethod = SymbolTable.addAbstractMethod(name, type);
+        newMethod.setVisibility(visibility);
         formalArgs(newMethod);
         match("pm_semicolon");
     }

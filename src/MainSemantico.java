@@ -56,7 +56,7 @@ public class MainSemantico {
         SyntaxAnalyzer syntaxAnalyzer = new SyntaxAnalyzerImp(lexicalAnalyzer);
 
         try {
-            syntaxAnalyzer.analyzeSintax();
+            System.out.println(syntaxAnalyzer.analyzeSintax());
             if(SymbolTable.isCorrect()) System.out.println("[SinErrores]");
         } catch (CompilerException e) {
             System.out.println(e.getMessage());

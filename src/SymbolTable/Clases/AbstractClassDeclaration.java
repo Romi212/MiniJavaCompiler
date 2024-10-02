@@ -20,7 +20,6 @@ public class AbstractClassDeclaration extends ClassDeclaration{
     }
 
 
-
     public void setAbstract(boolean isAbstract) {
         this.isAbstract = isAbstract;
     }
@@ -28,9 +27,11 @@ public class AbstractClassDeclaration extends ClassDeclaration{
     public MethodDeclaration addAbstractMethod(Token name, Token returnType) throws SemanticalErrorException  {
         MethodDeclaration newMethod = new MethodDeclaration(name, SymbolTable.decideType(returnType));
         newMethod.setAbstract(true);
-        methods.put(name.getLexeme(), newMethod);
+
+        this.methods.put(name.getLexeme(), newMethod);
         return newMethod;
     }
+
 
     public String toString(){
 
