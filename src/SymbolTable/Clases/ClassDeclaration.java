@@ -8,6 +8,7 @@ import SymbolTable.SymbolTable;
 import SymbolTable.Types.*;
 import utils.Exceptions.SemanticalErrorException;
 import utils.Token;
+import SymbolTable.MemberDeclaration;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,6 +29,8 @@ public class ClassDeclaration {
 
     protected ArrayList<MemberObjectType> orderedParametricTypes;
     protected MethodDeclaration constructor;
+
+    protected MemberDeclaration currentMember;
 
     public ClassDeclaration(Token name){
         this.name = name;
@@ -105,43 +108,22 @@ public class ClassDeclaration {
 
     public boolean isCorrectlyDeclared() throws  SemanticalErrorException{
 
-        for(HashMap.Entry<String, AttributeDeclaration> entry : attributes.entrySet()){
-            if(!entry.getValue().isCorrectlyDeclared()){
-                if(!correctParAttribute(entry.getValue())) {
+        System.out.println("CORRECTLY DECLARED EN CLASS "+name.getLexeme());
 
+        for(HashMap.Entry<String, AttributeDeclaration> entry : attributes.entrySet()){
+            currentMember = entry.getValue();
+            if(!entry.getValue().isCorrectlyDeclared()){
                     throw new SemanticalErrorException(entry.getValue().getType().getToken(), "Attribute "+entry.getValue().getName().getLexeme()+" declared of class "+entry.getValue().getType().getName()+" that doesn't exist nor is a valid Parametric Type");
-                }
             }
         }
         for(HashMap.Entry<String, MethodDeclaration> entry : methods.entrySet()){
-            if(!entry.getValue().isCorrectlyDeclared(this)) return false;
+            currentMember = entry.getValue();
+            if(!entry.getValue().isCorrectlyDeclared()) return false;
         }
         return true;
     }
 
-    private boolean correctParAttribute(AttributeDeclaration value) {
-        if (!value.isStatic) {
-            if (parametricTypes.containsKey(value.getType().getName())) {
-                if (value.getType().getAttributes().isEmpty()) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-    public boolean correctParMethod(MethodDeclaration value) {
-        if(parametricTypes.containsKey(value.getReturnType().getName())) {
-            if(value.getReturnType().getAttributes().isEmpty()) return true;
-        }
-        return false;
-    }
 
-    public boolean correctParPar(ParameterDeclaration value) {
-        if(parametricTypes.containsKey(value.getType().getName())) {
-            if(value.getType().getAttributes().isEmpty()) return true;
-        }
-        return false;
-    }
 
     public boolean isConsolidated() throws SemanticalErrorException{
 
@@ -225,5 +207,12 @@ public class ClassDeclaration {
 
     public ArrayList<MemberObjectType> getParametricTypes() {
         return orderedParametricTypes;
+    }
+    public HashMap<String,MemberType> getParametricTypesSet() {
+        return parametricTypes;
+    }
+
+    public MemberDeclaration getCurrentMember() {
+        return currentMember;
     }
 }

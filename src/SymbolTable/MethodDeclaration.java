@@ -42,19 +42,19 @@ public class MethodDeclaration extends MemberDeclaration {
 
     }
 
-    public boolean isCorrectlyDeclared(ClassDeclaration classContainer) throws SemanticalErrorException {
+    public boolean isCorrectlyDeclared() throws SemanticalErrorException {
 
-        if(returnType.isCorrect() || (!isStatic && classContainer.correctParMethod(this))){
+        if(returnType.isCorrect()){
             for (HashMap.Entry<String, ParameterDeclaration> entry : parameters.entrySet()) {
                 if(!entry.getValue().isCorrectlyDeclared()){
-                    if(isStatic || !classContainer.correctParPar(entry.getValue())) {
+                    if(isStatic ) {
                         throw new SemanticalErrorException(entry.getValue().getType().getToken(), "Parameter "+entry.getValue().getName().getLexeme()+" in method "+name.getLexeme()+" has an invalid type "+entry.getValue().getType().getName());
                     }
                 }
             }
             if(isAbstract && !visibility.getLexeme().equals("public")) throw new SemanticalErrorException(visibility, "Abstract method "+name.getLexeme()+" must be public");
 
-        } else throw new SemanticalErrorException(returnType.getToken(), "Method "+name.getLexeme()+" in class "+classContainer.getName().getLexeme()+" has an invalid return type "+returnType.getName());
+        } else throw new SemanticalErrorException(returnType.getToken(), "Method "+name.getLexeme()+"  has an invalid return type "+returnType.getName());
 
 
         return true;
@@ -100,11 +100,6 @@ public class MethodDeclaration extends MemberDeclaration {
 
     public boolean isAbstract() {
         return this.isAbstract;
-    }
-
-    @Override
-    public boolean isCorrectlyDeclared() throws SemanticalErrorException {
-        return false;
     }
 
 

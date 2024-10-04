@@ -22,10 +22,12 @@ class A  {
                 break;}
             case 9:
             case 10:
-            case 11:{
+            case 11:
 
-                break;}
-            default:{}
+
+            default:{
+                int x;
+            }
             case 11:{
 
                 break;}
@@ -34,6 +36,7 @@ class A  {
 }
 class B extends A {
    A z;
+   G<A> y = new G<>();
 }
 
 abstract class Abstract{
@@ -50,6 +53,7 @@ class Imp extends Abstract{
 
 class G<T> {
     T x;
+
     void meth(T x){
         this.x = x;
     }

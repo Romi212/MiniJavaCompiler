@@ -7,6 +7,7 @@ import utils.Exceptions.CompilerException;
 import utils.Exceptions.SemanticalErrorException;
 import utils.Token;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 
@@ -149,11 +150,17 @@ public class SymbolTable {
     public static void isConsolidated(Token parent) throws SemanticalErrorException{
         if(symbolTable.containsKey(parent.getLexeme())){
             ClassDeclaration parentClass = symbolTable.get(parent.getLexeme());
+            ClassDeclaration child = currentClass;
+            currentClass = parentClass;
             parentClass.isConsolidated();
+            currentClass = child;
 
         }else  throw new SemanticalErrorException(parent, "Parent class "+parent.getLexeme()+" is not declared");
     }
 
+    public static HashMap<String,MemberType> getParametricTypes() {
+        return currentClass.getParametricTypesSet();
+    }
     public static HashMap<String, AttributeDeclaration> getAttributes(String padre) {
         return symbolTable.get(padre).getAttributes();
     }
@@ -171,8 +178,10 @@ public class SymbolTable {
 
         if (!hasMain || mainMethod.getParametersSize()>0) throw new SemanticalErrorException(new Token("pc_object", "main", -1), "Main method declared correctly not found");
 
+
         for (HashMap.Entry<String, ClassDeclaration> entry : symbolTable.entrySet()) {
             ClassDeclaration classDeclaration = entry.getValue();
+            currentClass = classDeclaration;
             if(!classDeclaration.isConsolidated()) return false;
         }
 
@@ -198,5 +207,9 @@ public class SymbolTable {
 
     public static ClassDeclaration getClass(Token name) {
         return symbolTable.get(name.getLexeme());
+    }
+
+    public static MemberDeclaration getCurrentMember() {
+        return currentClass.getCurrentMember();
     }
 }
