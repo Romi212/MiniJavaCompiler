@@ -304,8 +304,10 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
             return constructor(className);
         }
         else if(currentToken.getToken().equals("id_met_var")|| currentToken.getToken().equals("op_less")) {
-            generic();
-            return declaration(new MemberObjectType(className));
+            ArrayList<Token> parameters = generic();
+            MemberObjectType type = new MemberObjectType(className);
+            type.addParametricTokens(parameters);
+            return declaration(type);
         }
         else{
             throw new SyntaxErrorException(currentToken, "constructor or method declaration");
@@ -378,7 +380,11 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
             toReturn = primitiveType();
         }
         else if( currentToken.getToken().equals("id_class")){
-            toReturn = new MemberObjectType(className().getName());
+            ClassDeclaration className = className();
+            MemberObjectType type = new MemberObjectType(className.getName());
+
+            type.addParametricTypes(className.getParametricTypes());
+            toReturn = type;
         }else{
             throw new SyntaxErrorException(currentToken, "primitive type or class name");
         }

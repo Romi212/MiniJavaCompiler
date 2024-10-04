@@ -195,4 +195,8 @@ public class SymbolTable {
 
         }
     }
+
+    public static ClassDeclaration getClass(Token name) {
+        return symbolTable.get(name.getLexeme());
+    }
 }

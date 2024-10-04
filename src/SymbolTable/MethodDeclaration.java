@@ -43,6 +43,7 @@ public class MethodDeclaration extends MemberDeclaration {
     }
 
     public boolean isCorrectlyDeclared(ClassDeclaration classContainer) throws SemanticalErrorException {
+
         if(returnType.isCorrect() || (!isStatic && classContainer.correctParMethod(this))){
             for (HashMap.Entry<String, ParameterDeclaration> entry : parameters.entrySet()) {
                 if(!entry.getValue().isCorrectlyDeclared()){

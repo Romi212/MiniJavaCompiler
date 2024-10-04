@@ -26,6 +26,7 @@ public class ClassDeclaration {
 
     protected HashMap<String, MemberType> parametricTypes;
 
+    protected ArrayList<MemberObjectType> orderedParametricTypes;
     protected MethodDeclaration constructor;
 
     public ClassDeclaration(Token name){
@@ -36,6 +37,7 @@ public class ClassDeclaration {
         this.methods = new HashMap<>();
         this.parametricTypes = new HashMap<>();
         constructor = new ConstructorDeclaration(name);
+        orderedParametricTypes = new ArrayList<>();
     }
 
     public ClassDeclaration(){
@@ -118,21 +120,27 @@ public class ClassDeclaration {
     }
 
     private boolean correctParAttribute(AttributeDeclaration value) {
-        if(!value.isStatic && parametricTypes.containsKey(value.getType().getName())){
-            return true;
-        }else return false;
+        if (!value.isStatic) {
+            if (parametricTypes.containsKey(value.getType().getName())) {
+                if (value.getType().getAttributes().isEmpty()) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
-
     public boolean correctParMethod(MethodDeclaration value) {
         if(parametricTypes.containsKey(value.getReturnType().getName())) {
-            return true;
-        }else   return false;
+            if(value.getReturnType().getAttributes().isEmpty()) return true;
+        }
+        return false;
     }
 
     public boolean correctParPar(ParameterDeclaration value) {
         if(parametricTypes.containsKey(value.getType().getName())) {
-            return true;
-        }else return false;
+            if(value.getType().getAttributes().isEmpty()) return true;
+        }
+        return false;
     }
 
     public boolean isConsolidated() throws SemanticalErrorException{
@@ -198,7 +206,9 @@ public class ClassDeclaration {
 
     public void addParametricType(Token genericType) throws SemanticalErrorException {
         if(!parametricTypes.containsKey(genericType.getLexeme())){
-            parametricTypes.put(genericType.getLexeme(), new MemberObjectType(genericType));
+            MemberObjectType newType = new MemberObjectType(genericType);
+            parametricTypes.put(genericType.getLexeme(), newType);
+            orderedParametricTypes.add(newType);
         }
         else throw new SemanticalErrorException(genericType, "Parametric Type "+genericType.getLexeme()+" already exists in class "+name.getLexeme());
     }
@@ -211,5 +221,9 @@ public class ClassDeclaration {
 
     public int genericParametersAmount() {
         return parametricTypes.size();
+    }
+
+    public ArrayList<MemberObjectType> getParametricTypes() {
+        return orderedParametricTypes;
     }
 }
