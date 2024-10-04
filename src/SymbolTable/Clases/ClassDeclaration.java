@@ -3,11 +3,13 @@ package SymbolTable.Clases;
 import SymbolTable.Attributes.*;
 import SymbolTable.ConstructorDeclaration;
 import SymbolTable.MethodDeclaration;
+import SymbolTable.Parameters.ParameterDeclaration;
 import SymbolTable.SymbolTable;
 import SymbolTable.Types.*;
 import utils.Exceptions.SemanticalErrorException;
 import utils.Token;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class ClassDeclaration {
@@ -22,6 +24,8 @@ public class ClassDeclaration {
     protected HashMap<String, AttributeDeclaration> attributes;
     protected HashMap<String, MethodDeclaration> methods;
 
+    protected HashMap<String, MemberType> parametricTypes;
+
     protected MethodDeclaration constructor;
 
     public ClassDeclaration(Token name){
@@ -30,6 +34,7 @@ public class ClassDeclaration {
         this.isConsolidated = false;
         this.attributes = new HashMap<>();
         this.methods = new HashMap<>();
+        this.parametricTypes = new HashMap<>();
         constructor = new ConstructorDeclaration(name);
     }
 
@@ -47,21 +52,25 @@ public class ClassDeclaration {
         this.parent = parent;
     }
 
+    public void setAbstract(boolean isAbstract) {
+        this.isAbstract = isAbstract;
+    }
 
-    public AttributeDeclaration addAttribute(Token attribute, Token typeT) throws SemanticalErrorException{
+
+    public AttributeDeclaration addAttribute(Token attribute, MemberType typeT) throws SemanticalErrorException{
 
         if(!attributes.containsKey(attribute.getLexeme())){
-            if(typeT.getLexeme().equals("void")) throw new SemanticalErrorException(typeT, "Attribute "+attribute.getLexeme()+" cannot be of type void");
-            AttributeDeclaration newAtr = new AttributeDeclaration(attribute, SymbolTable.decideType(typeT) );
+            if(typeT.getName().equals("void")) throw new SemanticalErrorException(typeT.getToken(), "Attribute "+attribute.getLexeme()+" cannot be of type void");
+            AttributeDeclaration newAtr = new AttributeDeclaration(attribute, typeT);
             this.attributes.put(attribute.getLexeme(), newAtr);
             return newAtr;
         }else throw new SemanticalErrorException(attribute, "Attribute "+attribute.getLexeme()+" in class "+name.getLexeme()+" already exists");
     }
 
-    public MethodDeclaration addMethod(Token method, Token returnType) throws  SemanticalErrorException{
+    public MethodDeclaration addMethod(Token method, MemberType returnType) throws  SemanticalErrorException{
 
         if(!methods.containsKey(method.getLexeme())) {
-            MethodDeclaration newMethod = new MethodDeclaration(method, SymbolTable.decideType(returnType));
+            MethodDeclaration newMethod = new MethodDeclaration(method, returnType);
             this.methods.put(method.getLexeme(), newMethod);
             return newMethod;
 
@@ -95,12 +104,35 @@ public class ClassDeclaration {
     public boolean isCorrectlyDeclared() throws  SemanticalErrorException{
 
         for(HashMap.Entry<String, AttributeDeclaration> entry : attributes.entrySet()){
-            if(!entry.getValue().isCorrectlyDeclared()) return false;
+            if(!entry.getValue().isCorrectlyDeclared()){
+                if(!correctParAttribute(entry.getValue())) {
+
+                    throw new SemanticalErrorException(entry.getValue().getType().getToken(), "Attribute "+entry.getValue().getName().getLexeme()+" declared of class "+entry.getValue().getType().getName()+" that doesn't exist nor is a valid Parametric Type");
+                }
+            }
         }
         for(HashMap.Entry<String, MethodDeclaration> entry : methods.entrySet()){
-            if(!entry.getValue().isCorrectlyDeclared()) return false;
+            if(!entry.getValue().isCorrectlyDeclared(this)) return false;
         }
         return true;
+    }
+
+    private boolean correctParAttribute(AttributeDeclaration value) {
+        if(!value.isStatic && parametricTypes.containsKey(value.getType().getName())){
+            return true;
+        }else return false;
+    }
+
+    public boolean correctParMethod(MethodDeclaration value) {
+        if(parametricTypes.containsKey(value.getReturnType().getName())) {
+            return true;
+        }else   return false;
+    }
+
+    public boolean correctParPar(ParameterDeclaration value) {
+        if(parametricTypes.containsKey(value.getType().getName())) {
+            return true;
+        }else return false;
     }
 
     public boolean isConsolidated() throws SemanticalErrorException{
@@ -149,9 +181,9 @@ public class ClassDeclaration {
         return isAbstract;
     }
 
-    public MethodDeclaration addAbstractMethod(Token name, Token type) throws SemanticalErrorException{
+    public MethodDeclaration addAbstractMethod(Token name, MemberType type) throws SemanticalErrorException{
         if(isAbstract){
-            MethodDeclaration newMethod = new MethodDeclaration(name, SymbolTable.decideType(type));
+            MethodDeclaration newMethod = new MethodDeclaration(name, type);
             newMethod.setAbstract(true);
 
             this.methods.put(name.getLexeme(), newMethod);
@@ -162,5 +194,22 @@ public class ClassDeclaration {
 
     protected Token getParent() {
         return parent;
+    }
+
+    public void addParametricType(Token genericType) throws SemanticalErrorException {
+        if(!parametricTypes.containsKey(genericType.getLexeme())){
+            parametricTypes.put(genericType.getLexeme(), new MemberObjectType(genericType));
+        }
+        else throw new SemanticalErrorException(genericType, "Parametric Type "+genericType.getLexeme()+" already exists in class "+name.getLexeme());
+    }
+
+    public void addParametricTypes(ArrayList<Token> generic) throws  SemanticalErrorException{
+        for(Token t : generic){
+            addParametricType(t);
+        }
+    }
+
+    public int genericParametersAmount() {
+        return parametricTypes.size();
     }
 }

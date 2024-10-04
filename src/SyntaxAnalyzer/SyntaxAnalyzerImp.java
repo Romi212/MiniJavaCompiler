@@ -2,12 +2,11 @@ package SyntaxAnalyzer;
 
 import LexicalAnalyzer.LexicalAnalyzer;
 import SymbolTable.Attributes.AttributeDeclaration;
-import SymbolTable.Clases.AbstractClassDeclaration;
 import SymbolTable.Clases.ClassDeclaration;
 import SymbolTable.MethodDeclaration;
 import SymbolTable.MemberDeclaration;
 import SymbolTable.SymbolTable;
-import SymbolTable.Types.MemberObjectType;
+import SymbolTable.Types.*;
 import utils.Exceptions.CompilerException;
 import utils.Exceptions.LexicalErrorException;
 import utils.Exceptions.SyntaxErrorException;
@@ -97,8 +96,8 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
     private void abstractClass() throws CompilerException{
         match("rw_abstract");
         ClassDeclaration newClass = classSignature();
-        AbstractClassDeclaration newAbstractClass = new AbstractClassDeclaration(newClass);
-        SymbolTable.addClass(newAbstractClass);
+        newClass.setAbstract(true);
+        SymbolTable.addClass(newClass);
         match("pm_brace_open");
         abstractMemberList();
         match("pm_brace_close");
@@ -106,7 +105,7 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
 
     private ClassDeclaration classSignature() throws CompilerException {
         match("rw_class");
-        ClassDeclaration newClass = new ClassDeclaration(className());
+        ClassDeclaration newClass = className();
         Token parent = parents();
         newClass.setParent(parent);
         return newClass;
@@ -114,19 +113,23 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
 
 
 
-    private Token className() throws CompilerException {
+    private ClassDeclaration className() throws CompilerException {
         Token newClass = currentToken;
         match("id_class");
-        generic();
+        ClassDeclaration newClassDeclaration = new ClassDeclaration(newClass);
+        newClassDeclaration.addParametricTypes(generic());
         //TODO VER GENERIC
-        return newClass;
+        return newClassDeclaration;
     }
 
-    private void generic() throws CompilerException {
+    private ArrayList<Token> generic() throws CompilerException {
+        ArrayList<Token> genericTypes = new ArrayList<>();
         if(currentToken.getToken().equals("op_less")){
             match("op_less");
+            Token genericType = currentToken;
             match("id_class");
-            pTypesList();
+            genericTypes = pTypesList();
+            genericTypes.add(genericType);
             match("op_greater");
         }
         else if(Follows.itFollows("Generic", currentToken.getToken())){
@@ -134,27 +137,34 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         }else{
             throw new SyntaxErrorException( currentToken, "reserved word extends or ( or {");
         }
+        return genericTypes;
     }
 
 
 
-    private void pTypesList() throws CompilerException {
+    private ArrayList<Token> pTypesList() throws CompilerException {
+        ArrayList<Token> pTypes = new ArrayList<>();
         if(currentToken.getToken().equals("pm_comma")){
             match("pm_comma");
+            Token genericType = currentToken;
             match("id_class");
-            pTypesList();
+            pTypes = pTypesList();
+            pTypes.add(genericType);
         }
         else if(Follows.itFollows("PTypesList", currentToken.getToken())){
-            //Only one parametric Type
+            return new ArrayList<>();
         }else{
             throw new SyntaxErrorException( currentToken, "another parametric Type or >");
         }
+        return pTypes;
     }
     private Token parents() throws CompilerException{
         Token parentClass;
         if(currentToken.getToken().equals("rw_extends")){
             match("rw_extends");
-            parentClass = className();
+            ClassDeclaration parent = className();
+            parentClass = parent.getName();
+            SymbolTable.checkParent(parent);
         }
         else if(Follows.itFollows("Parents", currentToken.getToken())){
             parentClass = new Token("rw_object", "Object",0);
@@ -251,7 +261,7 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
     private void member(Token visibility) throws CompilerException {
         if(currentToken.getToken().equals("rw_static")){
             match("rw_static");
-            Token type = memberType();
+            MemberType type = memberType();
             MemberDeclaration member = declaration(type);
             member.setVisibility(visibility);
             member.setStatic(true);
@@ -263,7 +273,7 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
             member.setVisibility(visibility);
         }
         else if(Firsts.isFirst("NonObjectType", currentToken.getToken())){
-            Token type = nonObjectType();
+            MemberType type = nonObjectType();
             MemberDeclaration member = declaration(type);
             member.setVisibility(visibility);
         }
@@ -274,7 +284,7 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
 
     private void abstractMethod(Token visibility) throws CompilerException {
         match("rw_abstract");
-        Token type = memberType();
+        MemberType type = memberType();
         Token name = currentToken;
         match("id_met_var");
         MethodDeclaration newMethod = SymbolTable.addAbstractMethod(name, type);
@@ -283,7 +293,7 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         match("pm_semicolon");
     }
 
-    private MemberDeclaration declaration(Token type) throws CompilerException {
+    private MemberDeclaration declaration(MemberType type) throws CompilerException {
         Token name = currentToken;
         match("id_met_var");
         return body(name, type);
@@ -295,14 +305,14 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         }
         else if(currentToken.getToken().equals("id_met_var")|| currentToken.getToken().equals("op_less")) {
             generic();
-            return declaration(className);
+            return declaration(new MemberObjectType(className));
         }
         else{
             throw new SyntaxErrorException(currentToken, "constructor or method declaration");
         }
     }
 
-    private MemberDeclaration body(Token name, Token type) throws CompilerException {
+    private MemberDeclaration body(Token name, MemberType type) throws CompilerException {
         if(currentToken.getToken().equals("pm_par_open")){
             MethodDeclaration newMethod = SymbolTable.addMethod(name, type);
             formalArgs(newMethod);
@@ -332,26 +342,28 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         return newMethod;
     }
 
-    private Token nonObjectType() throws CompilerException {
+    private MemberType nonObjectType() throws CompilerException {
         Token toReturn = currentToken;
+        MemberType type;
         if(currentToken.getToken().equals("rw_void")){
             match("rw_void");
+            return new VoidType(toReturn);
         }
         else if(Firsts.isFirst("PrimitiveType", currentToken.getToken())){
-            toReturn = primitiveType();
+            type = primitiveType();
         }
         else {
             throw new SyntaxErrorException(currentToken, "primitive type or void");
         }
-        return toReturn;
+        return type;
     }
-    private Token memberType() throws   CompilerException {
-        Token toReturn;
+    private MemberType memberType() throws   CompilerException {
+        MemberType toReturn;
         if(Firsts.isFirst("Type", currentToken.getToken())){
             toReturn = type();
         }
         else if( currentToken.getToken().equals("rw_void")){
-            toReturn = currentToken;
+            toReturn = new VoidType(currentToken);
             match("rw_void");
 
         }else{
@@ -360,33 +372,37 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         return toReturn;
     }
 
-    private Token type() throws CompilerException {
-        Token toReturn;
+    private MemberType type() throws CompilerException {
+        MemberType toReturn;
         if(Firsts.isFirst("PrimitiveType", currentToken.getToken())){
             toReturn = primitiveType();
         }
         else if( currentToken.getToken().equals("id_class")){
-            toReturn = className();
+            toReturn = new MemberObjectType(className().getName());
         }else{
             throw new SyntaxErrorException(currentToken, "primitive type or class name");
         }
         return toReturn;
     }
 
-    private Token primitiveType() throws CompilerException {
+    private MemberType primitiveType() throws CompilerException {
         Token toReturn = currentToken;
+        MemberType type;
         if(currentToken.getToken().equals("rw_int")){
             match("rw_int");
+            type = new IntegerType(toReturn);
         }
         else if(currentToken.getToken().equals("rw_char")){
             match("rw_char");
+            type = new CharacterType(toReturn);
         }
         else if(currentToken.getToken().equals("rw_boolean")){
             match("rw_boolean");
+            type = new BooleanType(toReturn);
         } else{
             throw new SyntaxErrorException(currentToken, "int, char or boolean");
         }
-        return toReturn;
+        return type;
 
     }
 
@@ -426,7 +442,7 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
     }
 
     private void formalArg(MethodDeclaration method) throws CompilerException {
-        Token argType = type();
+        MemberType argType = type();
         Token argName = currentToken;
         match("id_met_var");
         method.addParameter(argName, argType);

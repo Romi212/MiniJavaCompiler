@@ -1,17 +1,14 @@
-///[Error:B|12]
+///[Error:X|8]
 //
-class A {
+class A<T> {
     public char att;
     private int met1(int att, char a2){}
     private char met2(int a){}
+    T atributo;
+    private X met3(){}
 
 }
 
-class C extends A{
-    private int met1(int att, char a2){}
-    private B met2(char a){}
-
-}
 
 class Init{
     static void main()

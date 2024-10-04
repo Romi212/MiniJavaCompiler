@@ -14,4 +14,8 @@ public abstract class MemberType {
     public boolean isCorrect() throws SemanticalErrorException {
         return true;
     }
+
+    public Token getToken() {
+        return name;
+    }
 }

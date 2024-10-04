@@ -1,5 +1,6 @@
 package SymbolTable.Attributes;
 
+import SymbolTable.Clases.ClassDeclaration;
 import SymbolTable.MemberDeclaration;
 import SymbolTable.SymbolTable;
 import SymbolTable.Types.MemberType;

@@ -14,6 +14,6 @@ public class SemanticalErrorException extends CompilerException{
         }
 
         public String getLongMessage(){
-            return error+ " in line "+ found.getLine()+": "+found.getLexeme();
+            return "Semantic error: "+ error+ " in line "+ found.getLine()+": "+found.getLexeme();
         }
 }

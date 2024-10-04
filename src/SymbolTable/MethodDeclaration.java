@@ -1,5 +1,6 @@
 package SymbolTable;
 
+import SymbolTable.Clases.ClassDeclaration;
 import SymbolTable.Parameters.ParameterDeclaration;
 import SymbolTable.Types.MemberType;
 import utils.Exceptions.SemanticalErrorException;
@@ -33,21 +34,29 @@ public class MethodDeclaration extends MemberDeclaration {
         return "["+visibility.getLexeme()+" "+ staticT+" " + name.getLexeme() + "("+ parameters +") : " + returnType.getName()+"]";
     }
 
-    public void addParameter(Token argName, Token argType) throws SemanticalErrorException {
+    public void addParameter(Token argName, MemberType argType) throws SemanticalErrorException {
 
         if(parameters.containsKey(argName.getLexeme())) throw new SemanticalErrorException(argName, "Parameter "+argName.getLexeme()+" in method "+name.getLexeme()+" already exists");
         int pos = parameters.size();
-        parameters.put(argName.getLexeme(), new ParameterDeclaration(argName, SymbolTable.decideType(argType),pos));
+        parameters.put(argName.getLexeme(), new ParameterDeclaration(argName,argType,pos));
 
     }
 
-    public boolean isCorrectlyDeclared() throws SemanticalErrorException {
-        for (HashMap.Entry<String, ParameterDeclaration> entry : parameters.entrySet()) {
-            if(!entry.getValue().isCorrectlyDeclared()) return false;
-        }
-        if(isAbstract && !visibility.getLexeme().equals("public")) throw new SemanticalErrorException(visibility, "Abstract method "+name.getLexeme()+" must be public");
+    public boolean isCorrectlyDeclared(ClassDeclaration classContainer) throws SemanticalErrorException {
+        if(returnType.isCorrect() || (!isStatic && classContainer.correctParMethod(this))){
+            for (HashMap.Entry<String, ParameterDeclaration> entry : parameters.entrySet()) {
+                if(!entry.getValue().isCorrectlyDeclared()){
+                    if(isStatic || !classContainer.correctParPar(entry.getValue())) {
+                        throw new SemanticalErrorException(entry.getValue().getType().getToken(), "Parameter "+entry.getValue().getName().getLexeme()+" in method "+name.getLexeme()+" has an invalid type "+entry.getValue().getType().getName());
+                    }
+                }
+            }
+            if(isAbstract && !visibility.getLexeme().equals("public")) throw new SemanticalErrorException(visibility, "Abstract method "+name.getLexeme()+" must be public");
 
-        return returnType.isCorrect();
+        } else throw new SemanticalErrorException(returnType.getToken(), "Method "+name.getLexeme()+" in class "+classContainer.getName().getLexeme()+" has an invalid return type "+returnType.getName());
+
+
+        return true;
     }
 
     public boolean sameSignature(MethodDeclaration otherMethod) {
@@ -72,7 +81,7 @@ public class MethodDeclaration extends MemberDeclaration {
         return true;
     }
 
-    private MemberType getReturnType() {
+    public MemberType getReturnType() {
         return this.returnType;
     }
 
@@ -91,5 +100,11 @@ public class MethodDeclaration extends MemberDeclaration {
     public boolean isAbstract() {
         return this.isAbstract;
     }
+
+    @Override
+    public boolean isCorrectlyDeclared() throws SemanticalErrorException {
+        return false;
+    }
+
 
 }

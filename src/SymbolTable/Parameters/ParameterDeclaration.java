@@ -33,7 +33,7 @@ public class ParameterDeclaration {
         return this.position;
     }
 
-    private MemberType getType() {
+    public MemberType getType() {
         return this.type;
     }
 

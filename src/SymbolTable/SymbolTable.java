@@ -23,8 +23,8 @@ public class SymbolTable {
 
         try {
             ClassDeclaration object = new ClassDeclaration(new Token("pc_object", "Object", -1));
-            MethodDeclaration debugPrint =  object.addMethod(new Token("pc_object", "debugPrint", -1), new Token("pc_object", "void", -1));
-            debugPrint.addParameter(new Token("pc_object", "i", -1), new Token("pc_object", "int", -1));
+            MethodDeclaration debugPrint =  object.addMethod(new Token("pc_object", "debugPrint", -1), new VoidType(new Token("pc_object", "void", -1)));
+            debugPrint.addParameter(new Token("pc_object", "i", -1), new IntegerType(new Token("pc_object", "int", -1)));
             object.setConsolidated(true);
 
             symbolTable.put("Object", object);
@@ -35,24 +35,24 @@ public class SymbolTable {
             symbolTable.put("String", string);
             ClassDeclaration system = new ClassDeclaration(new Token("pc_object", "System", -1));
             system.setConsolidated(true);
-            system.addMethod(new Token("pc_object", "read", -1), new Token("pc_object", "int", -1));
-            MethodDeclaration printB = system.addMethod(new Token("pc_object", "printB", -1), new Token("pc_object", "void", -1));
-            printB.addParameter(new Token("pc_object", "b", -1), new Token("pc_object", "boolean", -1));
-            MethodDeclaration printC = system.addMethod(new Token("pc_object", "printC", -1), new Token("pc_object", "void", -1));
-            printC.addParameter(new Token("pc_object", "c", -1), new Token("pc_object", "char", -1));
-            MethodDeclaration printI = system.addMethod(new Token("pc_object", "printI", -1), new Token("pc_object", "void", -1));
-            printI.addParameter(new Token("pc_object", "i", -1), new Token("pc_object", "int", -1));
-            MethodDeclaration printS = system.addMethod(new Token("pc_object", "printS", -1), new Token("pc_object", "void", -1));
-            printS.addParameter(new Token("pc_object", "s", -1), new Token("pc_object", "String", -1));
-            system.addMethod(new Token("pc_object", "println", -1), new Token("pc_object", "void", -1));
-            MethodDeclaration printBln = system.addMethod(new Token("pc_object", "printBln", -1), new Token("pc_object", "void", -1));
-            printBln.addParameter(new Token("pc_object", "b", -1), new Token("pc_object", "boolean", -1));
-            MethodDeclaration printCln = system.addMethod(new Token("pc_object", "printCln", -1), new Token("pc_object", "void", -1));
-            printCln.addParameter(new Token("pc_object", "c", -1), new Token("pc_object", "char", -1));
-            MethodDeclaration printIln = system.addMethod(new Token("pc_object", "printIln", -1), new Token("pc_object", "void", -1));
-            printIln.addParameter(new Token("pc_object", "i", -1), new Token("pc_object", "int", -1));
-            MethodDeclaration printSln = system.addMethod(new Token("pc_object", "printSln", -1), new Token("pc_object", "void", -1));
-            printSln.addParameter(new Token("pc_object", "s", -1), new Token("pc_object", "String", -1));
+            system.addMethod(new Token("pc_object", "read", -1), new IntegerType(new Token("pc_object", "int", -1)));
+            MethodDeclaration printB = system.addMethod(new Token("pc_object", "printB", -1), new VoidType(new Token("pc_object", "void", -1)));
+            printB.addParameter(new Token("pc_object", "b", -1), new BooleanType(new Token("pc_object", "boolean", -1)));
+            MethodDeclaration printC = system.addMethod(new Token("pc_object", "printC", -1), new VoidType(new Token("pc_object", "void", -1)));
+            printC.addParameter(new Token("pc_object", "c", -1), new CharacterType(new Token("pc_object", "char", -1)));
+            MethodDeclaration printI = system.addMethod(new Token("pc_object", "printI", -1), new VoidType(new Token("pc_object", "void", -1)));
+            printI.addParameter(new Token("pc_object", "i", -1), new IntegerType(new Token("pc_object", "int", -1)));
+            MethodDeclaration printS = system.addMethod(new Token("pc_object", "printS", -1), new VoidType(new Token("pc_object", "void", -1)));
+            printS.addParameter(new Token("pc_object", "s", -1), new MemberObjectType(new Token("pc_object", "String", -1)));
+            system.addMethod(new Token("pc_object", "println", -1), new VoidType(new Token("pc_object", "void", -1)));
+            MethodDeclaration printBln = system.addMethod(new Token("pc_object", "printBln", -1), new VoidType(new Token("pc_object", "void", -1)));
+            printBln.addParameter(new Token("pc_object", "b", -1), new BooleanType(new Token("pc_object", "boolean", -1)));
+            MethodDeclaration printCln = system.addMethod(new Token("pc_object", "printCln", -1), new VoidType(new Token("pc_object", "void", -1)));
+            printCln.addParameter(new Token("pc_object", "c", -1), new CharacterType(new Token("pc_object", "char", -1)));
+            MethodDeclaration printIln = system.addMethod(new Token("pc_object", "printIln", -1), new VoidType(new Token("pc_object", "void", -1)));
+            printIln.addParameter(new Token("pc_object", "i", -1), new IntegerType(new Token("pc_object", "int", -1)));
+            MethodDeclaration printSln = system.addMethod(new Token("pc_object", "printSln", -1), new VoidType(new Token("pc_object", "void", -1)));
+            printSln.addParameter(new Token("pc_object", "s", -1), new MemberObjectType(new Token("pc_object", "String", -1)));
             symbolTable.put("System", system);
         } catch (SemanticalErrorException e) {
             e.printStackTrace();
@@ -83,15 +83,15 @@ public class SymbolTable {
 
     }
 
-    public static AttributeDeclaration addAttribute(Token attribute, Token type) throws SemanticalErrorException{
+    public static AttributeDeclaration addAttribute(Token attribute, MemberType type) throws SemanticalErrorException{
 
         return currentClass.addAttribute(attribute, type);
     }
 
-    public static MethodDeclaration addMethod(Token method, Token returnType) throws SemanticalErrorException{
+    public static MethodDeclaration addMethod(Token method, MemberType returnType) throws SemanticalErrorException{
 
         MethodDeclaration methodDeclaration = currentClass.addMethod(method, returnType);
-        if(method.getLexeme().equals("main") && returnType.getLexeme().equals("void")){
+        if(method.getLexeme().equals("main") && returnType.getName().equals("void")){
 
             if(!hasMain || mainMethod.getParametersSize() > 0) {
                 mainMethod = methodDeclaration;
@@ -164,7 +164,7 @@ public class SymbolTable {
 
     public static boolean hasClass(Token name) throws SemanticalErrorException {
         if (symbolTable.containsKey(name.getLexeme())) return true;
-        else throw new SemanticalErrorException(name, "Attribute declared of class "+name.getLexeme()+" that doesn't exist");
+        else return  false;
     }
 
     public static boolean isCorrect()throws CompilerException {
@@ -179,11 +179,20 @@ public class SymbolTable {
         return true;
     }
 
-    public static MethodDeclaration addAbstractMethod(Token name, Token type) throws SemanticalErrorException {
+    public static MethodDeclaration addAbstractMethod(Token name, MemberType type) throws SemanticalErrorException {
         return currentClass.addAbstractMethod(name, type);
     }
 
     public static boolean isAbstract(Token parent) {
         return symbolTable.get(parent.getLexeme()).isAbstract();
+    }
+
+    public static void checkParent(ClassDeclaration parent) throws SemanticalErrorException {
+        if(symbolTable.containsKey(parent.getName().getLexeme())){
+            int expectedParameters = symbolTable.get(parent.getName().getLexeme()).genericParametersAmount();
+            if(expectedParameters != parent.genericParametersAmount())
+                throw new SemanticalErrorException(parent.getName(), "Parent class "+parent.getName().getLexeme()+" declared with "+parent.genericParametersAmount()+" generic parameters, expected "+expectedParameters);
+
+        }
     }
 }
