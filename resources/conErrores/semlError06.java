@@ -2,8 +2,8 @@
 //
 class A{
 
-    private int met1(int a);
-    private char met1(int a);
+    private int met1(int a){}
+    private char met1(int a){}
 }
 
 class A{
