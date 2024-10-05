@@ -12,6 +12,7 @@ import SymbolTable.MemberDeclaration;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 public class ClassDeclaration {
 
@@ -108,7 +109,6 @@ public class ClassDeclaration {
 
     public boolean isCorrectlyDeclared() throws  SemanticalErrorException{
 
-        System.out.println("CORRECTLY DECLARED EN CLASS "+name.getLexeme());
 
         for(HashMap.Entry<String, AttributeDeclaration> entry : attributes.entrySet()){
             currentMember = entry.getValue();
@@ -134,10 +134,18 @@ public class ClassDeclaration {
             SymbolTable.isConsolidated(parent);
             visited = false;
             HashMap<String, AttributeDeclaration> parentAttributes = SymbolTable.getAttributes(parent.getLexeme());
+            HashMap<String, AttributeDeclaration> toAdd = new HashMap<>();
             for(HashMap.Entry<String, AttributeDeclaration> entry : parentAttributes.entrySet()){
-                if(attributes.containsKey(entry.getKey())) throw new SemanticalErrorException(attributes.get(entry.getKey()).getName(), "Attribute "+entry.getKey()+" in class "+name.getLexeme()+" already exists in parent class");
-                else attributes.put(entry.getKey(), entry.getValue());
+                if(entry.getKey().charAt(0)== '#') {
+                    if(attributes.containsKey(entry.getValue().getName().getLexeme())) toAdd.put("#"+entry.getKey(), entry.getValue());
+                    else toAdd.put(entry.getKey(), entry.getValue());
+                }else{
+                    if(attributes.containsKey(entry.getKey())) toAdd.put("#"+entry.getKey(), entry.getValue());
+                    else toAdd.put(entry.getKey(), entry.getValue());
+                }
+
             }
+            attributes.putAll(toAdd);
             HashMap<String, MethodDeclaration> parentMethods = SymbolTable.getMethods(parent.getLexeme());
             for(HashMap.Entry<String, MethodDeclaration> entry : parentMethods.entrySet()){
                 if(methods.containsKey(entry.getKey())) {
@@ -154,6 +162,8 @@ public class ClassDeclaration {
         }
         return true;
     }
+
+
 
     public HashMap<String, AttributeDeclaration> getAttributes() {
         return attributes;
