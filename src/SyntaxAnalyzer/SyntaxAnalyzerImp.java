@@ -7,6 +7,7 @@ import SymbolTable.MethodDeclaration;
 import SymbolTable.MemberDeclaration;
 import SymbolTable.SymbolTable;
 import SymbolTable.Types.*;
+import SymbolTable.ConstructorDeclaration;
 import utils.Exceptions.CompilerException;
 import utils.Exceptions.LexicalErrorException;
 import utils.Exceptions.SyntaxErrorException;
@@ -255,9 +256,11 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         MemberType type = memberType();
         Token name = currentToken;
         match("id_met_var");
-        MethodDeclaration newMethod = SymbolTable.addAbstractMethod(name, type);
+        MethodDeclaration newMethod = new MethodDeclaration(name, type);
+        newMethod.setAbstract(true);
         newMethod.setVisibility(visibility);
         formalArgs(newMethod);
+        SymbolTable.addAbstractMethod(newMethod);
         match("pm_semicolon");
     }
 
@@ -284,8 +287,9 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
 
     private MemberDeclaration body(Token name, MemberType type) throws CompilerException {
         if(currentToken.getToken().equals("pm_par_open")){
-            MethodDeclaration newMethod = SymbolTable.addMethod(name, type);
+            MethodDeclaration newMethod = new MethodDeclaration(name, type);
             formalArgs(newMethod);
+            SymbolTable.addMethod(newMethod);
             block();
             return newMethod;
         }
@@ -305,9 +309,9 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
     }
 
     private MemberDeclaration constructor(Token name) throws CompilerException{
-        //TODO cambiar si hay mas de un constructor
-        MethodDeclaration newMethod = SymbolTable.addConstructor(name);
+        ConstructorDeclaration newMethod = new ConstructorDeclaration(name);
         formalArgs(newMethod);
+        SymbolTable.addConstructor(newMethod);
         block();
         return newMethod;
     }
@@ -1050,19 +1054,6 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         }
     }
 
-    private boolean recover(String terminal) throws LexicalErrorException {
-        while (!currentToken.getToken().equals(terminal) && !currentToken.getToken().equals("EOF")){
-            getNewToken();
 
-        }
-        return !currentToken.getToken().equals("EOF");
-    }
-
-    private boolean recover(ArrayList<String> terminals) throws LexicalErrorException {
-        while (!terminals.contains(currentToken.getToken()) && !currentToken.getToken().equals("EOF")){
-            getNewToken();
-        }
-        return !currentToken.getToken().equals("EOF");
-    }
 
 }

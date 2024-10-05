@@ -29,7 +29,7 @@ public class ClassDeclaration {
     protected HashMap<String, MemberType> parametricTypes;
 
     protected ArrayList<MemberObjectType> orderedParametricTypes;
-    protected MethodDeclaration constructor;
+    protected HashMap<String, ConstructorDeclaration> constructors;
 
     protected MemberDeclaration currentMember;
 
@@ -40,7 +40,8 @@ public class ClassDeclaration {
         this.attributes = new HashMap<>();
         this.methods = new HashMap<>();
         this.parametricTypes = new HashMap<>();
-        constructor = new ConstructorDeclaration(name);
+        constructors = new HashMap<>();
+        constructors.put("default", new ConstructorDeclaration(name));
         orderedParametricTypes = new ArrayList<>();
     }
 
@@ -75,6 +76,7 @@ public class ClassDeclaration {
 
     public MethodDeclaration addMethod(Token method, MemberType returnType) throws  SemanticalErrorException{
 
+
         if(!methods.containsKey(method.getLexeme())) {
             MethodDeclaration newMethod = new MethodDeclaration(method, returnType);
             this.methods.put(method.getLexeme(), newMethod);
@@ -82,6 +84,19 @@ public class ClassDeclaration {
 
         }
         throw new SemanticalErrorException(method, "Method "+method.getLexeme()+" in class "+name.getLexeme()+" already exists");
+    }
+
+    public MethodDeclaration addMethod(MethodDeclaration newMethod) throws  SemanticalErrorException{
+
+        String key = "#"+newMethod.getParametersSize()+"#"+newMethod.getName().getLexeme();
+
+        if(!methods.containsKey(key)) {
+
+            this.methods.put(key, newMethod);
+            return newMethod;
+
+        }
+        throw new SemanticalErrorException(newMethod.getName(), "Method "+ newMethod.getName().getLexeme()+" in class "+name.getLexeme()+" already exists with same amount of parameters");
     }
 
     public Token getName(){
@@ -99,12 +114,17 @@ public class ClassDeclaration {
         this.isAbstract = true;
     }
 
-    public MethodDeclaration addConstructor(Token name) throws SemanticalErrorException{
-        if(hasConstructor) throw new SemanticalErrorException(name, "Constructor for class "+this.name.getLexeme()+" already exists");
-        if(!name.getLexeme().equals(this.name.getLexeme())) throw new SemanticalErrorException(name, "Constructor for class "+this.name.getLexeme()+" must have the same name as the class");
-        this.constructor = new ConstructorDeclaration(name);
+    public MethodDeclaration addConstructor(ConstructorDeclaration name) throws SemanticalErrorException{
+
+        if(!name.getName().getLexeme().equals(this.name.getLexeme())) throw new SemanticalErrorException(name.getName(), "Constructor for class "+this.name.getLexeme()+" must have the same name as the class");
+        String key = "#"+name.getParametersSize()+"#";
+        if(constructors.containsKey(key)) throw new SemanticalErrorException(name.getName(), "Constructor for class "+this.name.getLexeme()+" already exists with same amount of parameters");
+        else{
+            if(name.getParametersSize()== 0) constructors.remove("default");
+            constructors.put(key, name);
+        }
         hasConstructor = true;
-        return this.constructor;
+        return name;
     }
 
     public boolean isCorrectlyDeclared() throws  SemanticalErrorException{
@@ -150,9 +170,9 @@ public class ClassDeclaration {
             for(HashMap.Entry<String, MethodDeclaration> entry : parentMethods.entrySet()){
                 if(methods.containsKey(entry.getKey())) {
                     if(!methods.get(entry.getKey()).sameSignature(entry.getValue()))
-                        throw new SemanticalErrorException(methods.get(entry.getKey()).getName(), "Method "+entry.getKey()+" in class "+name.getLexeme()+" cant redefine method with different signature in Parent class");
+                        throw new SemanticalErrorException(methods.get(entry.getKey()).getName(), "Method "+entry.getValue().getName().getLexeme()+" in class "+name.getLexeme()+" cant redefine method with different signature in Parent class");
                 }else {
-                    if(entry.getValue().isAbstract()&& !isAbstract) throw new SemanticalErrorException(name, "Method "+entry.getKey()+" in class "+name.getLexeme()+" must be implemented!");
+                    if(entry.getValue().isAbstract()&& !isAbstract) throw new SemanticalErrorException(name, "Method "+entry.getValue().getName().getLexeme()+" in class "+name.getLexeme()+" must be implemented!");
                     methods.put(entry.getKey(), entry.getValue());
                 }
             }
@@ -181,13 +201,13 @@ public class ClassDeclaration {
         return isAbstract;
     }
 
-    public MethodDeclaration addAbstractMethod(Token name, MemberType type) throws SemanticalErrorException{
+    public MethodDeclaration addAbstractMethod(MethodDeclaration method) throws SemanticalErrorException{
         if(isAbstract){
-            MethodDeclaration newMethod = new MethodDeclaration(name, type);
-            newMethod.setAbstract(true);
-
-            this.methods.put(name.getLexeme(), newMethod);
-            return newMethod;
+            String name = "#"+method.getParametersSize()+"#"+method.getName().getLexeme();
+            if(!methods.containsKey(name)){
+                this.methods.put(name, method);
+                return method;
+            }else throw new SemanticalErrorException(method.getName(), "Method "+method.getName().getLexeme()+" in class "+this.name.getLexeme()+" already exists with same amount of parameters");
         }
         throw new SemanticalErrorException(name, "Method "+name.getLexeme()+" in class "+this.name.getLexeme()+" must be declared as abstract");
     }

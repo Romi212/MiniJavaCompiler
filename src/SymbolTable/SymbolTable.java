@@ -89,17 +89,17 @@ public class SymbolTable {
         return currentClass.addAttribute(attribute, type);
     }
 
-    public static MethodDeclaration addMethod(Token method, MemberType returnType) throws SemanticalErrorException{
+    public static MethodDeclaration addMethod(MethodDeclaration method) throws SemanticalErrorException{
 
-        MethodDeclaration methodDeclaration = currentClass.addMethod(method, returnType);
-        if(method.getLexeme().equals("main") && returnType.getName().equals("void")){
+        currentClass.addMethod(method);
+        if(method.getName().getLexeme().equals("main") && method.getReturnType().getName().equals("void") && method.getParametersSize() == 0){
             System.out.println("Main method found");
-            if(!hasMain || mainMethod.getParametersSize() > 0) {
-                mainMethod = methodDeclaration;
+            if(!hasMain ) {
+                mainMethod = method;
                 hasMain = true;
             }
         }
-        return methodDeclaration;
+        return method;
     }
 
     public static String showString(){
@@ -143,8 +143,8 @@ public class SymbolTable {
         return memberType;
     }
 
-    public static MethodDeclaration addConstructor(Token name) throws   SemanticalErrorException {
-        return currentClass.addConstructor(name);
+    public static MethodDeclaration addConstructor(ConstructorDeclaration constructor) throws   SemanticalErrorException {
+        return currentClass.addConstructor(constructor);
     }
 
     public static void isConsolidated(Token parent) throws SemanticalErrorException{
@@ -188,8 +188,8 @@ public class SymbolTable {
         return true;
     }
 
-    public static MethodDeclaration addAbstractMethod(Token name, MemberType type) throws SemanticalErrorException {
-        return currentClass.addAbstractMethod(name, type);
+    public static void addAbstractMethod(MethodDeclaration method) throws SemanticalErrorException {
+        currentClass.addAbstractMethod(method);
     }
 
     public static boolean isAbstract(Token parent) {
