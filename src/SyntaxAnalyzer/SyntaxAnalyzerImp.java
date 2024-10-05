@@ -42,7 +42,7 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         }else{
             SyntaxOutput = "[SinErrores]";
         }
-
+        if(SymbolTable.isCorrect(currentToken)) System.out.println("[SinErrores]");
         return SyntaxOutput;
     }
 
