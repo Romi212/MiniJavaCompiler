@@ -12,7 +12,5 @@ public class ConstructorDeclaration extends  MethodDeclaration{
             return "["+visibility.getLexeme()+" "+ name.getLexeme() + "("+ parameters +") ]";
         }
 
-        public boolean isCorrectlyDeclared() {
-            return true;
-        }
+
 }

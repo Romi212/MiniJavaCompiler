@@ -13,7 +13,8 @@ class B extends A {
 }
 
 class C extends B{
-    public int met1(int a){}
+    public int met1(int a){
+    }
     public int met1(char a, char b){}
 }
 

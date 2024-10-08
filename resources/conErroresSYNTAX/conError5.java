@@ -4,5 +4,7 @@ class MyClass {
 
         public MyClass() {
         }
-        abstract void m1();
+        C<> myMethod() {
+            return new C<>();
+        }
 }

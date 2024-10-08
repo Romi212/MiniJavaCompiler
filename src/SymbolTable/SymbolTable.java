@@ -93,7 +93,7 @@ public class SymbolTable {
 
         currentClass.addMethod(method);
         if(method.getName().getLexeme().equals("main") && method.getReturnType().getName().equals("void") && method.getParametersSize() == 0){
-            System.out.println("Main method found");
+
             if(!hasMain ) {
                 mainMethod = method;
                 hasMain = true;

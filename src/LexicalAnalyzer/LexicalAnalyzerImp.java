@@ -159,6 +159,7 @@ public class LexicalAnalyzerImp implements LexicalAnalyzer {
     private Token floatExponent() throws IOException,LexicalErrorException{
         int exponent = 0;
         currentChar = sourceManager.getNextChar();
+        String numero = lexeme;
         if( currentChar == '-' || currentChar == '+'){
             lexeme += currentChar;
             currentChar = sourceManager.getNextChar();
@@ -170,7 +171,18 @@ public class LexicalAnalyzerImp implements LexicalAnalyzer {
         }
         if (lexeme.charAt(lexeme.length()-1) == 'e' ||lexeme.charAt(lexeme.length()-1) == '-' || lexeme.charAt(lexeme.length()-1) == '+' ) throw new LexicalErrorException(lexeme,sourceManager.getLineNumber(), sourceManager.getLineIndexNumber(), sourceManager.getCurrentLine(), "Invalid float number, exponent not found.");
 
-        if(exponent > 38) throw new LexicalErrorException(lexeme,sourceManager.getLineNumber(), sourceManager.getLineIndexNumber(), sourceManager.getCurrentLine(), "Invalid float number, exponent too big.");
+        try {
+            float numeroSinExp = Float.parseFloat(numero+"1f");
+            if(numeroSinExp !=0) {
+                float f = Float.parseFloat(lexeme + "f");
+                if (f > 3.4028235E38)
+                    throw new LexicalErrorException(lexeme, sourceManager.getLineNumber(), sourceManager.getLineIndexNumber(), sourceManager.getCurrentLine(), "Invalid float number, exeeds float valid range.");
+                if (f < 1.401298464324817E-45)
+                    throw new LexicalErrorException(lexeme, sourceManager.getLineNumber(), sourceManager.getLineIndexNumber(), sourceManager.getCurrentLine(), "Invalid float number, exeeds float valid range.");
+            }
+        } catch (Exception e) {
+            throw new LexicalErrorException(lexeme,sourceManager.getLineNumber(), sourceManager.getLineIndexNumber(), sourceManager.getCurrentLine(), "Invalid float number, valid float range exceeded.");
+        }
         return new Token("lit_float",lexeme,sourceManager.getLineNumber());
 
         //throw new LexicalErrorException(lexeme,sourceManager.getLineNumber(), sourceManager.getLineIndexNumber(), sourceManager.getCurrentLine(), "Invalid float number, exponent too big.");

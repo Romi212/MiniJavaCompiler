@@ -95,6 +95,11 @@ class Compleja<T, U, V> extends BaseClase {
     public void metodo12() {
         String str = "Hola";
         str += " Mundo";
+        switch (str) {
+            case 5: if(a > 5) a =5;
+            default:
+                int a = 3;
+        }
         print (str);
     }
 

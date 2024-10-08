@@ -136,6 +136,10 @@ public class ClassDeclaration {
                     throw new SemanticalErrorException(entry.getValue().getType().getToken(), "Attribute "+entry.getValue().getName().getLexeme()+" declared of class "+entry.getValue().getType().getName()+" that doesn't exist nor is a valid Parametric Type");
             }
         }
+        for(HashMap.Entry<String, ConstructorDeclaration> entry : constructors.entrySet()){
+            currentMember = entry.getValue();
+            if(!entry.getValue().isCorrectlyDeclared()) return false;
+        }
         for(HashMap.Entry<String, MethodDeclaration> entry : methods.entrySet()){
             currentMember = entry.getValue();
             if(!entry.getValue().isCorrectlyDeclared()) return false;
