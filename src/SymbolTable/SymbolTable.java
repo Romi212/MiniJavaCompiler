@@ -1,5 +1,6 @@
 package SymbolTable;
 
+import AST.Statements.StatementNode;
 import SymbolTable.Attributes.AttributeDeclaration;
 import SymbolTable.Clases.ClassDeclaration;
 import SymbolTable.Types.*;
@@ -7,7 +8,6 @@ import utils.Exceptions.CompilerException;
 import utils.Exceptions.SemanticalErrorException;
 import utils.Token;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 
@@ -63,15 +63,6 @@ public class SymbolTable {
 
     }
 
-    public static void addClass(Token className) throws SemanticalErrorException{
-        if(!symbolTable.containsKey(className.getLexeme())){
-        symbolTable.put(className.getLexeme(), new ClassDeclaration(className));
-        currentClass = symbolTable.get(className);
-        }
-        else{
-            throw new SemanticalErrorException(className, "Class "+className.getLexeme()+" already exists");
-        }
-    }
 
     public static void addClass(ClassDeclaration classDeclaration) throws SemanticalErrorException{
         if(!symbolTable.containsKey(classDeclaration.getName().getLexeme())){
@@ -211,5 +202,9 @@ public class SymbolTable {
 
     public static MemberDeclaration getCurrentMember() {
         return currentClass.getCurrentMember();
+    }
+
+    public static void addStatement(StatementNode statement) {
+        currentClass.addStatement(statement);
     }
 }

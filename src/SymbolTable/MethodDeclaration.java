@@ -1,6 +1,7 @@
 package SymbolTable;
 
-import SymbolTable.Clases.ClassDeclaration;
+import AST.BLockDeclaration;
+import AST.Statements.StatementNode;
 import SymbolTable.Parameters.ParameterDeclaration;
 import SymbolTable.Types.MemberType;
 import utils.Exceptions.SemanticalErrorException;
@@ -15,6 +16,8 @@ public class MethodDeclaration extends MemberDeclaration {
     protected boolean isAbstract = false;
     protected HashMap<String, ParameterDeclaration> parameters = new HashMap<>();
 
+    protected BLockDeclaration block;
+
 
     public MethodDeclaration(Token name, MemberType returnType){
         this.name = name;
@@ -23,11 +26,16 @@ public class MethodDeclaration extends MemberDeclaration {
         this.visibility = new Token("pw_public", "public", -1);
     }
 
+    public void addBlock(BLockDeclaration block){
+        this.block = block;
+    }
     public Token getName(){
         return this.name;
     }
 
-
+    public void addStatement(StatementNode statement){
+        block.addStatement(statement);
+    }
     public String toString(){
 
         String staticT = isStatic ? "static " : "";

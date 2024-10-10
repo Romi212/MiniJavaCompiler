@@ -1,9 +1,9 @@
 package SymbolTable.Clases;
 
+import AST.Statements.StatementNode;
 import SymbolTable.Attributes.*;
 import SymbolTable.ConstructorDeclaration;
 import SymbolTable.MethodDeclaration;
-import SymbolTable.Parameters.ParameterDeclaration;
 import SymbolTable.SymbolTable;
 import SymbolTable.Types.*;
 import utils.Exceptions.SemanticalErrorException;
@@ -12,7 +12,6 @@ import SymbolTable.MemberDeclaration;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 
 public class ClassDeclaration {
 
@@ -31,6 +30,7 @@ public class ClassDeclaration {
     protected ArrayList<MemberObjectType> orderedParametricTypes;
     protected HashMap<String, ConstructorDeclaration> constructors;
 
+    protected MethodDeclaration currentMethod;
     protected MemberDeclaration currentMember;
 
     public ClassDeclaration(Token name){
@@ -45,11 +45,6 @@ public class ClassDeclaration {
         orderedParametricTypes = new ArrayList<>();
     }
 
-    public ClassDeclaration(){
-        this.isConsolidated = false;
-        this.attributes = new HashMap<>();
-        this.methods = new HashMap<>();
-    }
 
     public void setName(Token name) {
         this.name = name;
@@ -75,7 +70,7 @@ public class ClassDeclaration {
     }
 
     public MethodDeclaration addMethod(Token method, MemberType returnType) throws  SemanticalErrorException{
-
+///TODO CHANGE THIS DELETE ARREGLAR BOOO
 
         if(!methods.containsKey(method.getLexeme())) {
             MethodDeclaration newMethod = new MethodDeclaration(method, returnType);
@@ -92,11 +87,16 @@ public class ClassDeclaration {
 
         if(!methods.containsKey(key)) {
 
+            currentMethod = newMethod;
             this.methods.put(key, newMethod);
             return newMethod;
 
         }
         throw new SemanticalErrorException(newMethod.getName(), "Method "+ newMethod.getName().getLexeme()+" in class "+name.getLexeme()+" already exists with same amount of parameters");
+    }
+
+    public void addStatement(StatementNode statement){
+        this.currentMethod.addStatement(statement);
     }
 
     public Token getName(){
@@ -110,9 +110,6 @@ public class ClassDeclaration {
         return "Class: "+this.name.getLexeme()+"\n extends: "+p+"\n Attributes: "+this.attributes.toString()+"\n Methods: "+this.methods.toString()+"\n";
     }
 
-    public void makeAbstract() {
-        this.isAbstract = true;
-    }
 
     public MethodDeclaration addConstructor(ConstructorDeclaration name) throws SemanticalErrorException{
 

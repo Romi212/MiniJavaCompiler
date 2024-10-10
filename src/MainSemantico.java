@@ -26,37 +26,12 @@ public class MainSemantico {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        /*
-        Token token = null;
-        boolean error = false;
-       do{
-           try {
-                token = lexicalAnalyzer.nextToken();
-                System.out.println(token);
-
-              } catch (LexicalErrorException e) {
-                System.out.println(e.getLongMessage());
-                System.out.println(e.getMessage());
-                error = true;
-
-           }
-
-
-       }while(token == null || token.getToken() != "EOF");
-
-
-      if(!error)  System.out.println("[SinErrores]");
-        try {
-            sourceManager.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }*/
 
         SymbolTable.createTable();
         SyntaxAnalyzer syntaxAnalyzer = new SyntaxAnalyzerImp(lexicalAnalyzer);
 
         try {
-            System.out.println(syntaxAnalyzer.analyzeSintax());
+            syntaxAnalyzer.analyzeSintax();
 
         } catch (CompilerException e) {
             System.out.println(e.getMessage());
@@ -64,8 +39,8 @@ public class MainSemantico {
         }
 
 
-        ;
-        System.out.println(SymbolTable.showString());
+        //Muestra una string con la tabla de simbolos
+        //System.out.println(SymbolTable.showString());
     }
 
 }
