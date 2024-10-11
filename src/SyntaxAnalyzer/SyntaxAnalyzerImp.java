@@ -7,10 +7,7 @@ import AST.Expressions.BinaryExpression;
 import AST.Expressions.ExpressionNode;
 import AST.Expressions.Literals.*;
 import AST.Expressions.UnaryExpression;
-import AST.Statements.IfNode;
-import AST.Statements.SemicolonNode;
-import AST.Statements.StatementNode;
-import AST.Statements.WhileNode;
+import AST.Statements.*;
 import LexicalAnalyzer.LexicalAnalyzer;
 import SymbolTable.Attributes.AttributeDeclaration;
 import SymbolTable.Clases.ClassDeclaration;
@@ -461,20 +458,23 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
             match("pm_semicolon");
         }
         else if(currentToken.getToken().equals("id_class")){
-            match("id_class");
-            object();
+
+            statementN = object();
             match("pm_semicolon");
+
         }
         else if(Firsts.isFirst("NonStaticExp", currentToken.getToken())){
-            nonStaticExp();
+            statementN = nonStaticExp();
             match("pm_semicolon");
+
         }
         else if(Firsts.isFirst("LocalType", currentToken.getToken())){
-            primitiveVar();
+            statementN = primitiveVar();
             match("pm_semicolon");
+
         }
         else if(Firsts.isFirst("Return", currentToken.getToken())){
-            returnT();
+            statementN = returnT();
             match("pm_semicolon");
         }
         else if(Firsts.isFirst("Break", currentToken.getToken())){
@@ -493,7 +493,7 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
 
         }
         else if(Firsts.isFirst("Switch", currentToken.getToken())){
-            switchT();
+            return switchT();
         }
         else if(Firsts.isFirst("For", currentToken.getToken())){
             forT();
@@ -512,23 +512,36 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
 
     //VOY POR ACA
 
-    private void object() throws CompilerException {
+    private StatementNode object() throws CompilerException {
+        Token name = currentToken;
+        match("id_class");
         if (currentToken.getToken().equals("pm_period")) {
-            staticCall();
-            possibleExp();
+            ExpressionNode exp = staticCall();
+            AssignmentExp ass = possibleExp();
+            if(ass != null) {
+                ass.addAccess(exp);
+                return ass;
+            }else{
+                return exp;
+            }
+
         }
         else if(currentToken.getToken().equals("op_less")|| currentToken.getToken().equals("id_met_var")){
             generic();
-            localVar();
+            return localVar();
         }
         else{
             throw new SyntaxErrorException(currentToken, "static call or local object declaration");
         }
     }
-    private void localVar() throws CompilerException {
+    private AssignmentStatement localVar() throws CompilerException {
+        Token var = currentToken;
         match("id_met_var");
-        chainedVar();
-        initialize();
+        AssignmentStatement assignmentStatement = chainedVar();
+        assignmentStatement.addVariable(var);
+        ExpressionNode exp = initialize();
+        assignmentStatement.setExpression(exp);
+        return assignmentStatement;
     }
 
     private ExpressionNode staticCall() throws CompilerException {
@@ -546,60 +559,78 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
     }
 
 
-    private void chainedVar() throws CompilerException {
+    private AssignmentStatement chainedVar() throws CompilerException {
         if(currentToken.getToken().equals("pm_comma")){
             match("pm_comma");
+            Token var = currentToken;
             match("id_met_var");
-            chainedVar();
+            AssignmentStatement assignmentStatement = chainedVar();
+            assignmentStatement.addVariable(var);
+            return assignmentStatement;
         }
         else if(Follows.itFollows("ChainedVar", currentToken.getToken())){
             //No more vars declared here
+            return new AssignmentStatement(null);
         }else{
             throw new SyntaxErrorException(currentToken, "another var, initialization or ;");
         }
     }
 
-    private void primitiveVar() throws CompilerException {
-        localType();
-        localVar();
-    }
 
-    private void localType() throws CompilerException {
+    private StatementNode primitiveVar() throws CompilerException {
         if(Firsts.isFirst("PrimitiveType", currentToken.getToken())){
-            primitiveType();
+            MemberType t = primitiveType();
+            AssignmentStatement a = localVar();
+            a.setType(t.getToken());
+            return a;
         }
         else if(currentToken.getToken().equals("rw_var")){
             match("rw_var");
+            LocalVarDeclaration localVar = new LocalVarDeclaration(currentToken);
+            match("id_met_var");
+            ExpressionNode exp =initialize();
+            localVar.setExpression(exp);
+            return localVar;
         }
         else{
             throw new SyntaxErrorException(currentToken, "local var type");
         }
     }
 
-    private void nonStaticExp() throws CompilerException {
-        nSComplexExpression();
-        possibleExp();
+    private ExpressionNode nonStaticExp() throws CompilerException {
+        ExpressionNode expN = nSComplexExpression();
+        AssignmentExp assign = possibleExp();
+        if( assign != null){
+            assign.addAccess(expN);
+            return assign;
+        }
+        return expN;
     }
 
-    private void nSComplexExpression() throws CompilerException {
-        basicExpression();
-        possibleOp();
+    private ExpressionNode nSComplexExpression() throws CompilerException {
+        ExpressionNode exp = basicExpression();
+        BinaryExpression operation  = possibleOp();
+        if(operation!= null){
+            operation.addLeft(exp);
+            return operation;
+        }else return exp;
     }
-    private void returnT() throws CompilerException {
+    private StatementNode returnT() throws CompilerException {
         match("rw_return");
-        expressionOp();
+        return new ReturnNode( expressionOp());
     }
 
     private void breakT() throws CompilerException {
         match("rw_break");
     }
 
-    private void expressionOp() throws CompilerException {
+    private ExpressionNode expressionOp() throws CompilerException {
         if(Firsts.isFirst("Expression", currentToken.getToken())){
-            expression();
+            return expression();
         }
         else if (currentToken.getToken().equals("pm_semicolon")){
             //No expression after return
+            return null;
         }else{
             throw new SyntaxErrorException(currentToken, "expression or ;");
         }
@@ -666,13 +697,14 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         }
     }
 
-    private void initialize() throws CompilerException {
+    private ExpressionNode initialize() throws CompilerException {
         if(currentToken.getToken().equals("assign")){
             match("assign");
-            complexExpression();
+            return  complexExpression();
         }
         else if (currentToken.getToken().equals("pm_semicolon")){
             //Not initialized
+            return null;
         }
         else{
             throw new SyntaxErrorException(currentToken, "var initialization or ;");
@@ -699,31 +731,37 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         return new WhileNode(condition, body, name);
     }
 
-    private void switchT() throws CompilerException {
+    private SwitchNode switchT() throws CompilerException {
         match("rw_switch");
         match("pm_par_open");
-        expression();
+        ExpressionNode exp = expression();
 
         match("pm_par_close");
         match("pm_brace_open");
-        switchStateList();
+        SwitchNode node = switchStateList();
         match("pm_brace_close");
+        node.setExpression(exp);
+        return node;
+
     }
 
-    private void switchStateList() throws CompilerException {
+    private SwitchNode switchStateList() throws CompilerException {
         if(Firsts.isFirst("SwitchStatement", currentToken.getToken())){
-            switchStatement();
-            switchStateList();
+            CaseNode c = switchStatement();
+            SwitchNode s = switchStateList();
+            s.addCase(c);
+            return s;
         }
         else if(currentToken.getToken().equals("pm_brace_close")){
             //No more switch statements
+            return new SwitchNode();
         }
         else{
             throw new SyntaxErrorException(currentToken, "switch statement or }");
         }
     }
 
-    private void switchStatement() throws CompilerException {
+    private CaseNode switchStatement() throws CompilerException {
         if(currentToken.getToken().equals("rw_case")){
             match("rw_case");
             primitiveLiteral();
