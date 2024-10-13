@@ -469,7 +469,7 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
 
         }
         else if(Firsts.isFirst("NonStaticExp", currentToken.getToken())){
-            statementN = nonStaticExp();
+            statementN = new AssignmentStatement(nonStaticExp());
             match("pm_semicolon");
 
         }
@@ -523,12 +523,14 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         if (currentToken.getToken().equals("pm_period")) {
             ExpressionNode exp = staticCall();
             AssignmentExp ass = possibleExp();
+            AssignmentStatement expression = new AssignmentStatement(null);
             if(ass != null) {
                 ass.addAccess(exp);
-                return ass;
+                expression.setExpression(ass);
             }else{
-                return exp;
+                expression.setExpression(exp);
             }
+            return expression;
 
         }
         else if(currentToken.getToken().equals("op_less")|| currentToken.getToken().equals("id_met_var")){
@@ -539,14 +541,14 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
             throw new SyntaxErrorException(currentToken, "static call or local object declaration");
         }
     }
-    private AssignmentStatement localVar() throws CompilerException {
+    private DeclarationStatement localVar() throws CompilerException {
         Token var = currentToken;
         match("id_met_var");
-        AssignmentStatement assignmentStatement = chainedVar();
-        assignmentStatement.addVariable(var);
+        DeclarationStatement declarationStatement = chainedVar();
+        declarationStatement.addVariable(var);
         ExpressionNode exp = initialize();
-        assignmentStatement.setExpression(exp);
-        return assignmentStatement;
+        declarationStatement.setExpression(exp);
+        return declarationStatement;
     }
 
     private ExpressionNode staticCall() throws CompilerException {
@@ -564,18 +566,18 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
     }
 
 
-    private AssignmentStatement chainedVar() throws CompilerException {
+    private DeclarationStatement chainedVar() throws CompilerException {
         if(currentToken.getToken().equals("pm_comma")){
             match("pm_comma");
             Token var = currentToken;
             match("id_met_var");
-            AssignmentStatement assignmentStatement = chainedVar();
-            assignmentStatement.addVariable(var);
-            return assignmentStatement;
+            DeclarationStatement declarationStatement = chainedVar();
+            declarationStatement.addVariable(var);
+            return declarationStatement;
         }
         else if(Follows.itFollows("ChainedVar", currentToken.getToken())){
             //No more vars declared here
-            return new AssignmentStatement(null);
+            return new DeclarationStatement(null);
         }else{
             throw new SyntaxErrorException(currentToken, "another var, initialization or ;");
         }
@@ -585,7 +587,7 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
     private StatementNode primitiveVar() throws CompilerException {
         if(Firsts.isFirst("PrimitiveType", currentToken.getToken())){
             MemberType t = primitiveType();
-            AssignmentStatement a = localVar();
+            DeclarationStatement a = localVar();
             a.setType(t.getToken());
             return a;
         }

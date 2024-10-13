@@ -27,6 +27,13 @@ public class CaseNode extends StatementNode{
     }
 
     public String toString(){
-        return "CaseNode(" + expression.toString() + "): " + statement.toString();
+
+        String toReturn;
+        if(expression!= null){
+            toReturn = "CaseNode(" + expression.toString() + "): " + statement.toString();
+        }else{
+            toReturn = "default: " + statement.toString();
+        }
+        return toReturn;
     }
 }
