@@ -24,6 +24,7 @@ public class MethodDeclaration extends MemberDeclaration {
         this.returnType = returnType;
         this.isStatic = false;
         this.visibility = new Token("pw_public", "public", -1);
+        block = new BLockDeclaration();
     }
 
     public void addBlock(BLockDeclaration block){
@@ -39,7 +40,7 @@ public class MethodDeclaration extends MemberDeclaration {
     public String toString(){
 
         String staticT = isStatic ? "static " : "";
-        return "["+visibility.getLexeme()+" "+ staticT+" " + name.getLexeme() + "("+ parameters +") : " + returnType.getName()+"]";
+        return "["+visibility.getLexeme()+" "+ staticT+" " + name.getLexeme() + "("+ parameters +") : " + returnType.getName()+"] \n"+block.toString()+"\n";
     }
 
     public void addParameter(Token argName, MemberType argType) throws SemanticalErrorException {

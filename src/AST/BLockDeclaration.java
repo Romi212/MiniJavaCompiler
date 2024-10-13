@@ -30,4 +30,13 @@ public class BLockDeclaration extends StatementNode{
         }
         return true;
     }
+
+    public String toString(){
+        String result = "BlockDeclaration{ \n";
+        for(StatementNode statement : statements){
+            result += statement.toString()+ "\n";
+        }
+        result += "}";
+        return result;
+    }
 }

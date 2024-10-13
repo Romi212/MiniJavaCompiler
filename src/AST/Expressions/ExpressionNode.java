@@ -11,6 +11,6 @@ public abstract class ExpressionNode extends StatementNode {
 
         abstract public boolean isCorrect();
 
-        abstract MemberType getExpressionType();
+        abstract public MemberType getExpressionType();
 
 }

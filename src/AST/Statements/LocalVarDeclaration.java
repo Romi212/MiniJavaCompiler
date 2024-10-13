@@ -21,4 +21,12 @@ public class LocalVarDeclaration extends StatementNode{
     public boolean isCorrect() {
         return true;
     }
+
+    public String toString(){
+        String toReturn = "var "+ this.name;
+        if(initialization != null){
+            toReturn += " = " + initialization.toString();
+        }
+        return toReturn+";";
+    }
 }

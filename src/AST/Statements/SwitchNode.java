@@ -37,4 +37,16 @@ public class SwitchNode extends StatementNode{
         }
         return correct;
     }
+
+    public String toString(){
+        String result = "SwitchNode(" + expression.toString() + "){ \n";
+        for(CaseNode c : cases){
+            result += c.toString() + "\n";
+        }
+        if(defaultCase != null){
+            result += defaultCase.toString() + "\n";
+        }
+        result += "}";
+        return result;
+    }
 }

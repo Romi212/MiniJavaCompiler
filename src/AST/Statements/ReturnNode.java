@@ -14,4 +14,8 @@ public class ReturnNode extends StatementNode{
     public boolean isCorrect() {
         return expression.isCorrect();
     }
+
+    public String toString(){
+        return "ReturnNode(" + expression.toString() + ")";
+    }
 }

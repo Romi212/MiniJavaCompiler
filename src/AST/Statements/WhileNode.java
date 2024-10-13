@@ -17,4 +17,8 @@ public class WhileNode extends  StatementNode{
     public boolean isCorrect() {
         return condition.isCorrect() && statement.isCorrect();
     }
+
+    public String toString(){
+        return "WhileNode(" + condition.toString() + "){ \n " + statement.toString() + "}";
+    }
 }

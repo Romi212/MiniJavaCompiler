@@ -18,4 +18,8 @@ public abstract class LiteralValue extends ExpressionNode {
     }
 
     public abstract MemberType getExpressionType();
+
+    public String toString(){
+        return value.getLexeme();
+    }
 }

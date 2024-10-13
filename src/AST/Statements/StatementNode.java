@@ -11,4 +11,6 @@ abstract public class StatementNode {
     }
 
     public abstract boolean isCorrect();
+
+
 }

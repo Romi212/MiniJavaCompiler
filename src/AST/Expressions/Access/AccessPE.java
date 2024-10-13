@@ -4,15 +4,13 @@ import AST.Expressions.ExpressionNode;
 import SymbolTable.Types.MemberType;
 import utils.Token;
 
-import java.util.ArrayList;
+public class AccessPE extends AccessMember{
 
-public class AccessChainedMember extends AccessMember{
-
-    public AccessChainedMember(Token name){
-        super(name);
+    ExpressionNode exp;
+    public AccessPE(ExpressionNode name){
+        super(null);
+        exp = name;
     }
-
-
     @Override
     public boolean isCorrect() {
         return true;
@@ -21,5 +19,9 @@ public class AccessChainedMember extends AccessMember{
     @Override
     public MemberType getExpressionType() {
         return null;
+    }
+
+    public String toString(){
+        return exp.toString();
     }
 }

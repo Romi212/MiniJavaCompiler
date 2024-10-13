@@ -1,12 +1,13 @@
-package AST.Expressions;
+package AST.Expressions.UnaryOperations;
 
+import AST.Expressions.ExpressionNode;
 import SymbolTable.Types.MemberType;
 import utils.Token;
 
-public class UnaryExpression extends ExpressionNode{
+abstract public class UnaryExpression extends ExpressionNode {
 
-        private ExpressionNode expression;
-        private Token operator;
+        protected ExpressionNode expression;
+        protected Token operator;
 
         public UnaryExpression(Token operator){
             this.operator = operator;

@@ -40,7 +40,7 @@ public class MainSemantico {
 
 
         //Muestra una string con la tabla de simbolos
-        //System.out.println(SymbolTable.showString());
+        System.out.println(SymbolTable.showString());
     }
 
 }

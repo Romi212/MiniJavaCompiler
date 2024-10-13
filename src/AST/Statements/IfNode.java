@@ -20,4 +20,13 @@ public class IfNode extends StatementNode{
         public boolean isCorrect() {
             return condition.isCorrect() && ifStatement.isCorrect() && elseStatement.isCorrect();
         }
+
+        public String toString(){
+            String toReturn = "IfNode(" + condition.toString() + "){ \n " + ifStatement.toString() + "}"  ;
+            if( elseStatement != null){
+                toReturn += "else{ \n " + elseStatement.toString() + "}";
+            }
+            return toReturn;
+
+        }
 }

@@ -3,7 +3,7 @@ package AST.Expressions.Access;
 import SymbolTable.Types.MemberType;
 import utils.Token;
 
-public class AccessThis extends AccessExpression{
+public class AccessThis extends AccessMember{
 
     public AccessThis(Token name){
         super(name);

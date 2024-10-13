@@ -3,10 +3,15 @@ package SyntaxAnalyzer;
 import AST.BLockDeclaration;
 import AST.Expressions.Access.*;
 import AST.Expressions.AssignmentExp;
-import AST.Expressions.BinaryExpression;
+import AST.Expressions.BinaryOperations.BinaryExpression;
+import AST.Expressions.BinaryOperations.CompareOperation;
+import AST.Expressions.BinaryOperations.LogicalOperation;
+import AST.Expressions.BinaryOperations.NumberOperation;
 import AST.Expressions.ExpressionNode;
 import AST.Expressions.Literals.*;
-import AST.Expressions.UnaryExpression;
+import AST.Expressions.UnaryOperations.NotOperation;
+import AST.Expressions.UnaryOperations.SignExpression;
+import AST.Expressions.UnaryOperations.UnaryExpression;
 import AST.Statements.*;
 import LexicalAnalyzer.LexicalAnalyzer;
 import SymbolTable.Attributes.AttributeDeclaration;
@@ -762,27 +767,31 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
     }
 
     private CaseNode switchStatement() throws CompilerException {
+        LiteralValue option = null;
+        StatementNode statement;
         if(currentToken.getToken().equals("rw_case")){
             match("rw_case");
-            primitiveLiteral();
+            option = primitiveLiteral();
             match("pm_colon");
-            statementOp();
+            statement = statementOp();
         }
         else if(currentToken.getToken().equals("rw_default")){
             match("rw_default");
             match("pm_colon");
-            statement();
+            statement = statement();
         }else{
             throw new SyntaxErrorException(currentToken, "case or default");
         }
+        return new CaseNode(option, statement);
     }
 
-    private void statementOp() throws CompilerException {
+    private StatementNode statementOp() throws CompilerException {
         if(Firsts.isFirst("Statement", currentToken.getToken())){
-            statement();
+            return statement();
         }
         else if(currentToken.getToken().equals("rw_case")|| currentToken.getToken().equals("rw_default")|| currentToken.getToken().equals("pm_brace_close")){
             //No statement here
+            return null;
         }else{
             throw new SyntaxErrorException(currentToken, "valid statement or case or default");
         }
@@ -868,49 +877,63 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
 
     private BinaryExpression binaryOp() throws CompilerException {
         Token toReturn = currentToken;
+        BinaryExpression exp ;
         if(currentToken.getToken().equals("op_and")){
             match("op_and");
+            exp = new LogicalOperation(toReturn);
         }
         else if(currentToken.getToken().equals("op_or")){
             match("op_or");
+            exp = new LogicalOperation(toReturn);
         }
         else if(currentToken.getToken().equals("op_equal")){
             match("op_equal");
+            exp = new CompareOperation(toReturn);
         }
         else if(currentToken.getToken().equals("op_not_equal")){
             match("op_not_equal");
+            exp = new CompareOperation(toReturn);
         }
         else if(currentToken.getToken().equals("op_less")){
             match("op_less");
+            exp = new CompareOperation(toReturn);
         }
         else if(currentToken.getToken().equals("op_greater")){
             match("op_greater");
+            exp = new CompareOperation(toReturn);
         }
         else if(currentToken.getToken().equals("op_less_equal")){
             match("op_less_equal");
+            exp = new CompareOperation(toReturn);
         }
         else if(currentToken.getToken().equals("op_greater_equal")){
             match("op_greater_equal");
+            exp = new CompareOperation(toReturn);
         }
         else if(currentToken.getToken().equals("op_add")){
             match("op_add");
+            exp = new NumberOperation(toReturn);
         }
         else if(currentToken.getToken().equals("op_sub")){
             match("op_sub");
+            exp = new NumberOperation(toReturn);
         }
         else if(currentToken.getToken().equals("op_mult")){
             match("op_mult");
+            exp = new NumberOperation(toReturn);
         }
         else if(currentToken.getToken().equals("op_div")){
             match("op_div");
+            exp = new NumberOperation(toReturn);
         }
         else if ( currentToken.getToken().equals("op_mod")){
             match("op_mod");
+            exp = new NumberOperation(toReturn);
         }
         else{
             throw new SyntaxErrorException(currentToken, "binary operator");
         }
-        return new BinaryExpression(toReturn);
+        return exp;
 
     }
 
@@ -931,19 +954,23 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
 
     private UnaryExpression unaryOp() throws CompilerException {
         Token toReturn = currentToken;
+        UnaryExpression exp;
         if(currentToken.getToken().equals("op_add")){
             match("op_add");
+            exp = new SignExpression(toReturn);
         }
         else if(currentToken.getToken().equals("op_sub")){
             match("op_sub");
+            exp = new SignExpression(toReturn);
         }
         else if(currentToken.getToken().equals("op_not")){
             match("op_not");
+            exp = new NotOperation(toReturn);
         }
         else{
             throw new SyntaxErrorException(currentToken, "unary operator");
         }
-        return new UnaryExpression(toReturn);
+        return exp;
     }
 
     private ExpressionNode operand() throws CompilerException {
@@ -1016,12 +1043,13 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
     }
 
     private ExpressionNode access() throws CompilerException {
-        ExpressionNode exp = primary();
-        chainedOp();
+        AccessMember exp = primary();
+        ChainedMembers chain = chainedOp();
+        exp.addChain(chain);
         return exp;
     }
 
-    private ExpressionNode primary() throws CompilerException {
+    private AccessMember primary() throws CompilerException {
         if(Firsts.isFirst("AccessThis", currentToken.getToken())){
             return accessThis();
         }
@@ -1080,11 +1108,11 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
 
     }
 
-    private ExpressionNode pExpression() throws CompilerException {
+    private AccessPE pExpression() throws CompilerException {
         match("pm_par_open");
         ExpressionNode exp = expression();
         match("pm_par_close");
-        return exp;
+        return new AccessPE(exp);
     }
 
     private AccessMember accessVarMethod() throws CompilerException {
@@ -1094,7 +1122,7 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         return access;
     }
 
-    private void possibleArgs(AccessMember access) throws CompilerException {
+    private void possibleArgs(AccessExpression access) throws CompilerException {
         if(Firsts.isFirst("ActualArgs", currentToken.getToken())){
             actualArgs(access);
         }
@@ -1105,13 +1133,13 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         }
     }
 
-    private void actualArgs(AccessMember access) throws CompilerException {
+    private void actualArgs(AccessExpression access) throws CompilerException {
         match("pm_par_open");
         expressionList(access);
         match("pm_par_close");
     }
 
-    private void expressionList(AccessMember acc) throws CompilerException {
+    private void expressionList(AccessExpression acc) throws CompilerException {
         if(Firsts.isFirst("Expression", currentToken.getToken())){
             ExpressionNode exp = expression();
             acc.addParameter(exp);
@@ -1124,7 +1152,7 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         }
     }
 
-    private void optionalExpList(AccessMember acc) throws CompilerException {
+    private void optionalExpList(AccessExpression acc) throws CompilerException {
         if(currentToken.getToken().equals("pm_comma")){
             match("pm_comma");
             acc.addParameter(expression());
@@ -1137,13 +1165,14 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         }
     }
 
-    private AccessMember chainedOp() throws CompilerException {
+    private ChainedMembers chainedOp() throws CompilerException {
         if(currentToken.getToken().equals("pm_period")){
             match("pm_period");
-            AccessChainedMember access = new AccessChainedMember(currentToken);
+            ChainedMembers access = new ChainedMembers(currentToken);
             match("id_met_var");
             possibleArgs(access);
-            chainedOp();
+            ChainedMembers next = chainedOp();
+            access.setNext(next);
             return access;
         }
         else if(Follows.itFollows("ChainedOp", currentToken.getToken())){

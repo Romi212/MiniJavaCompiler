@@ -31,4 +31,8 @@ public class AssignmentExp extends ExpressionNode{
     public MemberType getExpressionType() {
         return expression.getExpressionType();
     }
+
+    public String toString(){
+        return access.toString() + " " + operator.getLexeme() + " " + expression.toString() ;
+    }
 }

@@ -1,13 +1,14 @@
-package AST.Expressions;
+package AST.Expressions.BinaryOperations;
 
+import AST.Expressions.ExpressionNode;
 import SymbolTable.Types.MemberType;
 import utils.Token;
 
-public class BinaryExpression extends ExpressionNode{
+abstract public class BinaryExpression extends ExpressionNode {
 
-    private ExpressionNode left;
-    private ExpressionNode right;
-    private Token operator;
+    protected ExpressionNode left;
+    protected ExpressionNode right;
+    protected Token operator;
 
     public BinaryExpression(Token operator){
         this.operator = operator;
@@ -26,8 +27,9 @@ public class BinaryExpression extends ExpressionNode{
         return left.isCorrect() && right.isCorrect();
     }
 
-    @Override
-    public MemberType getExpressionType() {
-        return null;
+    abstract public MemberType getExpressionType();
+
+    public String toString(){
+        return left.toString() + " " + operator.getLexeme() + " " + right.toString();
     }
 }

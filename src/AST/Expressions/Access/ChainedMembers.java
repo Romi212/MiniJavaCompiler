@@ -6,20 +6,17 @@ import utils.Token;
 
 import java.util.ArrayList;
 
-public abstract class AccessMember extends AccessExpression{
+public class ChainedMembers extends AccessExpression{
 
+    ChainedMembers next;
+    ArrayList<ExpressionNode> parameters;
 
-
-    ChainedMembers chain;
-
-    public AccessMember(Token name){
+    public ChainedMembers(Token name){
         super(name);
-        parameters = new ArrayList<>();
     }
 
-
-    public void addChain(ChainedMembers chain){
-        this.chain = chain;
+    public void setNext(ChainedMembers next){
+        this.next = next;
     }
 
     @Override
@@ -34,17 +31,17 @@ public abstract class AccessMember extends AccessExpression{
 
     public String toString(){
         String toReturn = name.getLexeme();
+
         if(parameters != null){
             toReturn += "(";
             for(ExpressionNode parameter : parameters){
                 toReturn += parameter.toString() + ",";
             }
-
             toReturn += ")";
         }
 
-        if(chain != null){
-            toReturn += "." + chain.toString();
+        if(next != null){
+            toReturn += "."+next.toString();
         }
         return toReturn;
     }
