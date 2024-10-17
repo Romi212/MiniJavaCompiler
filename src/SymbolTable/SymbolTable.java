@@ -1,5 +1,6 @@
 package SymbolTable;
 
+import AST.LocalVar;
 import AST.Statements.StatementNode;
 import SymbolTable.Attributes.AttributeDeclaration;
 import SymbolTable.Clases.ClassDeclaration;
@@ -138,7 +139,7 @@ public class SymbolTable {
         return currentClass.addConstructor(constructor);
     }
 
-    public static void isConsolidated(Token parent) throws SemanticalErrorException{
+    public static void isConsolidated(Token parent) throws CompilerException{
         if(symbolTable.containsKey(parent.getLexeme())){
             ClassDeclaration parentClass = symbolTable.get(parent.getLexeme());
             ClassDeclaration child = currentClass;
@@ -206,5 +207,21 @@ public class SymbolTable {
 
     public static void addStatement(StatementNode statement) {
         currentClass.addStatement(statement);
+    }
+
+    public static void addLocalVar(LocalVar localVar) {
+        currentClass.addLocalVar(localVar);
+    }
+
+    public static boolean isLocalVar(Token name) {
+        return currentClass.isLocalVar(name);
+    }
+
+    public static boolean isParameter(Token name) {
+        return currentClass.isParameter(name);
+    }
+
+    public static boolean isAtribute(Token name) {
+        return currentClass.isAtribute(name);
     }
 }

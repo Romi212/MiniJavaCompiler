@@ -9,15 +9,8 @@ public class SignExpression extends UnaryExpression{
         super(operator);
     }
 
-    @Override
-    public boolean isCorrect() {
-        return expression.isCorrect();
-    }
 
-    @Override
-    public MemberType getExpressionType() {
-        return expression.getExpressionType();
-    }
+
 
     public String toString(){
         return operator.getLexeme() + " " + expression.toString();

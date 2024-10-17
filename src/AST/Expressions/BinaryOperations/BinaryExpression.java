@@ -2,6 +2,7 @@ package AST.Expressions.BinaryOperations;
 
 import AST.Expressions.ExpressionNode;
 import SymbolTable.Types.MemberType;
+import utils.Exceptions.CompilerException;
 import utils.Token;
 
 abstract public class BinaryExpression extends ExpressionNode {
@@ -23,8 +24,8 @@ abstract public class BinaryExpression extends ExpressionNode {
     }
 
     @Override
-    public boolean isCorrect() {
-        return left.isCorrect() && right.isCorrect();
+    public boolean isCorrect() throws CompilerException {
+        return left != null && right!= null && left.isCorrect() && right.isCorrect();
     }
 
     abstract public MemberType getExpressionType();

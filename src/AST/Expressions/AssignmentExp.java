@@ -1,6 +1,7 @@
 package AST.Expressions;
 
 import SymbolTable.Types.MemberType;
+import utils.Exceptions.CompilerException;
 import utils.Token;
 
 public class AssignmentExp extends ExpressionNode{
@@ -23,8 +24,8 @@ public class AssignmentExp extends ExpressionNode{
             this.expression = expression;
         }
         @Override
-        public boolean isCorrect() {
-            return true;
+        public boolean isCorrect() throws CompilerException {
+            return access!= null && expression != null && access.isCorrect() && expression.isCorrect();
         }
 
     @Override

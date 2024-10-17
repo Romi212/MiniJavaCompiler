@@ -22,10 +22,6 @@ public abstract class AccessMember extends AccessExpression{
         this.chain = chain;
     }
 
-    @Override
-    public boolean isCorrect() {
-        return true;
-    }
 
     @Override
     public MemberType getExpressionType() {

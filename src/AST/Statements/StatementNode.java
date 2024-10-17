@@ -1,16 +1,17 @@
 package AST.Statements;
 
+import utils.Exceptions.CompilerException;
 import utils.Token;
 
 abstract public class StatementNode {
 
-    Token name;
+    protected Token name;
 
     public StatementNode(Token name){
         this.name = name;
     }
 
-    public abstract boolean isCorrect();
+    public abstract boolean isCorrect() throws CompilerException;
 
 
 }

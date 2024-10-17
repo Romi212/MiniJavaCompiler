@@ -1,6 +1,7 @@
 package AST.Statements;
 
 import AST.Expressions.ExpressionNode;
+import utils.Exceptions.CompilerException;
 import utils.Token;
 
 public class AssignmentStatement extends StatementNode{
@@ -19,7 +20,7 @@ public class AssignmentStatement extends StatementNode{
     }
 
     @Override
-    public boolean isCorrect() {
+    public boolean isCorrect() throws CompilerException {
         return expression.isCorrect();
     }
 

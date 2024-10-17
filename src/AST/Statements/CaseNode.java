@@ -2,6 +2,7 @@ package AST.Statements;
 
 import AST.Expressions.ExpressionNode;
 import AST.Expressions.Literals.LiteralValue;
+import utils.Exceptions.CompilerException;
 
 import java.util.ArrayList;
 
@@ -20,8 +21,8 @@ public class CaseNode extends StatementNode{
     }
 
     @Override
-    public boolean isCorrect() {
-        boolean correct = expression.isCorrect();
+    public boolean isCorrect() throws CompilerException {
+        boolean correct = (expression==null || expression.isCorrect()) && statement!= null  && statement.isCorrect();
 
         return correct;
     }

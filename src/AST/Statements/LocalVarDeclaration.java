@@ -1,11 +1,16 @@
 package AST.Statements;
 
 import AST.Expressions.ExpressionNode;
+import AST.LocalVar;
+import SymbolTable.SymbolTable;
+import SymbolTable.Types.MemberType;
+import utils.Exceptions.CompilerException;
+import utils.Exceptions.SemanticalErrorException;
 import utils.Token;
 
 public class LocalVarDeclaration extends StatementNode{
 
-    private Token type;
+    private MemberType type;
     private ExpressionNode initialization;
 
     public LocalVarDeclaration(Token var) {
@@ -18,8 +23,14 @@ public class LocalVarDeclaration extends StatementNode{
     }
 
     @Override
-    public boolean isCorrect() {
-        return true;
+    public boolean isCorrect() throws CompilerException {
+
+        if( initialization == null) throw new SemanticalErrorException(this.name, "Local variable declared 'var' "+this.name.getLexeme()+" must be initialized");
+        boolean isCorrect = initialization.isCorrect();
+        MemberType type = initialization.getExpressionType();
+        this.type = type;
+        SymbolTable.addLocalVar(new LocalVar(this.name, type));
+        return isCorrect;
     }
 
     public String toString(){

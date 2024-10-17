@@ -1,6 +1,7 @@
 package AST.Statements;
 
 import AST.Expressions.ExpressionNode;
+import utils.Exceptions.CompilerException;
 
 import java.util.ArrayList;
 
@@ -27,8 +28,8 @@ public class SwitchNode extends StatementNode{
     }
 
     @Override
-    public boolean isCorrect() {
-        boolean correct = expression.isCorrect();
+    public boolean isCorrect()  throws CompilerException {
+        boolean correct = (expression != null) && expression.isCorrect();
         for(CaseNode c : cases){
             correct = correct && c.isCorrect();
         }

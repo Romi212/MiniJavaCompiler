@@ -9,10 +9,6 @@ public class CompareOperation extends BinaryExpression{
             super(operator);
         }
 
-        @Override
-        public boolean isCorrect() {
-            return left.isCorrect() && right.isCorrect();
-        }
 
         @Override
         public MemberType getExpressionType() {

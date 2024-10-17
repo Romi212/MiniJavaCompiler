@@ -2,6 +2,7 @@ package AST.Expressions.Access;
 
 import AST.Expressions.ExpressionNode;
 import SymbolTable.Types.MemberType;
+import utils.Exceptions.CompilerException;
 import utils.Token;
 
 public class AccessPE extends AccessMember{
@@ -12,8 +13,8 @@ public class AccessPE extends AccessMember{
         exp = name;
     }
     @Override
-    public boolean isCorrect() {
-        return true;
+    public boolean isCorrect() throws CompilerException {
+        return exp.isCorrect();
     }
 
     @Override

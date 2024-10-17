@@ -1,9 +1,11 @@
 package SymbolTable;
 
 import AST.BLockDeclaration;
+import AST.LocalVar;
 import AST.Statements.StatementNode;
 import SymbolTable.Parameters.ParameterDeclaration;
 import SymbolTable.Types.MemberType;
+import utils.Exceptions.CompilerException;
 import utils.Exceptions.SemanticalErrorException;
 import utils.Token;
 
@@ -34,6 +36,9 @@ public class MethodDeclaration extends MemberDeclaration {
         return this.name;
     }
 
+    public boolean hasLocalVar(String name){
+        return block.containsLocalVar(name);
+    }
     public void addStatement(StatementNode statement){
         block.addStatement(statement);
     }
@@ -51,7 +56,7 @@ public class MethodDeclaration extends MemberDeclaration {
 
     }
 
-    public boolean isCorrectlyDeclared() throws SemanticalErrorException {
+    public boolean isCorrectlyDeclared() throws CompilerException {
 
         if(returnType.isCorrect()){
             for (HashMap.Entry<String, ParameterDeclaration> entry : parameters.entrySet()) {
@@ -65,8 +70,8 @@ public class MethodDeclaration extends MemberDeclaration {
 
         } else throw new SemanticalErrorException(returnType.getToken(), "Method "+name.getLexeme()+"  has an invalid return type "+returnType.getName());
 
+        return block.isCorrect();
 
-        return true;
     }
 
     public boolean sameSignature(MethodDeclaration otherMethod) {
@@ -112,4 +117,11 @@ public class MethodDeclaration extends MemberDeclaration {
     }
 
 
+    public void addLocalVar(LocalVar localVar) {
+        block.addLocalVar(localVar);
+    }
+
+    public boolean hasParameter(String lexeme) {
+        return parameters.containsKey(lexeme);
+    }
 }

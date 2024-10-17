@@ -2,6 +2,7 @@ package AST.Expressions;
 
 import AST.Statements.StatementNode;
 import SymbolTable.Types.MemberType;
+import utils.Exceptions.CompilerException;
 
 public abstract class ExpressionNode extends StatementNode {
 
@@ -9,7 +10,7 @@ public abstract class ExpressionNode extends StatementNode {
             super(null);
         }
 
-        abstract public boolean isCorrect();
+        abstract public boolean isCorrect() throws CompilerException;
 
         abstract public MemberType getExpressionType();
 

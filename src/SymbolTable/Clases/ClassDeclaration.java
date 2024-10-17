@@ -1,11 +1,13 @@
 package SymbolTable.Clases;
 
+import AST.LocalVar;
 import AST.Statements.StatementNode;
 import SymbolTable.Attributes.*;
 import SymbolTable.ConstructorDeclaration;
 import SymbolTable.MethodDeclaration;
 import SymbolTable.SymbolTable;
 import SymbolTable.Types.*;
+import utils.Exceptions.CompilerException;
 import utils.Exceptions.SemanticalErrorException;
 import utils.Token;
 import SymbolTable.MemberDeclaration;
@@ -124,7 +126,7 @@ public class ClassDeclaration {
         return name;
     }
 
-    public boolean isCorrectlyDeclared() throws  SemanticalErrorException{
+    public boolean isCorrectlyDeclared() throws CompilerException {
 
 
         for(HashMap.Entry<String, AttributeDeclaration> entry : attributes.entrySet()){
@@ -146,7 +148,7 @@ public class ClassDeclaration {
 
 
 
-    public boolean isConsolidated() throws SemanticalErrorException{
+    public boolean isConsolidated() throws CompilerException{
 
         if( !isConsolidated){
             if(!isCorrectlyDeclared()) return false;
@@ -245,5 +247,21 @@ public class ClassDeclaration {
 
     public MemberDeclaration getCurrentMember() {
         return currentMember;
+    }
+
+    public void addLocalVar(LocalVar localVar) {
+        this.currentMethod.addLocalVar(localVar);
+    }
+
+    public boolean isLocalVar(Token name) {
+        return this.currentMethod.hasLocalVar(name.getLexeme());
+    }
+
+    public boolean isParameter(Token name) {
+        return this.currentMethod.hasParameter(name.getLexeme());
+    }
+
+    public boolean isAtribute(Token name) {
+        return this.attributes.containsKey(name.getLexeme());
     }
 }

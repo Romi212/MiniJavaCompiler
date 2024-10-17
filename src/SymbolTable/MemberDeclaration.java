@@ -1,5 +1,6 @@
 package SymbolTable;
 
+import utils.Exceptions.CompilerException;
 import utils.Exceptions.SemanticalErrorException;
 import utils.Token;
 
@@ -23,5 +24,5 @@ public abstract class MemberDeclaration {
         return this.isStatic;
     }
 
-    public abstract boolean isCorrectlyDeclared() throws SemanticalErrorException;
+    public abstract boolean isCorrectlyDeclared() throws SemanticalErrorException, CompilerException;
 }

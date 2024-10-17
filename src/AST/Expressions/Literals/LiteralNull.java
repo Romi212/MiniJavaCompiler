@@ -8,10 +8,6 @@ public class LiteralNull extends LiteralValue{
             super(null);
         }
 
-        @Override
-        public boolean isCorrect() {
-            return true;
-        }
 
         @Override
         public MemberType getExpressionType() {

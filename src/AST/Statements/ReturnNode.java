@@ -1,6 +1,7 @@
 package AST.Statements;
 
 import AST.Expressions.ExpressionNode;
+import utils.Exceptions.CompilerException;
 
 public class ReturnNode extends StatementNode{
     private ExpressionNode expression;
@@ -11,8 +12,8 @@ public class ReturnNode extends StatementNode{
     }
 
     @Override
-    public boolean isCorrect() {
-        return expression.isCorrect();
+    public boolean isCorrect() throws CompilerException {
+        return (expression == null || expression.isCorrect());
     }
 
     public String toString(){

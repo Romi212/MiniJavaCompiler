@@ -11,6 +11,6 @@ public class LiteralString extends LiteralValue{
 
     @Override
     public MemberType getExpressionType() {
-        return new MemberObjectType(new Token("rw_string", "string", -1));
+        return new MemberObjectType(new Token("id_class", "String", -1));
     }
 }

@@ -1,6 +1,7 @@
 package AST.Expressions.Access;
 
 import SymbolTable.Types.MemberType;
+import utils.Exceptions.CompilerException;
 import utils.Token;
 
 public class AccessRootMember extends AccessMember{
@@ -10,7 +11,7 @@ public class AccessRootMember extends AccessMember{
 
 
     @Override
-    public boolean isCorrect() {
+    public boolean isCorrect() throws CompilerException {
         return true;
     }
 

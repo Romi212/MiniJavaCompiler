@@ -1,6 +1,7 @@
 package AST.Statements;
 
 import AST.Expressions.ExpressionNode;
+import utils.Exceptions.CompilerException;
 import utils.Token;
 
 public class IfNode extends StatementNode{
@@ -17,8 +18,8 @@ public class IfNode extends StatementNode{
         }
 
         @Override
-        public boolean isCorrect() {
-            return condition.isCorrect() && ifStatement.isCorrect() && elseStatement.isCorrect();
+        public boolean isCorrect() throws CompilerException {
+            return condition.isCorrect() && ifStatement.isCorrect() && (elseStatement == null || elseStatement.isCorrect());
         }
 
         public String toString(){

@@ -2,6 +2,7 @@ package AST.Expressions.UnaryOperations;
 
 import AST.Expressions.ExpressionNode;
 import SymbolTable.Types.MemberType;
+import utils.Exceptions.CompilerException;
 import utils.Token;
 
 abstract public class UnaryExpression extends ExpressionNode {
@@ -18,8 +19,8 @@ abstract public class UnaryExpression extends ExpressionNode {
         }
 
         @Override
-        public boolean isCorrect() {
-            return expression.isCorrect();
+        public boolean isCorrect() throws CompilerException {
+            return expression != null && expression.isCorrect();
         }
 
         @Override

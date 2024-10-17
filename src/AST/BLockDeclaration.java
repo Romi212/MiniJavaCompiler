@@ -1,16 +1,21 @@
 package AST;
 
 import AST.Statements.StatementNode;
+import utils.Exceptions.CompilerException;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class BLockDeclaration extends StatementNode{
 
     private ArrayList<StatementNode> statements;
 
+    private HashMap<String, LocalVar> localVars;
+
     public BLockDeclaration(){
         super(null);
         this.statements = new ArrayList<>();
+        this.localVars = new HashMap<>();
     }
 
     public void addStatement(StatementNode statement){
@@ -21,8 +26,16 @@ public class BLockDeclaration extends StatementNode{
         return this.statements;
     }
 
+    public void addLocalVar(LocalVar localVar){
+        //TODO CHECK REPETIDO
+        this.localVars.put(localVar.getName().getLexeme(), localVar);
+    }
+
+    public boolean containsLocalVar(String name){
+        return this.localVars.containsKey(name);
+    }
     @Override
-    public boolean isCorrect() {
+    public boolean isCorrect() throws CompilerException {
         for(StatementNode statement : statements){
             if(!statement.isCorrect()){
                 return false;

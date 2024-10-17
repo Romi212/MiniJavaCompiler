@@ -1,6 +1,7 @@
 package AST.Statements;
 
 import AST.Expressions.ExpressionNode;
+import utils.Exceptions.CompilerException;
 import utils.Token;
 
 public class WhileNode extends  StatementNode{
@@ -14,7 +15,7 @@ public class WhileNode extends  StatementNode{
     }
 
     @Override
-    public boolean isCorrect() {
+    public boolean isCorrect() throws CompilerException {
         return condition.isCorrect() && statement.isCorrect();
     }
 

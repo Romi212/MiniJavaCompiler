@@ -588,7 +588,7 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         if(Firsts.isFirst("PrimitiveType", currentToken.getToken())){
             MemberType t = primitiveType();
             DeclarationStatement a = localVar();
-            a.setType(t.getToken());
+            a.setType(t);
             return a;
         }
         else if(currentToken.getToken().equals("rw_var")){
