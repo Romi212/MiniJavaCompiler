@@ -70,7 +70,7 @@ public class MethodDeclaration extends MemberDeclaration {
 
         } else throw new SemanticalErrorException(returnType.getToken(), "Method "+name.getLexeme()+"  has an invalid return type "+returnType.getName());
 
-        return block.isCorrect();
+        return true;
 
     }
 
@@ -134,5 +134,9 @@ public class MethodDeclaration extends MemberDeclaration {
             }
         }
         return type;
+    }
+
+    public boolean validStatements() throws CompilerException {
+        return block.isCorrect();
     }
 }

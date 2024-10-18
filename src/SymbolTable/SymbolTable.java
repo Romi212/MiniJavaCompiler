@@ -177,6 +177,12 @@ public class SymbolTable {
             if(!classDeclaration.isConsolidated()) return false;
         }
 
+        for (HashMap.Entry<String, ClassDeclaration> entry : symbolTable.entrySet()) {
+            ClassDeclaration classDeclaration = entry.getValue();
+            currentClass = classDeclaration;
+            if(!classDeclaration.validStatements()) return false;
+        }
+
         return true;
     }
 

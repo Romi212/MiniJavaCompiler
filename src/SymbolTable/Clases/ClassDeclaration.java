@@ -285,4 +285,12 @@ public class ClassDeclaration {
         if(attributes.containsKey(link.getName().getLexeme())) return attributes.get(link.getName().getLexeme());
         return methods.get("#"+link.getParametersSize()+"#"+link.getName().getLexeme());
     }
+
+    public boolean validStatements() throws CompilerException{
+        for( HashMap.Entry<String, MethodDeclaration> entry : methods.entrySet()){
+            currentMethod = entry.getValue();
+            if(!entry.getValue().validStatements()) return false;
+        }
+        return true;
+    }
 }
