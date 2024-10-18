@@ -29,7 +29,7 @@ public class AccessMethod extends AccessMember{
 
     @Override
     public void setMember(MemberDeclaration hasMember) {
-        this.method = (MethodDeclaration) hasMember;
+        //this.method = (MethodDeclaration) hasMember;
         this.type = method.getType();
     }
 }

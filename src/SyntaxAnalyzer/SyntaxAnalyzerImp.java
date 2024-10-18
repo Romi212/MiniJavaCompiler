@@ -1086,7 +1086,8 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         Token className = currentToken;
         match("id_class");
         optionalGeneric();
-        AccessNewObject access = new AccessNewObject(className);
+        MemberObjectType type = new MemberObjectType(className);
+        AccessNewObject access = new AccessNewObject(className, type);
         actualArgs(access);
         return access;
     }
