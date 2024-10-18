@@ -1,6 +1,7 @@
 package AST.Expressions.Access;
 
 import AST.Expressions.ExpressionNode;
+import SymbolTable.MemberDeclaration;
 import SymbolTable.Types.MemberType;
 import utils.Exceptions.CompilerException;
 import utils.Token;
@@ -9,7 +10,8 @@ public class AccessPE extends AccessMember{
 
     ExpressionNode exp;
     public AccessPE(ExpressionNode name){
-        super(null);
+        super();
+        setName(name.getName());
         exp = name;
     }
     @Override
@@ -19,10 +21,15 @@ public class AccessPE extends AccessMember{
 
     @Override
     public MemberType getExpressionType() {
-        return null;
+        return exp.getExpressionType();
     }
 
     public String toString(){
         return exp.toString();
+    }
+
+    @Override
+    public void setMember(MemberDeclaration hasMember) {
+
     }
 }

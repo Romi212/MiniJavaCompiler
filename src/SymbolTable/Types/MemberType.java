@@ -1,5 +1,7 @@
 package SymbolTable.Types;
 
+import AST.Expressions.Access.AccessMember;
+import SymbolTable.MemberDeclaration;
 import utils.Exceptions.SemanticalErrorException;
 import utils.Token;
 
@@ -25,4 +27,6 @@ public abstract class MemberType {
     public ArrayList<MemberObjectType> getAttributes() {
         return null;
     }
+
+    abstract public MemberDeclaration hasMember(AccessMember link) throws SemanticalErrorException;
 }

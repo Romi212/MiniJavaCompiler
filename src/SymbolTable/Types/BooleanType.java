@@ -6,4 +6,6 @@ public class BooleanType extends MemberPrimitiveType{
     public BooleanType(Token name){
         this.name = name;
     }
+
+
 }

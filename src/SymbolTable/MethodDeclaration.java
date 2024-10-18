@@ -87,7 +87,7 @@ public class MethodDeclaration extends MemberDeclaration {
             if(!entry.getValue().sameType(otherParameters.get(key))) return false;
         }
 
-        if(!this.returnType.getName().equals(otherMethod.getReturnType().getName())) return false;
+        if(!this.returnType.getName().equals(otherMethod.getType().getName())) return false;
 
         if(this.isStatic != otherMethod.isStatic) return false;
 
@@ -96,7 +96,7 @@ public class MethodDeclaration extends MemberDeclaration {
         return true;
     }
 
-    public MemberType getReturnType() {
+    public MemberType getType() {
         return this.returnType;
     }
 
@@ -123,5 +123,11 @@ public class MethodDeclaration extends MemberDeclaration {
 
     public boolean hasParameter(String lexeme) {
         return parameters.containsKey(lexeme);
+    }
+
+    public MemberType visibleVar(Token name) {
+        MemberType type = block.visibleVar(name);
+        if(type == null) type = parameters.get(name.getLexeme()).getType();
+        return type;
     }
 }

@@ -1,26 +1,28 @@
 package AST.Expressions.Access;
 
 import AST.Expressions.ExpressionNode;
+import SymbolTable.MemberDeclaration;
 import SymbolTable.Types.MemberType;
 import utils.Token;
 
 import java.util.ArrayList;
+import java.util.Collection;
 
 public abstract class AccessMember extends AccessExpression{
 
 
 
-    ChainedMembers chain;
+    MemberType type;
 
-    public AccessMember(Token name){
-        super(name);
+    public AccessMember(){
+        super(null);
         parameters = new ArrayList<>();
     }
-
-
-    public void addChain(ChainedMembers chain){
-        this.chain = chain;
+    public void setName(Token name){
+        this.name = name;
     }
+
+
 
 
     @Override
@@ -39,9 +41,14 @@ public abstract class AccessMember extends AccessExpression{
             toReturn += ")";
         }
 
-        if(chain != null){
-            toReturn += "." + chain.toString();
-        }
+
         return toReturn;
     }
+
+    public Token getName() {
+        return name;
+    }
+
+
+    abstract  public void setMember(MemberDeclaration hasMember);
 }

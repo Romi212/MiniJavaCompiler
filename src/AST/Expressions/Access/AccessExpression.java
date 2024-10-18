@@ -20,7 +20,9 @@ public abstract class AccessExpression extends ExpressionNode {
         parameters.add(parameter);
     }
 
-
+    public int getParametersSize(){
+        return parameters.size();
+    }
     public abstract MemberType getExpressionType();
 
     public String toString(){

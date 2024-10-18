@@ -1,7 +1,9 @@
 package SymbolTable.Types;
 
+import AST.Expressions.Access.AccessMember;
 import SymbolTable.Clases.ClassDeclaration;
 import SymbolTable.SymbolTable;
+import SymbolTable.MemberDeclaration;
 import utils.Exceptions.SemanticalErrorException;
 import utils.Token;
 
@@ -62,5 +64,9 @@ public class MemberObjectType extends MemberType{
         for (Token type : parametricTypes) {
             attributes.add(new MemberObjectType(type));
         }
+    }
+
+    public MemberDeclaration hasMember(AccessMember link) {
+        return SymbolTable.getClass(this.name).getMember(link);
     }
 }

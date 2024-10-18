@@ -1,12 +1,17 @@
 package AST.Expressions.Access;
 
+import SymbolTable.MemberDeclaration;
+import SymbolTable.SymbolTable;
+import SymbolTable.Types.MemberObjectType;
 import SymbolTable.Types.MemberType;
 import utils.Token;
 
 public class AccessThis extends AccessMember{
 
     public AccessThis(Token name){
-        super(name);
+        super();
+        setName(name);
+        this.type = new MemberObjectType(SymbolTable.getCurrentClass().getName());
     }
     @Override
     public boolean isCorrect() {
@@ -15,6 +20,11 @@ public class AccessThis extends AccessMember{
 
     @Override
     public MemberType getExpressionType() {
-        return null;
+        return type;
+    }
+
+    @Override
+    public void setMember(MemberDeclaration hasMember) {
+
     }
 }

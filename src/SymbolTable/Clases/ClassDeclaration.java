@@ -1,5 +1,6 @@
 package SymbolTable.Clases;
 
+import AST.Expressions.Access.AccessMember;
 import AST.LocalVar;
 import AST.Statements.StatementNode;
 import SymbolTable.Attributes.*;
@@ -263,5 +264,22 @@ public class ClassDeclaration {
 
     public boolean isAtribute(Token name) {
         return this.attributes.containsKey(name.getLexeme());
+    }
+
+    public MemberType visibleVar(Token name) {
+        MemberType type = currentMethod.visibleVar(name);
+        if(type == null) type = attributes.get(name.getLexeme()).getType();
+        return type;
+    }
+
+    public MethodDeclaration findMethod(Token name, int size) {
+        String key = "#"+size+"#"+name.getLexeme();
+        if(methods.containsKey(key)) return methods.get(key);
+        return null;
+    }
+
+    public MemberDeclaration getMember(AccessMember link) {
+        if(attributes.containsKey(link.getName().getLexeme())) return attributes.get(link.getName().getLexeme());
+        return methods.get("#"+link.getParametersSize()+"#"+link.getName().getLexeme());
     }
 }

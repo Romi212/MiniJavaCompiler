@@ -1,7 +1,9 @@
 package AST;
 
 import AST.Statements.StatementNode;
+import SymbolTable.Types.MemberType;
 import utils.Exceptions.CompilerException;
+import utils.Token;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -51,5 +53,12 @@ public class BLockDeclaration extends StatementNode{
         }
         result += "}";
         return result;
+    }
+
+    public MemberType visibleVar(Token name) {
+        if(localVars.containsKey(name.getLexeme())){
+            return localVars.get(name.getLexeme()).getType();
+        }
+        return null;
     }
 }

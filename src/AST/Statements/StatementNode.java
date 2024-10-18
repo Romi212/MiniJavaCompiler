@@ -14,4 +14,7 @@ abstract public class StatementNode {
     public abstract boolean isCorrect() throws CompilerException;
 
 
+    public Token getName() {
+        return name;
+    }
 }

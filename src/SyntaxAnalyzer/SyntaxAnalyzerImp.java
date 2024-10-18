@@ -553,16 +553,20 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
 
     private ExpressionNode staticCall() throws CompilerException {
         match("pm_period");
-        AccessRootMember access = new AccessRootMember(currentToken);
+        ChainedExpression chain = new ChainedExpression();
+        AccessMethod access = new AccessMethod();
+        access.setName(currentToken);
         match("id_met_var");
         actualArgs(access);
-        chainedOp();
+        Link rest = chainedOp();
+        chain.setFirst(access);
+        chain.addNext(rest);
         BinaryExpression exp = possibleOp();
         if(exp != null){
-            exp.addLeft(access);
+            exp.addLeft(chain);
             return exp;
         }
-        return access;
+        return chain;
     }
 
 
@@ -1046,8 +1050,10 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
 
     private ExpressionNode access() throws CompilerException {
         AccessMember exp = primary();
-        ChainedMembers chain = chainedOp();
-        exp.addChain(chain);
+        ChainedExpression chain = new ChainedExpression();
+        chain.setFirst(exp);
+        Link rest = chainedOp();
+        chain.addNext(rest);
         return exp;
     }
 
@@ -1118,18 +1124,22 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
     }
 
     private AccessMember accessVarMethod() throws CompilerException {
-        AccessMember access = new AccessRootMember(currentToken);
+        Token name = currentToken;
         match("id_met_var");
-        possibleArgs(access);
+        AccessMember access = possibleArgs();
+        access.setName(name);
         return access;
     }
 
-    private void possibleArgs(AccessExpression access) throws CompilerException {
+    private AccessMember possibleArgs() throws CompilerException {
         if(Firsts.isFirst("ActualArgs", currentToken.getToken())){
+            AccessMember access = new AccessMethod();
             actualArgs(access);
+            return access;
         }
         else if(Follows.itFollows("ChainedOp", currentToken.getToken())){
             //No method call just variable
+            return new AccessVar();
         } else{
             throw new SyntaxErrorException(currentToken, "actual arguments or end of access");
         }
@@ -1167,15 +1177,19 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         }
     }
 
-    private ChainedMembers chainedOp() throws CompilerException {
+    private Link chainedOp() throws CompilerException {
         if(currentToken.getToken().equals("pm_period")){
             match("pm_period");
-            ChainedMembers access = new ChainedMembers(currentToken);
+            Token name = currentToken;
+
             match("id_met_var");
-            possibleArgs(access);
-            ChainedMembers next = chainedOp();
-            access.setNext(next);
-            return access;
+            AccessMember access = possibleArgs();
+            access.setName(currentToken);
+            Link next = chainedOp();
+            Link chain = new Link();
+            chain.setLink(access);
+            chain.setNext(next);
+            return chain;
         }
         else if(Follows.itFollows("ChainedOp", currentToken.getToken())){
             //No more chained operations

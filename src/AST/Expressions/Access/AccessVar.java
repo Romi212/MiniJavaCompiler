@@ -1,19 +1,29 @@
 package AST.Expressions.Access;
 
 import SymbolTable.SymbolTable;
+import SymbolTable.MemberDeclaration;
+import SymbolTable.Types.MemberType;
 import utils.Exceptions.SemanticalErrorException;
 import utils.Token;
 
-public class AccessVar extends AccessRootMember{
-    public AccessVar(Token name){
-        super(name);
-    }
+public class AccessVar extends AccessMember{
+
+
 
     public boolean isCorrect() throws SemanticalErrorException{
-        if(!SymbolTable.isLocalVar(this.name))
-            if(!SymbolTable.isParameter(this.name))
-                if(!SymbolTable.isAtribute(this.name))
-                    throw new SemanticalErrorException(name, "Variable " + this.name + " not found");
+        MemberType type = SymbolTable.visibleVar(this.name);
+        this.type = type;
         return true;
     }
+
+    public MemberType getExpressionType(){
+        return this.type;
+    }
+
+    @Override
+    public void setMember(MemberDeclaration hasMember) {
+        this.type = hasMember.getType();
+    }
+
+
 }

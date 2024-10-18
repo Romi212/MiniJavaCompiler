@@ -84,7 +84,7 @@ public class SymbolTable {
     public static MethodDeclaration addMethod(MethodDeclaration method) throws SemanticalErrorException{
 
         currentClass.addMethod(method);
-        if(method.getName().getLexeme().equals("main") && method.getReturnType().getName().equals("void") && method.getParametersSize() == 0){
+        if(method.getName().getLexeme().equals("main") && method.getType().getName().equals("void") && method.getParametersSize() == 0){
 
             if(!hasMain ) {
                 mainMethod = method;
@@ -223,5 +223,22 @@ public class SymbolTable {
 
     public static boolean isAtribute(Token name) {
         return currentClass.isAtribute(name);
+    }
+
+    public static MemberType visibleVar(Token name) throws SemanticalErrorException{
+        MemberType type = currentClass.visibleVar(name);
+        if(type == null) {
+            throw new SemanticalErrorException(name, "Variable " + name + " is not visible in current block");
+        }
+        return type;
+    }
+
+    public static MethodDeclaration findMethod(Token name, int size) {
+        return currentClass.findMethod(name, size);
+    }
+
+
+    public static ClassDeclaration getCurrentClass() {
+        return currentClass;
     }
 }
