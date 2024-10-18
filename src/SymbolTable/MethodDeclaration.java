@@ -127,7 +127,12 @@ public class MethodDeclaration extends MemberDeclaration {
 
     public MemberType visibleVar(Token name) {
         MemberType type = block.visibleVar(name);
-        if(type == null) type = parameters.get(name.getLexeme()).getType();
+        if(type == null) {
+            ParameterDeclaration met = parameters.get(name.getLexeme());
+            if (met != null) {
+                return met.getType();
+            }
+        }
         return type;
     }
 }

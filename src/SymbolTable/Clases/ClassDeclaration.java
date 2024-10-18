@@ -268,7 +268,10 @@ public class ClassDeclaration {
 
     public MemberType visibleVar(Token name) {
         MemberType type = currentMethod.visibleVar(name);
-        if(type == null) type = attributes.get(name.getLexeme()).getType();
+        if(type == null){
+            MemberDeclaration m =  attributes.get(name.getLexeme());
+            if(m!= null) return m.getType();
+        }
         return type;
     }
 
