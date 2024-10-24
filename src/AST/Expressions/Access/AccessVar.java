@@ -27,6 +27,7 @@ public class AccessVar extends AccessMember{
         AttributeDeclaration a = parent.getExpressionType().hasAttribute(this);
         if(a == null) throw new SemanticalErrorException( this.name,"Attribute "+this.name.getLexeme()+" not found in "+parent.getExpressionType().getName());
         this.attribute = a;
+        if (!a.isPublic()) throw new SemanticalErrorException(this.name, "Attribute cant be accessed because "+this.name.getLexeme()+" is not public");
         this.type = a.getType();
     }
 

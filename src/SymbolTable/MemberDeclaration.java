@@ -28,4 +28,8 @@ public abstract class MemberDeclaration {
     public abstract boolean isCorrectlyDeclared() throws SemanticalErrorException, CompilerException;
 
     abstract public MemberType getType();
+
+    public boolean isPublic() {
+        return this.visibility.getLexeme().equals("public");
+    }
 }
