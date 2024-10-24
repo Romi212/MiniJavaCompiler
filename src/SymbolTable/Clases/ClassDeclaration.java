@@ -1,6 +1,8 @@
 package SymbolTable.Clases;
 
 import AST.Expressions.Access.AccessMember;
+import AST.Expressions.Access.AccessMethod;
+import AST.Expressions.Access.AccessVar;
 import AST.LocalVar;
 import AST.Statements.StatementNode;
 import SymbolTable.Attributes.*;
@@ -292,5 +294,13 @@ public class ClassDeclaration {
             if(!entry.getValue().validStatements()) return false;
         }
         return true;
+    }
+
+    public MethodDeclaration getMethod(AccessMethod accessMethod) {
+        return methods.get("#"+accessMethod.getParametersSize()+"#"+accessMethod.getName().getLexeme());
+    }
+
+    public AttributeDeclaration getAttribute(AccessVar accessVar) {
+        return attributes.get(accessVar.getName().getLexeme());
     }
 }

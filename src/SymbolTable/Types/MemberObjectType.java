@@ -1,7 +1,11 @@
 package SymbolTable.Types;
 
 import AST.Expressions.Access.AccessMember;
+import AST.Expressions.Access.AccessMethod;
+import AST.Expressions.Access.AccessVar;
+import SymbolTable.Attributes.AttributeDeclaration;
 import SymbolTable.Clases.ClassDeclaration;
+import SymbolTable.MethodDeclaration;
 import SymbolTable.SymbolTable;
 import SymbolTable.MemberDeclaration;
 import utils.Exceptions.SemanticalErrorException;
@@ -68,5 +72,13 @@ public class MemberObjectType extends MemberType{
 
     public MemberDeclaration hasMember(AccessMember link) {
         return SymbolTable.getClass(this.name).getMember(link);
+    }
+
+    public MethodDeclaration hasMethod(AccessMethod accessMethod) {
+        return SymbolTable.getClass(this.name).getMethod(accessMethod);
+    }
+
+    public AttributeDeclaration hasAttribute(AccessVar accessVar) {
+        return SymbolTable.getClass(this.name).getAttribute(accessVar);
     }
 }

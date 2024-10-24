@@ -24,7 +24,7 @@ public class AccessThis extends AccessMember{
     }
 
     @Override
-    public void setMember(MemberDeclaration hasMember) {
+    public void setMember(AccessMember hasMember) {
 
     }
 }

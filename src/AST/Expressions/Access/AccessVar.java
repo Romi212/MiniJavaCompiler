@@ -1,5 +1,6 @@
 package AST.Expressions.Access;
 
+import SymbolTable.Attributes.AttributeDeclaration;
 import SymbolTable.SymbolTable;
 import SymbolTable.MemberDeclaration;
 import SymbolTable.Types.MemberType;
@@ -9,6 +10,7 @@ import utils.Token;
 public class AccessVar extends AccessMember{
 
 
+    AttributeDeclaration attribute;
 
     public boolean isCorrect() throws SemanticalErrorException{
         MemberType type = SymbolTable.visibleVar(this.name);
@@ -21,8 +23,11 @@ public class AccessVar extends AccessMember{
     }
 
     @Override
-    public void setMember(MemberDeclaration hasMember) {
-        this.type = hasMember.getType();
+    public void setMember(AccessMember parent) throws SemanticalErrorException{
+        AttributeDeclaration a = parent.getExpressionType().hasAttribute(this);
+        if(a == null) throw new SemanticalErrorException( this.name,"Attribute "+this.name.getLexeme()+" not found in "+parent.getExpressionType().getName());
+        this.attribute = a;
+        this.type = a.getType();
     }
 
 

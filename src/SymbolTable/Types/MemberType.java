@@ -1,7 +1,11 @@
 package SymbolTable.Types;
 
 import AST.Expressions.Access.AccessMember;
+import AST.Expressions.Access.AccessMethod;
+import AST.Expressions.Access.AccessVar;
+import SymbolTable.Attributes.AttributeDeclaration;
 import SymbolTable.MemberDeclaration;
+import SymbolTable.MethodDeclaration;
 import utils.Exceptions.SemanticalErrorException;
 import utils.Token;
 
@@ -29,4 +33,8 @@ public abstract class MemberType {
     }
 
     abstract public MemberDeclaration hasMember(AccessMember link) throws SemanticalErrorException;
+
+    abstract public MethodDeclaration hasMethod(AccessMethod accessMethod) throws SemanticalErrorException;
+
+    abstract public AttributeDeclaration hasAttribute(AccessVar accessVar) throws SemanticalErrorException;
 }

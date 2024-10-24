@@ -28,9 +28,8 @@ public class Link extends AccessExpression{
 
 
     public boolean isCorrect(AccessMember parent) throws CompilerException {
-        MemberDeclaration m = parent.getExpressionType().hasMember(link);
-        if(m == null) throw new SemanticalErrorException( link.name,"Member "+link.name.getLexeme()+" not found in "+parent.getExpressionType().getName());
-        link.setMember(m);
+        link.setMember(parent);
+
         if(next != null){
             return next.isCorrect(link);
         }

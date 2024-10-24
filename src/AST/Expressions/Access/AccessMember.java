@@ -3,6 +3,7 @@ package AST.Expressions.Access;
 import AST.Expressions.ExpressionNode;
 import SymbolTable.MemberDeclaration;
 import SymbolTable.Types.MemberType;
+import utils.Exceptions.SemanticalErrorException;
 import utils.Token;
 
 import java.util.ArrayList;
@@ -50,5 +51,5 @@ public abstract class AccessMember extends AccessExpression{
     }
 
 
-    abstract  public void setMember(MemberDeclaration hasMember);
+    abstract  public void setMember(AccessMember hasMember) throws SemanticalErrorException;
 }
