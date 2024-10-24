@@ -252,7 +252,7 @@ public class ClassDeclaration {
         return currentMember;
     }
 
-    public void addLocalVar(LocalVar localVar) {
+    public void addLocalVar(LocalVar localVar) throws SemanticalErrorException{
         this.currentMethod.addLocalVar(localVar);
     }
 

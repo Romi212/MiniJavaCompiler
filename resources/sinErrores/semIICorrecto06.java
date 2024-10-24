@@ -25,9 +25,9 @@ class A {
 
         var cat = 2;
         int e1,e2,e3 = 3;
-        while(cat < 5){
+        while(e1 < 5){
             a1.a3.a2 = 3;
-            cat = cat + 1;
+            e2 = e1 + 1;
         }
 
     }

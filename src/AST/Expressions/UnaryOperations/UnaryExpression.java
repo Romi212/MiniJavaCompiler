@@ -16,6 +16,7 @@ abstract public class UnaryExpression extends ExpressionNode {
 
         public void addExpression(ExpressionNode expression){
             this.expression = expression;
+            expression.setParent(this);
         }
 
         @Override

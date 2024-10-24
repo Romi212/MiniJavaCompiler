@@ -18,10 +18,12 @@ public class AssignmentExp extends ExpressionNode{
 
         public void addAccess(ExpressionNode access){
             this.access = access;
+            access.setParent(this);
         }
 
         public void addExpression(ExpressionNode expression){
             this.expression = expression;
+            expression.setParent(this);
         }
         @Override
         public boolean isCorrect() throws CompilerException {

@@ -11,11 +11,14 @@ public class WhileNode extends  StatementNode{
     public WhileNode(ExpressionNode condition, StatementNode statement, Token name) {
         super(name);
         this.condition = condition;
+        condition.setParent(this);
         this.statement = statement;
+        statement.setParent(this);
     }
 
     @Override
     public boolean isCorrect() throws CompilerException {
+        System.out.println("WhileNode"+ condition.toString());
         return condition.isCorrect() && statement.isCorrect();
     }
 

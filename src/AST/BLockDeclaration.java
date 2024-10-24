@@ -12,37 +12,37 @@ public class BLockDeclaration extends StatementNode{
 
     private ArrayList<StatementNode> statements;
 
-    private HashMap<String, LocalVar> localVars;
+    private boolean cheked;
+
+
 
     public BLockDeclaration(){
         super(null);
         this.statements = new ArrayList<>();
-        this.localVars = new HashMap<>();
+        cheked = false;
     }
 
     public void addStatement(StatementNode statement){
         this.statements.add(statement);
+        statement.setParent(this);
     }
 
     public ArrayList<StatementNode> getStatements(){
         return this.statements;
     }
 
-    public void addLocalVar(LocalVar localVar){
-        //TODO CHECK REPETIDO
-        this.localVars.put(localVar.getName().getLexeme(), localVar);
-    }
 
-    public boolean containsLocalVar(String name){
-        return this.localVars.containsKey(name);
-    }
     @Override
     public boolean isCorrect() throws CompilerException {
+        if(cheked){
+            return true;
+        }
         for(StatementNode statement : statements){
             if(!statement.isCorrect()){
                 return false;
             }
         }
+        cheked = true;
         return true;
     }
 
@@ -55,10 +55,5 @@ public class BLockDeclaration extends StatementNode{
         return result;
     }
 
-    public MemberType visibleVar(Token name) {
-        if(localVars.containsKey(name.getLexeme())){
-            return localVars.get(name.getLexeme()).getType();
-        }
-        return null;
-    }
+
 }

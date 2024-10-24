@@ -17,10 +17,12 @@ abstract public class BinaryExpression extends ExpressionNode {
 
     public void addLeft(ExpressionNode left){
         this.left = left;
+        left.setParent(this);
     }
 
     public void addRight(ExpressionNode right){
         this.right = right;
+        right.setParent(this);
     }
 
     @Override

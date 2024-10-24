@@ -17,14 +17,17 @@ public class SwitchNode extends StatementNode{
 
     public void setExpression(ExpressionNode expression){
         this.expression = expression;
+        expression.setParent(this);
     }
 
     public void addCase(CaseNode c){
         cases.add(c);
+        c.setParent(this);
     }
 
     public void setDefaultCase(CaseNode c){
         defaultCase = c;
+        c.setParent(this);
     }
 
     @Override

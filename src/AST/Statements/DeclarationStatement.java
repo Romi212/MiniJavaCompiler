@@ -30,6 +30,7 @@ public class DeclarationStatement extends StatementNode{
 
     public void setExpression(ExpressionNode expression){
         this.expression = expression;
+        expression.setParent(this);
     }
     @Override
     public boolean isCorrect() throws CompilerException {
@@ -38,7 +39,8 @@ public class DeclarationStatement extends StatementNode{
         if(correct){
             for(Token t : variables){
                 LocalVar localVar = new LocalVar(t, type);
-                SymbolTable.addLocalVar(localVar);
+                //SymbolTable.addLocalVar(localVar);
+                parent.addLocalVar(localVar);
             }
         }
         return correct;

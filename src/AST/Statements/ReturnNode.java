@@ -9,6 +9,9 @@ public class ReturnNode extends StatementNode{
     public ReturnNode(ExpressionNode expression){
         super(null);
         this.expression = expression;
+        if(expression != null){
+            expression.setParent(this);
+        }
     }
 
     @Override

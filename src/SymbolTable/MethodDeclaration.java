@@ -117,7 +117,7 @@ public class MethodDeclaration extends MemberDeclaration {
     }
 
 
-    public void addLocalVar(LocalVar localVar) {
+    public void addLocalVar(LocalVar localVar) throws SemanticalErrorException {
         block.addLocalVar(localVar);
     }
 

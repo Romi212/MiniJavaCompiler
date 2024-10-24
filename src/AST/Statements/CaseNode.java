@@ -13,11 +13,16 @@ public class CaseNode extends StatementNode{
     public CaseNode(LiteralValue expression, StatementNode s){
         super(null);
         this.expression = expression;
+        if(expression!= null) {
+            expression.setParent(this);
+        }
         statement = s;
+        statement.setParent(this);
     }
 
     public void setStatement(StatementNode statement){
         this.statement = statement;
+        statement.setParent(this);
     }
 
     @Override

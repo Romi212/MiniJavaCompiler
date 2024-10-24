@@ -12,11 +12,13 @@ public class AssignmentStatement extends StatementNode{
     public AssignmentStatement(ExpressionNode expression) {
         super(null);
         this.expression = expression;
+        if( expression!= null) expression.setParent(this);
     }
 
 
     public void setExpression(ExpressionNode expression){
         this.expression = expression;
+        expression.setParent(this);
     }
 
     @Override

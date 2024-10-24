@@ -215,7 +215,7 @@ public class SymbolTable {
         currentClass.addStatement(statement);
     }
 
-    public static void addLocalVar(LocalVar localVar) {
+    public static void addLocalVar(LocalVar localVar) throws SemanticalErrorException{
         currentClass.addLocalVar(localVar);
     }
 

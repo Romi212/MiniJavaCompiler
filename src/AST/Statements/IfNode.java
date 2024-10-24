@@ -13,8 +13,13 @@ public class IfNode extends StatementNode{
         public IfNode(ExpressionNode condition, StatementNode ifStatement, StatementNode elseStatement, Token name){
             super(name);
             this.condition = condition;
+            condition.setParent(this);
             this.ifStatement = ifStatement;
+            ifStatement.setParent(this);
             this.elseStatement = elseStatement;
+            if(elseStatement != null){
+                elseStatement.setParent(this);
+            }
         }
 
         @Override

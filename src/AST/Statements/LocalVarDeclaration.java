@@ -20,6 +20,7 @@ public class LocalVarDeclaration extends StatementNode{
 
     public void setExpression(ExpressionNode expression){
         this.initialization = expression;
+        expression.setParent(this);
     }
 
     @Override
@@ -29,7 +30,9 @@ public class LocalVarDeclaration extends StatementNode{
         boolean isCorrect = initialization.isCorrect();
         MemberType type = initialization.getExpressionType();
         this.type = type;
-        SymbolTable.addLocalVar(new LocalVar(this.name, type));
+        System.out.println("Adding local var "+this.name.getLexeme() + this.name.getLine());
+        parent.addLocalVar(new LocalVar(this.name, type));
+
         return isCorrect;
     }
 
