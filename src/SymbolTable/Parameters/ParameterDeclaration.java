@@ -29,7 +29,7 @@ public class ParameterDeclaration {
         return this.type.getName().equals(parameterDeclaration.getType().getName()) && this.name.getLexeme().equals(parameterDeclaration.getName().getLexeme()) && this.position == parameterDeclaration.getPosition();
     }
 
-    private int getPosition() {
+    public int getPosition() {
         return this.position;
     }
 

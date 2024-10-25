@@ -3,10 +3,7 @@ package SyntaxAnalyzer;
 import AST.BLockDeclaration;
 import AST.Expressions.Access.*;
 import AST.Expressions.AssignmentExp;
-import AST.Expressions.BinaryOperations.BinaryExpression;
-import AST.Expressions.BinaryOperations.CompareOperation;
-import AST.Expressions.BinaryOperations.LogicalOperation;
-import AST.Expressions.BinaryOperations.NumberOperation;
+import AST.Expressions.BinaryOperations.*;
 import AST.Expressions.ExpressionNode;
 import AST.Expressions.Literals.*;
 import AST.Expressions.UnaryOperations.NotOperation;
@@ -894,11 +891,11 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         }
         else if(currentToken.getToken().equals("op_equal")){
             match("op_equal");
-            exp = new CompareOperation(toReturn);
+            exp = new EqualsOperation(toReturn);
         }
         else if(currentToken.getToken().equals("op_not_equal")){
             match("op_not_equal");
-            exp = new CompareOperation(toReturn);
+            exp = new EqualsOperation(toReturn);
         }
         else if(currentToken.getToken().equals("op_less")){
             match("op_less");
@@ -1054,7 +1051,7 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         chain.setFirst(exp);
         Link rest = chainedOp();
         chain.addNext(rest);
-        return exp;
+        return chain;
     }
 
     private AccessMember primary() throws CompilerException {
@@ -1185,7 +1182,7 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
 
             match("id_met_var");
             AccessMember access = possibleArgs();
-            access.setName(currentToken);
+            access.setName(name);
             Link next = chainedOp();
             Link chain = new Link();
             chain.setLink(access);

@@ -2,6 +2,7 @@ package AST.Expressions;
 
 import SymbolTable.Types.MemberType;
 import utils.Exceptions.CompilerException;
+import utils.Exceptions.SemanticalErrorException;
 import utils.Token;
 
 public class AssignmentExp extends ExpressionNode{
@@ -27,7 +28,12 @@ public class AssignmentExp extends ExpressionNode{
         }
         @Override
         public boolean isCorrect() throws CompilerException {
-            return access!= null && expression != null && access.isCorrect() && expression.isCorrect();
+            if(access == null) throw new SemanticalErrorException(operator,"Assignment expression has no access");
+            if(expression == null) throw new SemanticalErrorException(operator,"Assignment expression has no expression");
+            if(!access.isCorrect()) throw new SemanticalErrorException(operator,"Assignment expression has incorrect access");
+            if(!expression.isCorrect()) throw new SemanticalErrorException(operator,"Assignment expression has incorrect expression");
+            if(!expression.getExpressionType().conformsTo(access.getExpressionType())) throw new SemanticalErrorException(operator,"Assignment expression has expressions that do not conform to each other");
+            return true;
         }
 
     @Override

@@ -1,8 +1,10 @@
 package AST.Expressions.UnaryOperations;
 
 import AST.Expressions.ExpressionNode;
+import SymbolTable.Types.IntegerType;
 import SymbolTable.Types.MemberType;
 import utils.Exceptions.CompilerException;
+import utils.Exceptions.SemanticalErrorException;
 import utils.Token;
 
 abstract public class UnaryExpression extends ExpressionNode {
@@ -19,10 +21,7 @@ abstract public class UnaryExpression extends ExpressionNode {
             expression.setParent(this);
         }
 
-        @Override
-        public boolean isCorrect() throws CompilerException {
-            return expression != null && expression.isCorrect();
-        }
+
 
         @Override
         public MemberType getExpressionType() {

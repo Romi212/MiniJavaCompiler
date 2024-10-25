@@ -31,5 +31,9 @@ public class AccessVar extends AccessMember{
         this.type = a.getType();
     }
 
+    public String toString(){
+        if (this.attribute == null) return this.name.getLexeme();
+        return attribute.toString();
+    }
 
 }

@@ -25,10 +25,7 @@ abstract public class BinaryExpression extends ExpressionNode {
         right.setParent(this);
     }
 
-    @Override
-    public boolean isCorrect() throws CompilerException {
-        return left != null && right!= null && left.isCorrect() && right.isCorrect();
-    }
+
 
     abstract public MemberType getExpressionType();
 

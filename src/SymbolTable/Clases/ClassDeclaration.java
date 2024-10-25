@@ -218,7 +218,7 @@ public class ClassDeclaration {
         throw new SemanticalErrorException(name, "Method "+name.getLexeme()+" in class "+this.name.getLexeme()+" must be declared as abstract");
     }
 
-    protected Token getParent() {
+    public Token getParent() {
         return parent;
     }
 

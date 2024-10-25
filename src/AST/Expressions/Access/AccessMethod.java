@@ -1,5 +1,6 @@
 package AST.Expressions.Access;
 
+import AST.Expressions.ExpressionNode;
 import SymbolTable.MethodDeclaration;
 import SymbolTable.SymbolTable;
 import SymbolTable.MemberDeclaration;
@@ -16,12 +17,18 @@ public class AccessMethod extends AccessMember{
     }
     @Override
     public boolean isCorrect() throws CompilerException {
-        if(method != null) return true;
-        this.method = SymbolTable.findMethod(this.name,parameters.size());
-        if(this.method == null){
-            throw new SemanticalErrorException(name,"Method "+this.name.getLexeme()+" with "+parameters.size()+" parameters not found in current class");
+        if(method == null) {
+            this.method = SymbolTable.findMethod(this.name,parameters.size());
+            if(this.method == null){
+                throw new SemanticalErrorException(name,"Method "+this.name.getLexeme()+" with "+parameters.size()+" parameters not found in current class");
+            }
+            this.type = method.getType();
+            }
+        for( ExpressionNode e : parameters){
+            if(!e.isCorrect()) throw new SemanticalErrorException(name,"Method "+this.name.getLexeme()+" has incorrect parameter");
+            MemberType type = e.getExpressionType();
+            if(!type.conformsTo(method.getParameterType(parameters.indexOf(e)))) throw new SemanticalErrorException(name,"Method "+this.name.getLexeme()+" has parameter that does not conform to the method");
         }
-        this.type = method.getType();
         return true;
     }
     @Override

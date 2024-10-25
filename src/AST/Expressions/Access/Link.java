@@ -51,16 +51,9 @@ public class Link extends AccessExpression{
     }
 
     public String toString(){
-        String toReturn = name.getLexeme();
+        String toReturn = link.toString();
 
-        if(parameters != null){
-            toReturn += "(";
-            for(ExpressionNode parameter : parameters){
-                toReturn += parameter.toString() + ",";
-            }
-            toReturn += ")";
-        }
-
+        System.out.println("Link: " + toReturn);
         if(next != null){
             toReturn += "."+next.toString();
         }

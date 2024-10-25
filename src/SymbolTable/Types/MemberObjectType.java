@@ -81,4 +81,11 @@ public class MemberObjectType extends MemberType{
     public AttributeDeclaration hasAttribute(AccessVar accessVar) {
         return SymbolTable.getClass(this.name).getAttribute(accessVar);
     }
+
+    public boolean conformsTo(MemberType type) {
+        if(name.getLexeme().equals(type.getName())) return true;
+        else{
+            return SymbolTable.isAncestor(type.getName(), name.getLexeme());
+        }
+    }
 }

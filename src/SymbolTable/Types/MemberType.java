@@ -37,4 +37,6 @@ public abstract class MemberType {
     abstract public MethodDeclaration hasMethod(AccessMethod accessMethod) throws SemanticalErrorException;
 
     abstract public AttributeDeclaration hasAttribute(AccessVar accessVar) throws SemanticalErrorException;
+
+    abstract public boolean conformsTo(MemberType type) throws SemanticalErrorException;
 }

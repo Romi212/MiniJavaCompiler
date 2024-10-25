@@ -247,4 +247,11 @@ public class SymbolTable {
     public static ClassDeclaration getCurrentClass() {
         return currentClass;
     }
+
+    public static boolean isAncestor(String ancestor, String child) {
+        String parent = symbolTable.get(child).getParent().getLexeme();
+        if(parent.equals("Object")) return false;
+        if(parent.equals(ancestor)) return true;
+        else return isAncestor(ancestor, symbolTable.get(child).getParent().getLexeme());
+    }
 }

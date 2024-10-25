@@ -38,4 +38,9 @@ public class ChainedExpression extends AccessExpression{
         }
         return chain.getExpressionType();
     }
+
+    public String toString(){
+
+        return first.toString() + (chain != null ? chain.toString() : "");
+    }
 }

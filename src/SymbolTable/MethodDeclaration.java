@@ -139,4 +139,11 @@ public class MethodDeclaration extends MemberDeclaration {
     public boolean validStatements() throws CompilerException {
         return block.isCorrect();
     }
+
+    public MemberType getParameterType(int indexOf) throws SemanticalErrorException {
+        for( ParameterDeclaration p : parameters.values()){
+            if(p.getPosition() == indexOf) return p.getType();
+        }
+        throw new SemanticalErrorException(name, "Method "+name.getLexeme()+" has no parameter at position "+indexOf);
+    }
 }

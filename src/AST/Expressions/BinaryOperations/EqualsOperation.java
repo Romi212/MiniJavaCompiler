@@ -7,10 +7,9 @@ import utils.Exceptions.CompilerException;
 import utils.Exceptions.SemanticalErrorException;
 import utils.Token;
 
-public class LogicalOperation extends BinaryExpression {
+public class EqualsOperation extends BinaryExpression{
 
-
-    public LogicalOperation(Token operator) {
+    public EqualsOperation(Token operator) {
         super(operator);
     }
 
@@ -20,14 +19,11 @@ public class LogicalOperation extends BinaryExpression {
         if(right == null) throw new SemanticalErrorException(operator,"Binary expression has no right expression");
         if(!left.isCorrect()) throw new SemanticalErrorException(operator,"Binary expression has incorrect left expression");
         if(!right.isCorrect()) throw new SemanticalErrorException(operator,"Binary expression has incorrect right expression");
-        if(!left.getExpressionType().conformsTo(new IntegerType(new Token("rw_boolean","boolean",-1)))) throw new SemanticalErrorException(operator,"Binary expression has left expression that does not conform to int");
-        if(!right.getExpressionType().conformsTo(new IntegerType(new Token("rw_boolean","boolean",-1)))) throw new SemanticalErrorException(operator,"Binary expression has right expression that does not conform to int");
+        if(!left.getExpressionType().conformsTo(right.getExpressionType()) && !right.getExpressionType().conformsTo(left.getExpressionType())) throw new SemanticalErrorException(operator,"Binary expression has expressions that do not conform to each other");
         return true;
     }
     @Override
     public MemberType getExpressionType() {
         return new BooleanType(new Token("rw_boolean","boolean",-1));
     }
-
-
 }

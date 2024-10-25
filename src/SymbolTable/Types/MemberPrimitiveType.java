@@ -19,4 +19,8 @@ public abstract class MemberPrimitiveType extends MemberType {
     public AttributeDeclaration hasAttribute(AccessVar link) throws SemanticalErrorException{
         throw new SemanticalErrorException(this.name, "Primitive type member "+this.name.getLexeme()+" has no members");
     }
+    public boolean conformsTo(MemberType other) throws SemanticalErrorException {
+
+        return name.getLexeme().equals(other.getName());
+    }
 }
