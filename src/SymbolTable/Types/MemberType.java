@@ -39,4 +39,12 @@ public abstract class MemberType {
     abstract public AttributeDeclaration hasAttribute(AccessVar accessVar) throws SemanticalErrorException;
 
     abstract public boolean conformsTo(MemberType type) throws SemanticalErrorException;
+
+    public boolean isOrdinal() {
+        return false;
+    }
+
+    public boolean isVoid() {
+        return false;
+    }
 }

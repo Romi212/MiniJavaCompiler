@@ -13,6 +13,7 @@ abstract public class UnaryExpression extends ExpressionNode {
         protected Token operator;
 
         public UnaryExpression(Token operator){
+            setName(operator);
             this.operator = operator;
         }
 

@@ -1,7 +1,9 @@
 package AST.Statements;
 
 import AST.Expressions.ExpressionNode;
+import SymbolTable.Types.MemberType;
 import utils.Exceptions.CompilerException;
+import utils.Exceptions.SemanticalErrorException;
 
 import java.util.ArrayList;
 
@@ -21,7 +23,8 @@ public class SwitchNode extends StatementNode{
     }
 
     public void addCase(CaseNode c){
-        cases.add(c);
+        if(c.getExpressionType() == null) defaultCase = c;
+        else cases.add(c);
         c.setParent(this);
     }
 
@@ -32,9 +35,13 @@ public class SwitchNode extends StatementNode{
 
     @Override
     public boolean isCorrect()  throws CompilerException {
-        boolean correct = (expression != null) && expression.isCorrect();
+        if(expression == null) throw new SemanticalErrorException(name,"Switch expression is null");
+        if(!expression.isCorrect()) throw new SemanticalErrorException(expression.getName(),"Switch expression is not correct");
+        MemberType expressionType = expression.getExpressionType();
+        if(!expressionType.isOrdinal()) throw new SemanticalErrorException(expression.getName(),"Switch expression is not ordinal");
+        boolean correct = true;
         for(CaseNode c : cases){
-            correct = correct && c.isCorrect();
+            correct = correct && c.isCorrect() && c.getExpressionType().conformsTo(expressionType);
         }
         if(defaultCase != null){
             correct = correct && defaultCase.isCorrect();

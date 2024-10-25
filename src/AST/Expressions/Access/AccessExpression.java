@@ -9,7 +9,7 @@ import java.util.ArrayList;
 
 public abstract class AccessExpression extends ExpressionNode {
 
-    Token name;
+
     ArrayList<ExpressionNode> parameters;
 
     public AccessExpression(Token name){
@@ -28,6 +28,7 @@ public abstract class AccessExpression extends ExpressionNode {
     public String toString(){
         return name.getLexeme();
     }
+
 
 
 }

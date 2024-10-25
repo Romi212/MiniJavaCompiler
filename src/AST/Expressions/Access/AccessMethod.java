@@ -40,7 +40,12 @@ public class AccessMethod extends AccessMember{
     public void setMember(AccessMember parent) throws SemanticalErrorException{
         MethodDeclaration m = parent.getExpressionType().hasMethod(this);
         if(m == null) throw new SemanticalErrorException( this.name,"Method "+this.name.getLexeme()+" with "+parameters.size()+" not found in "+parent.getExpressionType().getName());
+        if(parent.isStatic() && !m.isStatic()) throw new SemanticalErrorException( this.name,"Method "+this.name.getLexeme()+" is not static and cannot be called from a static context");
+        if (!m.isPublic()) throw new SemanticalErrorException(this.name, "Method cant be accessed because "+this.name.getLexeme()+" is not public");
         this.method = m;
         this.type = method.getType();
+    }
+    public boolean isStatement(){
+        return true;
     }
 }

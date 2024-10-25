@@ -11,16 +11,19 @@ import utils.Exceptions.SemanticalErrorException;
 public abstract class MemberPrimitiveType extends MemberType {
 
     public MemberDeclaration hasMember(AccessMember link) throws SemanticalErrorException{
-        throw new SemanticalErrorException(this.name, "Primitive type member "+this.name.getLexeme()+" has no members");
+        throw new SemanticalErrorException(link.getName(), "Primitive type member "+this.name.getLexeme()+" has no members");
     }
     public MethodDeclaration hasMethod(AccessMethod link) throws SemanticalErrorException{
-        throw new SemanticalErrorException(this.name, "Primitive type member "+this.name.getLexeme()+" has no members");
+        throw new SemanticalErrorException(link.getName(), "Primitive type member "+this.name.getLexeme()+" has no members");
     }
     public AttributeDeclaration hasAttribute(AccessVar link) throws SemanticalErrorException{
-        throw new SemanticalErrorException(this.name, "Primitive type member "+this.name.getLexeme()+" has no members");
+        throw new SemanticalErrorException(link.getName(), "Primitive type member "+this.name.getLexeme()+" has no members");
     }
     public boolean conformsTo(MemberType other) throws SemanticalErrorException {
-
+        if(other == null) return false;
         return name.getLexeme().equals(other.getName());
+    }
+    public boolean isOrdinal() {
+        return true;
     }
 }

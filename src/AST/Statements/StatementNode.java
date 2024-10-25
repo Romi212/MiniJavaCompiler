@@ -10,13 +10,17 @@ import java.util.HashMap;
 
 abstract public class StatementNode {
 
-    protected Token name;
+    public Token name;
     public StatementNode parent;
 
     private HashMap<String, LocalVar> localVars;
     public StatementNode(Token name){
         this.name = name;
         this.localVars = new HashMap<>();
+    }
+
+    public void setName(Token name){
+        this.name = name;
     }
     public void addLocalVar(LocalVar localVar) throws SemanticalErrorException {
         //TODO CHECK REPETIDO

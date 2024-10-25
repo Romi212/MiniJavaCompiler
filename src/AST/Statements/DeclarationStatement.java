@@ -5,6 +5,7 @@ import AST.LocalVar;
 import SymbolTable.SymbolTable;
 import SymbolTable.Types.MemberType;
 import utils.Exceptions.CompilerException;
+import utils.Exceptions.SemanticalErrorException;
 import utils.Token;
 
 import java.util.ArrayList;
@@ -40,6 +41,7 @@ public class DeclarationStatement extends StatementNode{
             for(Token t : variables){
                 LocalVar localVar = new LocalVar(t, type);
                 //SymbolTable.addLocalVar(localVar);
+                if(SymbolTable.isParameter(t)) throw new SemanticalErrorException(t,"Variable name is already used as a parameter");
                 parent.addLocalVar(localVar);
             }
         }

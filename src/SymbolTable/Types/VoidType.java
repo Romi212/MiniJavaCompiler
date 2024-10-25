@@ -8,4 +8,11 @@ public class VoidType extends MemberPrimitiveType{
         this.name = name;
     }
 
+    public boolean isOrdinal() {
+        return false;
+    }
+    public boolean isVoid(){
+        return true;
+    }
+
 }

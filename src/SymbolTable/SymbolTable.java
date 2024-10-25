@@ -254,4 +254,8 @@ public class SymbolTable {
         if(parent.equals(ancestor)) return true;
         else return isAncestor(ancestor, symbolTable.get(child).getParent().getLexeme());
     }
+
+    public static MemberType getReturnType() {
+        return currentClass.getReturnType();
+    }
 }

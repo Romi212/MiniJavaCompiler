@@ -14,6 +14,8 @@ public class ChainedExpression extends AccessExpression{
 
     public void setFirst(AccessMember first){
         this.first = first;
+        System.out.println("Setting name to "+first.getName());
+        setName(first.getName());
     }
 
     public void addNext(Link chain){
@@ -42,5 +44,20 @@ public class ChainedExpression extends AccessExpression{
     public String toString(){
 
         return first.toString() + (chain != null ? chain.toString() : "");
+    }
+
+    @Override
+    public boolean isStatement() {
+        if(chain == null){
+            return first.isStatement();
+        }
+        return chain.isStatement();
+    }
+
+    public boolean isAssignable(){
+        if(chain == null){
+            return first.isAssignable();
+        }
+        return chain.isAssignable();
     }
 }

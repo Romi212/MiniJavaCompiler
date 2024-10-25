@@ -19,10 +19,6 @@ public abstract class AccessMember extends AccessExpression{
         super(null);
         parameters = new ArrayList<>();
     }
-    public void setName(Token name){
-        this.name = name;
-    }
-
 
 
 
@@ -52,4 +48,8 @@ public abstract class AccessMember extends AccessExpression{
 
 
     abstract  public void setMember(AccessMember hasMember) throws SemanticalErrorException;
+
+    public boolean isStatic(){
+        return false;
+    }
 }

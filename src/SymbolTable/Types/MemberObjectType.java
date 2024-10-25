@@ -83,6 +83,7 @@ public class MemberObjectType extends MemberType{
     }
 
     public boolean conformsTo(MemberType type) {
+        if(type == null) return false;
         if(name.getLexeme().equals(type.getName())) return true;
         else{
             return SymbolTable.isAncestor(type.getName(), name.getLexeme());

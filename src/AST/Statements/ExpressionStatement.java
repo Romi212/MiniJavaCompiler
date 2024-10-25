@@ -2,14 +2,15 @@ package AST.Statements;
 
 import AST.Expressions.ExpressionNode;
 import utils.Exceptions.CompilerException;
+import utils.Exceptions.SemanticalErrorException;
 import utils.Token;
 
-public class AssignmentStatement extends StatementNode{
+public class ExpressionStatement extends StatementNode{
 
 
     private ExpressionNode expression;
 
-    public AssignmentStatement(ExpressionNode expression) {
+    public ExpressionStatement(ExpressionNode expression) {
         super(null);
         this.expression = expression;
         if( expression!= null) expression.setParent(this);
@@ -23,7 +24,13 @@ public class AssignmentStatement extends StatementNode{
 
     @Override
     public boolean isCorrect() throws CompilerException {
-        return expression.isCorrect();
+        if(expression.isCorrect()){
+
+            if(!expression.isStatement()) {
+                throw new SemanticalErrorException(expression.getName(), "Expression is not a statement");
+            }
+        }
+        return true;
     }
 
     public String toString(){

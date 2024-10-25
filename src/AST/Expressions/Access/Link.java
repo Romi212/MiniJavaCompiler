@@ -60,5 +60,14 @@ public class Link extends AccessExpression{
         return toReturn;
     }
 
+    public boolean isStatement() {
+        if(next == null) return link.isStatement();
+        else return next.isStatement();
+    }
+
+    public boolean isAssignable(){
+        if(next == null) return link.isAssignable();
+        else return next.isAssignable();
+    }
 
 }

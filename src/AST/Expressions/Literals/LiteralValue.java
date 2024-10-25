@@ -10,6 +10,7 @@ public abstract class LiteralValue extends ExpressionNode {
 
     public LiteralValue(Token value){
         this.value = value;
+        setName(value);
     }
 
     @Override

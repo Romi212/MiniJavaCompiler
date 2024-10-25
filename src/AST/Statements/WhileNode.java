@@ -1,7 +1,9 @@
 package AST.Statements;
 
 import AST.Expressions.ExpressionNode;
+import SymbolTable.Types.BooleanType;
 import utils.Exceptions.CompilerException;
+import utils.Exceptions.SemanticalErrorException;
 import utils.Token;
 
 public class WhileNode extends  StatementNode{
@@ -18,8 +20,10 @@ public class WhileNode extends  StatementNode{
 
     @Override
     public boolean isCorrect() throws CompilerException {
-        System.out.println("WhileNode"+ condition.toString());
-        return condition.isCorrect() && statement.isCorrect();
+        if(!condition.isCorrect()) throw new SemanticalErrorException(condition.getName(),"Condition is not correct");
+        if(!statement.isCorrect()) throw new SemanticalErrorException(statement.getName(),"Statement is not correct");
+        if(!condition.getExpressionType().conformsTo(new BooleanType(new Token("rw_boolean","boolean",-1)))) throw new SemanticalErrorException(condition.getName(),"Condition is not boolean");
+        return true;
     }
 
     public String toString(){

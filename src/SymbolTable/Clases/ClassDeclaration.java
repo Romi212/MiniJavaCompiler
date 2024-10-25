@@ -289,6 +289,10 @@ public class ClassDeclaration {
     }
 
     public boolean validStatements() throws CompilerException{
+        for (HashMap.Entry<String, ConstructorDeclaration> entry : constructors.entrySet()){
+            currentMethod = entry.getValue();
+            if(!entry.getValue().validStatements()) return false;
+        }
         for( HashMap.Entry<String, MethodDeclaration> entry : methods.entrySet()){
             currentMethod = entry.getValue();
             if(!entry.getValue().validStatements()) return false;
@@ -302,5 +306,9 @@ public class ClassDeclaration {
 
     public AttributeDeclaration getAttribute(AccessVar accessVar) {
         return attributes.get(accessVar.getName().getLexeme());
+    }
+
+    public MemberType getReturnType() {
+        return currentMethod.getType();
     }
 }

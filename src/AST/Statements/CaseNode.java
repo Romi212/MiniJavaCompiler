@@ -2,6 +2,7 @@ package AST.Statements;
 
 import AST.Expressions.ExpressionNode;
 import AST.Expressions.Literals.LiteralValue;
+import SymbolTable.Types.MemberType;
 import utils.Exceptions.CompilerException;
 
 import java.util.ArrayList;
@@ -41,5 +42,12 @@ public class CaseNode extends StatementNode{
             toReturn = "default: " + statement.toString();
         }
         return toReturn;
+    }
+
+    public MemberType getExpressionType(){
+        if(expression != null){
+            return expression.getExpressionType();
+        }
+        else return null;
     }
 }

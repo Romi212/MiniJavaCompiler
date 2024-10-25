@@ -318,7 +318,8 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         ConstructorDeclaration newMethod = new ConstructorDeclaration(name);
         formalArgs(newMethod);
         SymbolTable.addConstructor(newMethod);
-        block();
+        BLockDeclaration block = block();
+        newMethod.addBlock(block);
         return newMethod;
     }
 
@@ -466,7 +467,7 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
 
         }
         else if(Firsts.isFirst("NonStaticExp", currentToken.getToken())){
-            statementN = new AssignmentStatement(nonStaticExp());
+            statementN = new ExpressionStatement(nonStaticExp());
             match("pm_semicolon");
 
         }
@@ -512,15 +513,17 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
 
     }
 
-    //VOY POR ACA
 
     private StatementNode object() throws CompilerException {
         Token name = currentToken;
         match("id_class");
         if (currentToken.getToken().equals("pm_period")) {
-            ExpressionNode exp = staticCall();
+            ChainedExpression staticClass = new ChainedExpression();
+            staticClass.setFirst(new AccessStaticClass(name));
+            ExpressionNode exp = staticCall(staticClass);
+            exp.setName(name);
             AssignmentExp ass = possibleExp();
-            AssignmentStatement expression = new AssignmentStatement(null);
+            ExpressionStatement expression = new ExpressionStatement(null);
             if(ass != null) {
                 ass.addAccess(exp);
                 expression.setExpression(ass);
@@ -548,22 +551,23 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         return declarationStatement;
     }
 
-    private ExpressionNode staticCall() throws CompilerException {
+    private ExpressionNode staticCall(ChainedExpression staticClass) throws CompilerException {
         match("pm_period");
-        ChainedExpression chain = new ChainedExpression();
+        Link chain = new Link();
         AccessMethod access = new AccessMethod();
         access.setName(currentToken);
         match("id_met_var");
         actualArgs(access);
         Link rest = chainedOp();
-        chain.setFirst(access);
-        chain.addNext(rest);
+        chain.setLink(access);
+        chain.setNext(rest);
+        staticClass.addNext(chain);
         BinaryExpression exp = possibleOp();
         if(exp != null){
-            exp.addLeft(chain);
+            exp.addLeft(staticClass);
             return exp;
         }
-        return chain;
+        return staticClass;
     }
 
 
@@ -845,8 +849,11 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
 
     private ExpressionNode complexExpression() throws CompilerException {
         if(currentToken.getToken().equals("id_class")){
+            Token name = currentToken;
             match("id_class");
-            return staticCall();
+            ChainedExpression staticClass = new ChainedExpression();
+            staticClass.setFirst(new AccessStaticClass(name));
+            return staticCall(staticClass);
         }
         else if(Firsts.isFirst("BasicExpression", currentToken.getToken())){
             ExpressionNode operand = basicExpression();
@@ -1031,7 +1038,7 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         Token literalV = currentToken;
         if(currentToken.getToken().equals("rw_null")){
             match("rw_null");
-            lit = new LiteralNull();
+            lit = new LiteralNull(literalV);
 
         }
         else if(currentToken.getToken().equals("lit_string")){
