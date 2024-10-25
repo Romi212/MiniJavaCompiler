@@ -15,7 +15,7 @@ public class LogicalOperation extends BinaryExpression {
     }
 
     @Override
-    public boolean isCorrect() throws CompilerException {
+    public boolean isCorrect() throws SemanticalErrorException {
         if(left == null) throw new SemanticalErrorException(operator,"Binary expression has no left expression");
         if(right == null) throw new SemanticalErrorException(operator,"Binary expression has no right expression");
         if(!left.isCorrect()) throw new SemanticalErrorException(operator,"Binary expression has incorrect left expression");

@@ -13,16 +13,17 @@ abstract public class BinaryExpression extends ExpressionNode {
 
     public BinaryExpression(Token operator){
         this.operator = operator;
+        setName(operator);
     }
 
     public void addLeft(ExpressionNode left){
         this.left = left;
-        left.setParent(this);
+        left.setParent(parent);
     }
 
     public void addRight(ExpressionNode right){
         this.right = right;
-        right.setParent(this);
+        right.setParent(parent);
     }
 
 

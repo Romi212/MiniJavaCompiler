@@ -3,6 +3,7 @@ package AST.Expressions.Access;
 import AST.Expressions.ExpressionNode;
 import SymbolTable.Types.MemberType;
 import utils.Exceptions.CompilerException;
+import utils.Exceptions.SemanticalErrorException;
 import utils.Token;
 
 import java.util.ArrayList;
@@ -15,7 +16,7 @@ public abstract class AccessExpression extends ExpressionNode {
     public AccessExpression(Token name){
         this.name = name;
     }
-    public abstract boolean isCorrect() throws CompilerException;
+    public abstract boolean isCorrect() throws SemanticalErrorException;
     public void addParameter(ExpressionNode parameter){
         parameters.add(parameter);
     }

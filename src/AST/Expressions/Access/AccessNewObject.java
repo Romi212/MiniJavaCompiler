@@ -1,6 +1,7 @@
 package AST.Expressions.Access;
 
-import SymbolTable.MemberDeclaration;
+import SymbolTable.MethodDeclaration;
+import SymbolTable.ConstructorDeclaration;
 import SymbolTable.SymbolTable;
 import SymbolTable.Types.MemberObjectType;
 import SymbolTable.Types.MemberType;
@@ -8,6 +9,8 @@ import utils.Exceptions.SemanticalErrorException;
 import utils.Token;
 
 public class AccessNewObject extends AccessMember{
+
+    private ConstructorDeclaration constructor;
     public AccessNewObject(Token name, MemberObjectType type){
         super();
         setName(name);
@@ -15,7 +18,11 @@ public class AccessNewObject extends AccessMember{
     }
     @Override
     public boolean isCorrect() throws SemanticalErrorException {
-        return SymbolTable.hasClass(type.getToken());
+        if( !SymbolTable.hasClass(type.getToken())) throw new SemanticalErrorException(getName(), "Class "+type.getToken().getLexeme()+" does not exist");
+        ConstructorDeclaration constructor = SymbolTable.findConstructor(this.name,parameters.size());
+        if(constructor == null) throw new SemanticalErrorException(getName(), "Constructor "+this.name.getLexeme()+" with "+parameters.size()+" parameters not found in class "+type.getToken().getLexeme());
+        this.constructor = constructor;
+        return true;
     }
 
     @Override

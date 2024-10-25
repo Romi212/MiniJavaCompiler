@@ -27,7 +27,7 @@ public class Link extends AccessExpression{
     }
 
 
-    public boolean isCorrect(AccessMember parent) throws CompilerException {
+    public boolean isCorrect(AccessMember parent) throws SemanticalErrorException {
         link.setMember(parent);
 
         if(next != null){
@@ -37,7 +37,7 @@ public class Link extends AccessExpression{
     }
 
     @Override
-    public boolean isCorrect() throws CompilerException {
+    public boolean isCorrect() throws SemanticalErrorException {
         return false;
     }
 

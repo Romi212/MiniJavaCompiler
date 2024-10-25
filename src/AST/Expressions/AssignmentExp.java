@@ -21,15 +21,15 @@ public class AssignmentExp extends ExpressionNode{
 
         public void addAccess(ExpressionNode access){
             this.access = access;
-            access.setParent(this);
+            access.setParent(parent);
         }
 
         public void addExpression(ExpressionNode expression){
             this.expression = expression;
-            expression.setParent(this);
+            expression.setParent(parent);
         }
         @Override
-        public boolean isCorrect() throws CompilerException {
+        public boolean isCorrect() throws SemanticalErrorException {
             if(access == null) throw new SemanticalErrorException(operator,"Assignment expression has no access");
             if(expression == null) throw new SemanticalErrorException(operator,"Assignment expression has no expression");
             if(!access.isCorrect()) throw new SemanticalErrorException(operator,"Assignment expression has incorrect access");

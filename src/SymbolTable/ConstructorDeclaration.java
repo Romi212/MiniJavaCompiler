@@ -1,11 +1,12 @@
 package SymbolTable;
 
+import SymbolTable.Types.NullType;
 import utils.Token;
 
 public class ConstructorDeclaration extends  MethodDeclaration{
 
         public ConstructorDeclaration(Token name) {
-            super(name, SymbolTable.decideType(new Token("rw_void", "void", -1)));
+            super(name, new NullType());
         }
 
         public String toString(){

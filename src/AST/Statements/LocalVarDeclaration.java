@@ -31,6 +31,7 @@ public class LocalVarDeclaration extends StatementNode{
         MemberType type = initialization.getExpressionType();
         this.type = type;
         if(type == null || type.conformsTo(null)) throw new SemanticalErrorException(this.name, "Local variable declared 'var' "+this.name.getLexeme()+" cant be initialized with null");
+        if(type.isVoid()) throw new SemanticalErrorException(this.name, "Local variable declared 'var' "+this.name.getLexeme()+" cant be initialized with void");
         System.out.println("Adding local var "+this.name.getLexeme() + this.name.getLine());
         if(SymbolTable.isParameter(name)) throw new SemanticalErrorException(name,"Variable name is already used as a parameter");
         parent.addLocalVar(new LocalVar(this.name, type));

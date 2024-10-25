@@ -628,8 +628,9 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         }else return exp;
     }
     private StatementNode returnT() throws CompilerException {
+        Token name = currentToken;
         match("rw_return");
-        return new ReturnNode( expressionOp());
+        return new ReturnNode(name, expressionOp());
     }
 
     private void breakT() throws CompilerException {

@@ -4,6 +4,7 @@ import SymbolTable.SymbolTable;
 import SymbolTable.Types.MemberObjectType;
 import SymbolTable.Types.MemberType;
 import utils.Exceptions.CompilerException;
+import utils.Exceptions.SemanticalErrorException;
 import utils.Token;
 
 public class AccessStaticClass extends AccessMember{
@@ -13,7 +14,7 @@ public class AccessStaticClass extends AccessMember{
         setName(name);
     }
     @Override
-    public boolean isCorrect() throws CompilerException {
+    public boolean isCorrect() throws SemanticalErrorException {
         return SymbolTable.hasClass(name);
     }
 

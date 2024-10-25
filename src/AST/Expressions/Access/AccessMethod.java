@@ -16,7 +16,7 @@ public class AccessMethod extends AccessMember{
         super();
     }
     @Override
-    public boolean isCorrect() throws CompilerException {
+    public boolean isCorrect() throws SemanticalErrorException {
         if(method == null) {
             this.method = SymbolTable.findMethod(this.name,parameters.size());
             if(this.method == null){
@@ -24,9 +24,12 @@ public class AccessMethod extends AccessMember{
             }
             this.type = method.getType();
             }
+        System.out.println("Method: "+this.name.getLexeme());
         for( ExpressionNode e : parameters){
             if(!e.isCorrect()) throw new SemanticalErrorException(name,"Method "+this.name.getLexeme()+" has incorrect parameter");
             MemberType type = e.getExpressionType();
+            System.out.println(parameters.indexOf(e) +")Parameter: "+type.getName());
+            System.out.println("Real parameter: "+method.getParameterType(parameters.indexOf(e)));
             if(!type.conformsTo(method.getParameterType(parameters.indexOf(e)))) throw new SemanticalErrorException(name,"Method "+this.name.getLexeme()+" has parameter that does not conform to the method");
         }
         return true;
@@ -42,6 +45,14 @@ public class AccessMethod extends AccessMember{
         if(m == null) throw new SemanticalErrorException( this.name,"Method "+this.name.getLexeme()+" with "+parameters.size()+" not found in "+parent.getExpressionType().getName());
         if(parent.isStatic() && !m.isStatic()) throw new SemanticalErrorException( this.name,"Method "+this.name.getLexeme()+" is not static and cannot be called from a static context");
         if (!m.isPublic()) throw new SemanticalErrorException(this.name, "Method cant be accessed because "+this.name.getLexeme()+" is not public");
+        System.out.println("Method: "+this.name.getLexeme());
+        for( ExpressionNode e : parameters){
+            if(!e.isCorrect()) throw new SemanticalErrorException(name,"Method "+this.name.getLexeme()+" has incorrect parameter");
+            MemberType type = e.getExpressionType();
+            System.out.println(parameters.indexOf(e) +")Parameter: "+type.getName());
+            System.out.println("Real parameter: "+m.getParameterType(parameters.indexOf(e)));
+            if(!type.conformsTo(m.getParameterType(parameters.indexOf(e)))) throw new SemanticalErrorException(name,"Method "+this.name.getLexeme()+" has parameter that does not conform to the method");
+        }
         this.method = m;
         this.type = method.getType();
     }

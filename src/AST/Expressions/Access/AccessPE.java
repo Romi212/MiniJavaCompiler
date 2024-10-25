@@ -4,6 +4,7 @@ import AST.Expressions.ExpressionNode;
 import SymbolTable.MemberDeclaration;
 import SymbolTable.Types.MemberType;
 import utils.Exceptions.CompilerException;
+import utils.Exceptions.SemanticalErrorException;
 import utils.Token;
 
 public class AccessPE extends AccessMember{
@@ -15,7 +16,7 @@ public class AccessPE extends AccessMember{
         exp = name;
     }
     @Override
-    public boolean isCorrect() throws CompilerException {
+    public boolean isCorrect() throws SemanticalErrorException {
         return exp.isCorrect();
     }
 

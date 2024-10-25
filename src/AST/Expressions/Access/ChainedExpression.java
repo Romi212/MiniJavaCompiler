@@ -2,6 +2,7 @@ package AST.Expressions.Access;
 
 import SymbolTable.Types.MemberType;
 import utils.Exceptions.CompilerException;
+import utils.Exceptions.SemanticalErrorException;
 
 public class ChainedExpression extends AccessExpression{
 
@@ -23,7 +24,7 @@ public class ChainedExpression extends AccessExpression{
     }
 
     @Override
-    public boolean isCorrect() throws CompilerException {
+    public boolean isCorrect() throws SemanticalErrorException {
         boolean isCorrect = first.isCorrect();
         if(chain != null){
             isCorrect = isCorrect && chain.isCorrect(first);

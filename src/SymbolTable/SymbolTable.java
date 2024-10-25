@@ -249,13 +249,17 @@ public class SymbolTable {
     }
 
     public static boolean isAncestor(String ancestor, String child) {
-        String parent = symbolTable.get(child).getParent().getLexeme();
-        if(parent.equals("Object")) return false;
-        if(parent.equals(ancestor)) return true;
-        else return isAncestor(ancestor, symbolTable.get(child).getParent().getLexeme());
+        Token parent = symbolTable.get(child).getParent();
+        if(parent == null || parent.getLexeme().equals("Object")) return false;
+        if(parent.getLexeme().equals(ancestor)) return true;
+        else return isAncestor(ancestor, parent.getLexeme());
     }
 
     public static MemberType getReturnType() {
         return currentClass.getReturnType();
+    }
+
+    public static ConstructorDeclaration findConstructor(Token name, int size) {
+        return currentClass.findConstructor(name,size);
     }
 }

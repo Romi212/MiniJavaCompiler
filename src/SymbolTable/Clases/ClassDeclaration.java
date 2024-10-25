@@ -48,6 +48,7 @@ public class ClassDeclaration {
         constructors = new HashMap<>();
         constructors.put("default", new ConstructorDeclaration(name));
         orderedParametricTypes = new ArrayList<>();
+
     }
 
 
@@ -310,5 +311,13 @@ public class ClassDeclaration {
 
     public MemberType getReturnType() {
         return currentMethod.getType();
+    }
+
+    public ConstructorDeclaration findConstructor(Token name, int size) {
+        String key = "#"+size+"#";
+        if(constructors.containsKey(key)) return constructors.get(key);
+        else if(size == 0) return constructors.get("default");
+        return null;
+
     }
 }
