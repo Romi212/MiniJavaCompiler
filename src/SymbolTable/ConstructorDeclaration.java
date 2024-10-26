@@ -6,7 +6,7 @@ import utils.Token;
 public class ConstructorDeclaration extends  MethodDeclaration{
 
         public ConstructorDeclaration(Token name) {
-            super(name, new NullType());
+            super(name, new NullType(new Token("null", "null", 0)));
         }
 
         public String toString(){

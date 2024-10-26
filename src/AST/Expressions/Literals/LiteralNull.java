@@ -13,7 +13,7 @@ public class LiteralNull extends LiteralValue{
 
         @Override
         public MemberType getExpressionType() {
-            return new NullType();
+            return new NullType(value);
         }
 
         public String toString(){

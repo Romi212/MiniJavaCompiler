@@ -265,4 +265,8 @@ public class SymbolTable {
     public static ConstructorDeclaration findConstructor(Token name, int size) {
         return currentClass.findConstructor(name,size);
     }
+
+    public static boolean instanciates(MemberType type, MemberType type1) {
+        return currentClass.instanciates(type, type1);
+    }
 }

@@ -1,9 +1,11 @@
 package SymbolTable.Types;
 
+import utils.Token;
+
 public class NullType extends MemberObjectType{
 
-        public NullType(){
-            super(null);
+        public NullType(Token name){
+            super(name);
         }
 
         public boolean isCorrect() {
@@ -11,7 +13,7 @@ public class NullType extends MemberObjectType{
         }
 
         public boolean conformsTo(MemberType type) {
-            return type == null;
+            return (type == null) || !type.isOrdinal() && !type.isVoid();
         }
 
         public boolean isVoid() {

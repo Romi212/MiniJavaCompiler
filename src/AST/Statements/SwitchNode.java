@@ -37,6 +37,7 @@ public class SwitchNode extends StatementNode{
     public boolean isCorrect()  throws CompilerException {
         if(expression == null) throw new SemanticalErrorException(name,"Switch expression is null");
         if(!expression.isCorrect()) throw new SemanticalErrorException(expression.getName(),"Switch expression is not correct");
+        if(!expression.isAssignable()) throw new SemanticalErrorException(expression.getName(),"Switch expression is not a variable");
         MemberType expressionType = expression.getExpressionType();
         if(!expressionType.isOrdinal()) throw new SemanticalErrorException(expression.getName(),"Switch expression is not ordinal");
         boolean correct = true;
