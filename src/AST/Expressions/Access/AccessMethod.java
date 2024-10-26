@@ -36,7 +36,7 @@ public class AccessMethod extends AccessMember{
     }
     @Override
     public MemberType getExpressionType() {
-        return method.getType();
+        return type;
     }
 
     @Override
