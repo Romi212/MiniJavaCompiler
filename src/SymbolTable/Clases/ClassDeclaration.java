@@ -179,15 +179,8 @@ public class ClassDeclaration {
             HashMap<String, MethodDeclaration> parentMethods = SymbolTable.getMethods(parent.getLexeme());
             for(HashMap.Entry<String, MethodDeclaration> entry : parentMethods.entrySet()){
                 if(methods.containsKey(entry.getKey())) {
-                    if(!methods.get(entry.getKey()).getType().equals(entry.getValue())){
-                        if(instanceGenericTypes.containsKey(entry.getValue().getType().getName())) {
-                            if (!methods.get(entry.getKey()).getType().getName().equals(instanceGenericTypes.get(entry.getValue().getType().getName())))
-                                throw new SemanticalErrorException(methods.get(entry.getKey()).getName(), "Method " + entry.getValue().getName().getLexeme() + " in class " + name.getLexeme() + " cant redefine method with different return type in Parent class");
-                        }
-                        if(!methods.get(entry.getKey()).sameSignature(entry.getValue()))
-                            throw new SemanticalErrorException(methods.get(entry.getKey()).getName(), "Method "+entry.getValue().getName().getLexeme()+" in class "+name.getLexeme()+" cant redefine method with different signature in Parent class");
-
-                    }
+                    if(!methods.get(entry.getKey()).sameSignature(entry.getValue()))
+                        throw new SemanticalErrorException(methods.get(entry.getKey()).getName(), "Method "+entry.getValue().getName().getLexeme()+" in class "+name.getLexeme()+" cant redefine method with different signature in Parent class");
                     }else {
                     if(entry.getValue().isAbstract()&& !isAbstract) throw new SemanticalErrorException(name, "Method "+entry.getValue().getName().getLexeme()+" in class "+name.getLexeme()+" must be implemented!");
                     methods.put(entry.getKey(), entry.getValue());
@@ -333,5 +326,14 @@ public class ClassDeclaration {
 
     public void setInstanceType(MemberObjectType generic, MemberObjectType instance) {
         instanceGenericTypes.put(generic.getName(), instance.getName());
+        parametricTypes.put(instance.getName(), instance);
+    }
+
+    public boolean instanciates(MemberType instance, MemberType generic) {
+        if(instanceGenericTypes.containsKey(generic.getName())) {
+            if (!instance.getName().equals(instanceGenericTypes.get(generic.getName())))
+                return false;
+        }
+        return true;
     }
 }

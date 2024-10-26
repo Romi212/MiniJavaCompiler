@@ -71,6 +71,6 @@ abstract public class StatementNode {
     }
 
     public boolean isBreakable() {
-        return false;
+        return (parent != null && parent.isBreakable());
     }
 }

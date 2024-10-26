@@ -21,8 +21,8 @@ public class ReturnNode extends StatementNode{
     @Override
     public boolean isCorrect() throws CompilerException {
         MemberType returnType = SymbolTable.getReturnType();
-        if(returnType.conformsTo(null))
-            throw new SemanticalErrorException(this.getName(), "Invalid return statement in constructor function");
+       // if(returnType.conformsTo(null))
+         //   throw new SemanticalErrorException(this.getName(), "Invalid return statement in constructor function");
         if (expression != null) {
             if (!expression.isCorrect())
                 throw new SemanticalErrorException(expression.getName(), "Return expression is not correct");
@@ -30,7 +30,7 @@ public class ReturnNode extends StatementNode{
                 throw new SemanticalErrorException(expression.getName(), "Return expression does not conform to function return type");
 
         }else{
-            if(!returnType.isVoid())
+            if(!returnType.isVoid() && !returnType.conformsTo(null))
                 throw new SemanticalErrorException(this.getName(), "Method is not void, missing return expression");
         }
         return true;
