@@ -29,4 +29,8 @@ public class WhileNode extends  StatementNode{
     public String toString(){
         return "WhileNode(" + condition.toString() + "){ \n " + statement.toString() + "}";
     }
+
+    public boolean isBreakable(){
+        return true;
+    }
 }

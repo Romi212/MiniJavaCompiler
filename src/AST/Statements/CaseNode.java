@@ -50,4 +50,7 @@ public class CaseNode extends StatementNode{
         }
         else return null;
     }
+    public boolean isBreakable(){
+        return true;
+    }
 }

@@ -87,7 +87,7 @@ public class MethodDeclaration extends MemberDeclaration {
             if(!entry.getValue().sameType(otherParameters.get(key))) return false;
         }
 
-        if(!this.returnType.getName().equals(otherMethod.getType().getName())) return false;
+        //if(!this.returnType.getName().equals(otherMethod.getType().getName())) return false;
 
         if(this.isStatic != otherMethod.isStatic) return false;
 

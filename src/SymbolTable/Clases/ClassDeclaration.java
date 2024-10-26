@@ -38,6 +38,8 @@ public class ClassDeclaration {
     protected MethodDeclaration currentMethod;
     protected MemberDeclaration currentMember;
 
+    protected HashMap<String,String> instanceGenericTypes;
+
     public ClassDeclaration(Token name){
         this.name = name;
         isAbstract = false;
@@ -48,6 +50,7 @@ public class ClassDeclaration {
         constructors = new HashMap<>();
         constructors.put("default", new ConstructorDeclaration(name));
         orderedParametricTypes = new ArrayList<>();
+        instanceGenericTypes = new HashMap<>();
 
     }
 
@@ -176,9 +179,16 @@ public class ClassDeclaration {
             HashMap<String, MethodDeclaration> parentMethods = SymbolTable.getMethods(parent.getLexeme());
             for(HashMap.Entry<String, MethodDeclaration> entry : parentMethods.entrySet()){
                 if(methods.containsKey(entry.getKey())) {
-                    if(!methods.get(entry.getKey()).sameSignature(entry.getValue()))
-                        throw new SemanticalErrorException(methods.get(entry.getKey()).getName(), "Method "+entry.getValue().getName().getLexeme()+" in class "+name.getLexeme()+" cant redefine method with different signature in Parent class");
-                }else {
+                    if(!methods.get(entry.getKey()).getType().equals(entry.getValue())){
+                        if(instanceGenericTypes.containsKey(entry.getValue().getType().getName())) {
+                            if (!methods.get(entry.getKey()).getType().getName().equals(instanceGenericTypes.get(entry.getValue().getType().getName())))
+                                throw new SemanticalErrorException(methods.get(entry.getKey()).getName(), "Method " + entry.getValue().getName().getLexeme() + " in class " + name.getLexeme() + " cant redefine method with different return type in Parent class");
+                        }
+                        if(!methods.get(entry.getKey()).sameSignature(entry.getValue()))
+                            throw new SemanticalErrorException(methods.get(entry.getKey()).getName(), "Method "+entry.getValue().getName().getLexeme()+" in class "+name.getLexeme()+" cant redefine method with different signature in Parent class");
+
+                    }
+                    }else {
                     if(entry.getValue().isAbstract()&& !isAbstract) throw new SemanticalErrorException(name, "Method "+entry.getValue().getName().getLexeme()+" in class "+name.getLexeme()+" must be implemented!");
                     methods.put(entry.getKey(), entry.getValue());
                 }
@@ -319,5 +329,9 @@ public class ClassDeclaration {
         else if(size == 0) return constructors.get("default");
         return null;
 
+    }
+
+    public void setInstanceType(MemberObjectType generic, MemberObjectType instance) {
+        instanceGenericTypes.put(generic.getName(), instance.getName());
     }
 }

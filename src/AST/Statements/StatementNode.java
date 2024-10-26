@@ -60,4 +60,8 @@ abstract public class StatementNode {
         if(parent!= null) return parent.visibleVar(name);
         return null;
     }
+
+    public boolean isBreakable() {
+        return false;
+    }
 }

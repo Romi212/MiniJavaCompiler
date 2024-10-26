@@ -55,5 +55,7 @@ public class BLockDeclaration extends StatementNode{
         return result;
     }
 
-
+    public boolean isBreakable(){
+        return parent!= null && parent.isBreakable();
+    }
 }
