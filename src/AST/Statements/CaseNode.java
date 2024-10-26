@@ -4,6 +4,7 @@ import AST.Expressions.ExpressionNode;
 import AST.Expressions.Literals.LiteralValue;
 import SymbolTable.Types.MemberType;
 import utils.Exceptions.CompilerException;
+import utils.Token;
 
 import java.util.ArrayList;
 
@@ -11,11 +12,12 @@ public class CaseNode extends StatementNode{
     private LiteralValue expression;
     private StatementNode statement;
 
-    public CaseNode(LiteralValue expression, StatementNode s){
-        super(null);
+    public CaseNode(Token name, LiteralValue expression, StatementNode s){
+        super(name);
         this.expression = expression;
         if(expression!= null) {
             expression.setParent(this);
+            //setName(expression.getName());
         }
         statement = s;
         statement.setParent(this);

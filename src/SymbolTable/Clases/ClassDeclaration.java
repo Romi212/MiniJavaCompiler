@@ -336,4 +336,8 @@ public class ClassDeclaration {
         }
         return true;
     }
+
+    public boolean staticContext() {
+        return currentMethod.isStatic();
+    }
 }

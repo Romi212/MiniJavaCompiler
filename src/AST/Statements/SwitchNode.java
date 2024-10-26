@@ -24,7 +24,7 @@ public class SwitchNode extends StatementNode{
 
     public void addCase(CaseNode c){
         if(c.getExpressionType() == null) defaultCase = c;
-        else cases.add(c);
+        else cases.addFirst(c);
         c.setParent(this);
     }
 
@@ -37,12 +37,13 @@ public class SwitchNode extends StatementNode{
     public boolean isCorrect()  throws CompilerException {
         if(expression == null) throw new SemanticalErrorException(name,"Switch expression is null");
         if(!expression.isCorrect()) throw new SemanticalErrorException(expression.getName(),"Switch expression is not correct");
-        if(!expression.isAssignable()) throw new SemanticalErrorException(expression.getName(),"Switch expression is not a variable");
         MemberType expressionType = expression.getExpressionType();
         if(!expressionType.isOrdinal()) throw new SemanticalErrorException(expression.getName(),"Switch expression is not ordinal");
         boolean correct = true;
         for(CaseNode c : cases){
-            correct = correct && c.isCorrect() && c.getExpressionType().conformsTo(expressionType);
+
+            correct = correct && c.isCorrect();
+            if(!c.getExpressionType().conformsTo(expressionType)) throw  new SemanticalErrorException(c.getName(),"Case expression does not conform to switch expression");
         }
         if(defaultCase != null){
             correct = correct && defaultCase.isCorrect();

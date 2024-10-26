@@ -779,9 +779,11 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
     private CaseNode switchStatement() throws CompilerException {
         LiteralValue option = null;
         StatementNode statement;
+        Token name = currentToken;
         if(currentToken.getToken().equals("rw_case")){
             match("rw_case");
             option = primitiveLiteral();
+            name = option.getName();
             match("pm_colon");
             statement = statementOp();
         }
@@ -792,7 +794,7 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         }else{
             throw new SyntaxErrorException(currentToken, "case or default");
         }
-        return new CaseNode(option, statement);
+        return new CaseNode(name, option, statement);
     }
 
     private StatementNode statementOp() throws CompilerException {

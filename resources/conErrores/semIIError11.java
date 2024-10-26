@@ -1,4 +1,4 @@
-///[Error:this|25]
+///[Error:m1|15]
 // Nombre de variable local o parametro repetido x - ln: 17
 class A {
     private int a1;
@@ -9,23 +9,18 @@ class A {
          w1 = 4;
          m1(w1);
 
+    }
 
-       
+    static int m2(){
+         m1(3);
+         return 3;
     }
     
  
   
 }
 
-class B{
-    A x;
 
-    static void m1()
-    {
-        this.x = new A();
-    }
-
-}
 
 
 

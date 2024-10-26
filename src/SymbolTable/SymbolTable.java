@@ -269,4 +269,8 @@ public class SymbolTable {
     public static boolean instanciates(MemberType type, MemberType type1) {
         return currentClass.instanciates(type, type1);
     }
+
+    public static boolean staticContext() {
+        return currentClass.staticContext();
+    }
 }

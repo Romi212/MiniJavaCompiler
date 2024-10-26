@@ -36,7 +36,7 @@ public class AccessMethod extends AccessMember{
     }
     @Override
     public MemberType getExpressionType() {
-        return type;
+        return method.getType();
     }
 
     @Override
@@ -58,5 +58,9 @@ public class AccessMethod extends AccessMember{
     }
     public boolean isStatement(){
         return true;
+    }
+
+    public boolean isStatic(){
+        return method.isStatic();
     }
 }

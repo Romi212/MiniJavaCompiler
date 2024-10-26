@@ -1,5 +1,6 @@
 package AST.Expressions.Access;
 
+import SymbolTable.SymbolTable;
 import SymbolTable.Types.MemberType;
 import utils.Exceptions.CompilerException;
 import utils.Exceptions.SemanticalErrorException;
@@ -25,8 +26,9 @@ public class ChainedExpression extends AccessExpression{
 
     @Override
     public boolean isCorrect() throws SemanticalErrorException {
+        System.out.println("Parent: "+this.parent+"StaticCOntext"+staticContext);
         boolean isCorrect = first.isCorrect();
-        isCorrect = (staticContext == first.isStatic()) && isCorrect;
+        if(SymbolTable.staticContext() && !first.isStatic()) throw new SemanticalErrorException(name,"Method "+this.name.getLexeme()+" is not static and cannot be called from a static context");
         if(chain != null){
             isCorrect = isCorrect && chain.isCorrect(first);
 

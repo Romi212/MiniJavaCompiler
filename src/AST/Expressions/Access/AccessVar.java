@@ -46,4 +46,8 @@ public class AccessVar extends AccessMember{
         return true;
     }
 
+    public boolean isStatic(){
+        return attribute!= null && attribute.isStatic();
+    }
+
 }

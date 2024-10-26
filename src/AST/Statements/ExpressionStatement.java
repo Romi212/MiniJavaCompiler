@@ -13,13 +13,17 @@ public class ExpressionStatement extends StatementNode{
     public ExpressionStatement(ExpressionNode expression) {
         super(null);
         this.expression = expression;
-        if( expression!= null) expression.setParent(this);
     }
 
 
     public void setExpression(ExpressionNode expression){
         this.expression = expression;
-        expression.setParent(this);
+    }
+
+    public void setParent(StatementNode parent){
+        this.parent = parent;
+        staticContext = parent.isStaticContext();
+        expression.setParent(parent);
     }
 
     @Override
