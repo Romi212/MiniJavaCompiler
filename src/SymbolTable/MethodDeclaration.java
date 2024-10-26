@@ -31,6 +31,7 @@ public class MethodDeclaration extends MemberDeclaration {
 
     public void addBlock(BLockDeclaration block){
         this.block = block;
+        block.setStaticContext(isStatic);
     }
     public Token getName(){
         return this.name;

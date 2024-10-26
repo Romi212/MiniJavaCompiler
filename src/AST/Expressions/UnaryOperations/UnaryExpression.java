@@ -19,9 +19,13 @@ abstract public class UnaryExpression extends ExpressionNode {
 
         public void addExpression(ExpressionNode expression){
             this.expression = expression;
-            expression.setParent(parent);
         }
 
+        public void setParent(ExpressionNode parent){
+            this.parent = parent;
+            if(expression != null) expression.setParent(parent);
+            staticContext = parent.isStaticContext();
+        }
 
 
         @Override

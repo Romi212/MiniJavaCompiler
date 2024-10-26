@@ -26,6 +26,7 @@ public class ChainedExpression extends AccessExpression{
     @Override
     public boolean isCorrect() throws SemanticalErrorException {
         boolean isCorrect = first.isCorrect();
+        isCorrect = (staticContext == first.isStatic()) && isCorrect;
         if(chain != null){
             isCorrect = isCorrect && chain.isCorrect(first);
 

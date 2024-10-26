@@ -1,5 +1,6 @@
 package AST.Expressions;
 
+import AST.Statements.StatementNode;
 import SymbolTable.Types.IntegerType;
 import SymbolTable.Types.MemberType;
 import utils.Exceptions.CompilerException;
@@ -21,12 +22,17 @@ public class AssignmentExp extends ExpressionNode{
 
         public void addAccess(ExpressionNode access){
             this.access = access;
-            access.setParent(parent);
         }
 
         public void addExpression(ExpressionNode expression){
             this.expression = expression;
-            expression.setParent(parent);
+
+        }
+        public void setParent(StatementNode parent){
+            this.parent = parent;
+            if(access != null) access.setParent(parent);
+            if(expression != null) expression.setParent(parent);
+            staticContext = parent.isStaticContext();
         }
         @Override
         public boolean isCorrect() throws SemanticalErrorException {

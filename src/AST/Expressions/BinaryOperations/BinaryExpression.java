@@ -18,12 +18,17 @@ abstract public class BinaryExpression extends ExpressionNode {
 
     public void addLeft(ExpressionNode left){
         this.left = left;
-        left.setParent(parent);
     }
 
     public void addRight(ExpressionNode right){
         this.right = right;
-        right.setParent(parent);
+    }
+
+    public void setParent(ExpressionNode parent){
+        this.parent = parent;
+        if(left != null) left.setParent(parent);
+        if(right != null) right.setParent(parent);
+        staticContext = parent.isStaticContext();
     }
 
 

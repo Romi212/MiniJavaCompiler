@@ -12,11 +12,19 @@ abstract public class StatementNode {
 
     public Token name;
     public StatementNode parent;
+    public boolean staticContext = false;
 
     private HashMap<String, LocalVar> localVars;
     public StatementNode(Token name){
         this.name = name;
         this.localVars = new HashMap<>();
+    }
+    public void setStaticContext(boolean isStatic){
+        this.staticContext = isStatic;
+    }
+
+    public boolean isStaticContext(){
+        return this.staticContext;
     }
 
     public void setName(Token name){
@@ -40,6 +48,7 @@ abstract public class StatementNode {
 
     public void setParent(StatementNode parent){
         this.parent = parent;
+        staticContext = parent.isStaticContext();
     }
 
     public boolean containsLocalVar(String name){
