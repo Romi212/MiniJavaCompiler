@@ -523,6 +523,11 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
             staticClass.setFirst(new AccessStaticClass(name));
             ExpressionNode exp = staticCall(staticClass);
             exp.setName(name);
+            BinaryExpression binexp = possibleOp();
+            if(binexp != null){
+                binexp.addLeft(exp);
+                exp = binexp;
+            }
             AssignmentExp ass = possibleExp();
             ExpressionStatement expression = new ExpressionStatement(null);
             if(ass != null) {
@@ -563,11 +568,7 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         chain.setLink(access);
         chain.setNext(rest);
         staticClass.addNext(chain);
-        BinaryExpression exp = possibleOp();
-        if(exp != null){
-            exp.addLeft(staticClass);
-            return exp;
-        }
+
         return staticClass;
     }
 
@@ -859,7 +860,14 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
             match("id_class");
             ChainedExpression staticClass = new ChainedExpression();
             staticClass.setFirst(new AccessStaticClass(name));
-            return staticCall(staticClass);
+            ExpressionNode staticCall = staticCall(staticClass);
+            BinaryExpression operation = possibleOp();
+            if(operation != null) {
+                operation.addLeft(staticCall);
+                return operation;
+            }
+            return staticCall;
+
         }
         else if(Firsts.isFirst("BasicExpression", currentToken.getToken())){
             ExpressionNode operand = basicExpression();
@@ -961,7 +969,7 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
             return op;
         }
         else if(Firsts.isFirst("Operand", currentToken.getToken())){
-            return operand();
+            return nsOperand();
         }
         else{
             throw new SyntaxErrorException(currentToken, "unary operator or operand");
@@ -989,7 +997,19 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         return exp;
     }
 
-    private ExpressionNode operand() throws CompilerException {
+    private ExpressionNode operand() throws CompilerException{
+        if(currentToken.getToken().equals("id_class")){
+            ChainedExpression staticClass = new ChainedExpression();
+            staticClass.setFirst(new AccessStaticClass(currentToken));
+            match("id_class");
+            return staticCall(staticClass);
+        }
+        else {
+            return nsOperand();
+        }
+    }
+
+    private ExpressionNode nsOperand() throws CompilerException {
         if(Firsts.isFirst("Literal", currentToken.getToken())){
             return literal();
         }
