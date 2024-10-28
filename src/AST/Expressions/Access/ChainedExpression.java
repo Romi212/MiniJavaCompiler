@@ -26,7 +26,7 @@ public class ChainedExpression extends AccessExpression{
 
     @Override
     public boolean isCorrect() throws SemanticalErrorException {
-        System.out.println("Parent: "+this.parent+"StaticCOntext"+staticContext);
+        first.setParent(parent);
         boolean isCorrect = first.isCorrect();
         if(SymbolTable.staticContext() && !first.isStatic()) throw new SemanticalErrorException(name,"Method "+this.name.getLexeme()+" is not static and cannot be called from a static context");
         if(chain != null){

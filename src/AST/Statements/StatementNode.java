@@ -43,7 +43,10 @@ abstract public class StatementNode {
     }
 
     public LocalVar getLocalVar(String name){
-        return this.localVars.get(name);
+
+        if(this.localVars.containsKey(name)) return this.localVars.get(name);
+        if(parent != null) return parent.getLocalVar(name);
+        return null;
     }
 
     public void setParent(StatementNode parent){
@@ -52,6 +55,8 @@ abstract public class StatementNode {
     }
 
     public boolean containsLocalVar(String name){
+        System.out.println("Checking if contains "+name + " in "+this);
+
         return this.localVars.containsKey(name) || (parent != null && parent.containsLocalVar(name));
     }
 

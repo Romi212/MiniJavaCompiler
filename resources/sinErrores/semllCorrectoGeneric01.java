@@ -6,7 +6,10 @@ class A<T>{
 }
 class B extends A<Base>{
     Base f() {}
-    void h(Base p1) {}
+    void h(Base p1) {
+        A<String> a = new A();
+        a.f() + 3;
+    }
 }
 class Init{
     static void main()

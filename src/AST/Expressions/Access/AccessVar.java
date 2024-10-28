@@ -1,5 +1,6 @@
 package AST.Expressions.Access;
 
+import AST.LocalVar;
 import SymbolTable.Attributes.AttributeDeclaration;
 import SymbolTable.SymbolTable;
 import SymbolTable.MemberDeclaration;
@@ -13,6 +14,11 @@ public class AccessVar extends AccessMember{
     AttributeDeclaration attribute;
 
     public boolean isCorrect() throws SemanticalErrorException{
+        LocalVar var = parent.getLocalVar(this.name.getLexeme());
+        if(var != null){
+            this.type = var.getType();
+            return true;
+        }
         MemberType type = SymbolTable.visibleVar(this.name);
         this.type = type;
         return true;

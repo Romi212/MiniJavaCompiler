@@ -11,7 +11,7 @@ public class ExpressionStatement extends StatementNode{
     private ExpressionNode expression;
 
     public ExpressionStatement(ExpressionNode expression) {
-        super(null);
+        super(expression.getName());
         this.expression = expression;
     }
 
