@@ -3,7 +3,6 @@ package AST.Statements;
 import AST.Expressions.ExpressionNode;
 import utils.Exceptions.CompilerException;
 import utils.Exceptions.SemanticalErrorException;
-import utils.Token;
 
 public class ExpressionStatement extends StatementNode{
 
@@ -11,23 +10,21 @@ public class ExpressionStatement extends StatementNode{
     private ExpressionNode expression;
 
     public ExpressionStatement(ExpressionNode expression) {
-        super(expression.getName());
+        super(null);
+        if(expression!= null) setName(expression.getName());
         this.expression = expression;
     }
 
 
     public void setExpression(ExpressionNode expression){
         this.expression = expression;
-    }
-
-    public void setParent(StatementNode parent){
-        this.parent = parent;
-        staticContext = parent.isStaticContext();
-        expression.setParent(parent);
+        this.name = expression.getName();
     }
 
     @Override
     public boolean isCorrect() throws CompilerException {
+        if(expression == null) throw new SemanticalErrorException(name,"Expression statement has no expression");
+        expression.setParent(parent);
         if(expression.isCorrect()){
 
             if(!expression.isStatement()) {

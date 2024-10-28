@@ -20,24 +20,24 @@ public class LocalVarDeclaration extends StatementNode{
 
     public void setExpression(ExpressionNode expression){
         this.initialization = expression;
-        expression.setParent(this);
     }
 
     @Override
     public boolean isCorrect() throws CompilerException {
 
         if( initialization == null) throw new SemanticalErrorException(this.name, "Local variable declared 'var' "+this.name.getLexeme()+" must be initialized");
-        boolean isCorrect = initialization.isCorrect();
+        initialization.setParent(parent);
+        if(!initialization.isCorrect()) throw new SemanticalErrorException(initialization.getName(), "Local variable declared 'var' "+this.name.getLexeme()+" initialization is not correct");
         MemberType type = initialization.getExpressionType();
         this.type = type;
-        if(type == null || type.conformsTo(null)) throw new SemanticalErrorException(this.name, "Local variable declared 'var' "+this.name.getLexeme()+" cant be initialized with null");
+        if(type == null || type.conformsTo((MemberType) null)) throw new SemanticalErrorException(this.name, "Local variable declared 'var' "+this.name.getLexeme()+" cant be initialized with null");
 
         if(type.isVoid()) throw new SemanticalErrorException(this.name, "Local variable declared 'var' "+this.name.getLexeme()+" cant be initialized with void");
         System.out.println("Adding local var "+this.name.getLexeme() + this.name.getLine() + parent);
         if(SymbolTable.isParameter(name)) throw new SemanticalErrorException(name,"Variable name is already used as a parameter");
         parent.addLocalVar(new LocalVar(this.name, type));
 
-        return isCorrect;
+        return true;
     }
 
     public String toString(){

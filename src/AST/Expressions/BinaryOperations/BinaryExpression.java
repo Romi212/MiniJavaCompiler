@@ -12,8 +12,9 @@ abstract public class BinaryExpression extends ExpressionNode {
     protected Token operator;
 
     public BinaryExpression(Token operator){
+        super(operator);
         this.operator = operator;
-        setName(operator);
+
     }
 
     public void addLeft(ExpressionNode left){
@@ -24,12 +25,6 @@ abstract public class BinaryExpression extends ExpressionNode {
         this.right = right;
     }
 
-    public void setParent(ExpressionNode parent){
-        this.parent = parent;
-        if(left != null) left.setParent(parent);
-        if(right != null) right.setParent(parent);
-        staticContext = parent.isStaticContext();
-    }
 
 
 

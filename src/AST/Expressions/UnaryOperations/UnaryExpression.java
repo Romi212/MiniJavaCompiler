@@ -13,7 +13,7 @@ abstract public class UnaryExpression extends ExpressionNode {
         protected Token operator;
 
         public UnaryExpression(Token operator){
-            setName(operator);
+            super(operator);
             this.operator = operator;
         }
 
@@ -21,11 +21,7 @@ abstract public class UnaryExpression extends ExpressionNode {
             this.expression = expression;
         }
 
-        public void setParent(ExpressionNode parent){
-            this.parent = parent;
-            if(expression != null) expression.setParent(parent);
-            staticContext = parent.isStaticContext();
-        }
+
 
 
         @Override

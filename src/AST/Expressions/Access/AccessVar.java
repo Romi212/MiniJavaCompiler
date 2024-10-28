@@ -2,6 +2,7 @@ package AST.Expressions.Access;
 
 import AST.LocalVar;
 import SymbolTable.Attributes.AttributeDeclaration;
+import SymbolTable.Parameters.ParameterDeclaration;
 import SymbolTable.SymbolTable;
 import SymbolTable.MemberDeclaration;
 import SymbolTable.Types.MemberType;
@@ -13,14 +14,33 @@ public class AccessVar extends AccessMember{
 
     AttributeDeclaration attribute;
 
+    boolean isStatic = true;
+
+    public AccessVar() {
+        super(null);
+    }
+
     public boolean isCorrect() throws SemanticalErrorException{
         LocalVar var = parent.getLocalVar(this.name.getLexeme());
         if(var != null){
             this.type = var.getType();
+
             return true;
         }
-        MemberType type = SymbolTable.visibleVar(this.name);
-        this.type = type;
+        ParameterDeclaration par = SymbolTable.visibleParameter(this.name);
+        if(par == null){
+            AttributeDeclaration a = SymbolTable.visibleAttribute(this.name);
+            this.attribute = a;
+            if(a!= null) {
+                type = a.getType();
+                isStatic = a.isStatic();
+            }
+        }else {
+            this.type = par.getType();
+        }
+
+        if(type == null) throw new SemanticalErrorException(this.name,"Variable "+this.name.getLexeme()+" not found in current context");
+
         return true;
     }
 
@@ -33,9 +53,9 @@ public class AccessVar extends AccessMember{
         AttributeDeclaration a = parent.getExpressionType().hasAttribute(this);
         if(a == null) throw new SemanticalErrorException( this.name,"Attribute "+this.name.getLexeme()+" not found in "+parent.getExpressionType().getName());
         this.attribute = a;
-        if(parent.isStatic() && !a.isStatic()) throw new SemanticalErrorException( this.name,"Attribute "+this.name.getLexeme()+" is not static and cannot be called from a static context");
+       //if(parent.isStatic() && !a.isStatic()) throw new SemanticalErrorException( this.name,"Attribute "+this.name.getLexeme()+" is not static and cannot be called from a static context");
         if (!a.isPublic()) throw new SemanticalErrorException(this.name, "Attribute cant be accessed because "+this.name.getLexeme()+" is not public");
-
+        isStatic = a.isStatic();
         this.type = a.getType();
     }
 
@@ -53,7 +73,7 @@ public class AccessVar extends AccessMember{
     }
 
     public boolean isStatic(){
-        return attribute!= null && attribute.isStatic();
+        return isStatic;
     }
 
 }

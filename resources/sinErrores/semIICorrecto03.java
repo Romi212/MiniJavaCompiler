@@ -1,3 +1,4 @@
+///[SinErrores]
 // Acceso simple a una variable de instancia
 // Chequea Asignacion compuesta
 

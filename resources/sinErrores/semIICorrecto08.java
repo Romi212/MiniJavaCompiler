@@ -6,8 +6,9 @@ class A {
     int a2;
 
     void m1() {
+        var w = 3;
         if(a2 > 5){
-            var w = 3;
+
             w += 5;
         }
 

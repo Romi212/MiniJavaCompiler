@@ -9,8 +9,7 @@ import utils.Token;
 public class AccessThis extends AccessMember{
 
     public AccessThis(Token name){
-        super();
-        setName(name);
+        super(name);
         this.type = new MemberObjectType(SymbolTable.getCurrentClass().getName());
     }
     @Override

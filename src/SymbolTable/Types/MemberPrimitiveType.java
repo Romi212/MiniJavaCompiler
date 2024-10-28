@@ -26,4 +26,7 @@ public abstract class MemberPrimitiveType extends MemberType {
     public boolean isOrdinal() {
         return true;
     }
+    public boolean conformsTo(String type) throws SemanticalErrorException {
+        return name.getLexeme().equals(type);
+    }
 }

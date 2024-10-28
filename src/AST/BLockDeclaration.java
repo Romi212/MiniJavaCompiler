@@ -3,6 +3,7 @@ package AST;
 import AST.Statements.StatementNode;
 import SymbolTable.Types.MemberType;
 import utils.Exceptions.CompilerException;
+import utils.Exceptions.SemanticalErrorException;
 import utils.Token;
 
 import java.util.ArrayList;
@@ -16,8 +17,8 @@ public class BLockDeclaration extends StatementNode{
 
 
 
-    public BLockDeclaration(){
-        super(null);
+    public BLockDeclaration(Token name){
+        super(name);
         this.statements = new ArrayList<>();
         cheked = false;
     }
@@ -37,10 +38,11 @@ public class BLockDeclaration extends StatementNode{
         if(cheked){
             return true;
         }
+
+
         for(StatementNode statement : statements){
-            if(!statement.isCorrect()){
-                return false;
-            }
+            statement.setParent(this);
+            if(!statement.isCorrect()) throw new SemanticalErrorException(statement.getName(), "Statement is not correct");
         }
         cheked = true;
         return true;
@@ -55,7 +57,5 @@ public class BLockDeclaration extends StatementNode{
         return result;
     }
 
-    public boolean isBreakable(){
-        return parent!= null && parent.isBreakable();
-    }
+
 }

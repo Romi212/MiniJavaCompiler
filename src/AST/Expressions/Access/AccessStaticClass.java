@@ -10,8 +10,7 @@ import utils.Token;
 public class AccessStaticClass extends AccessMember{
 
     public AccessStaticClass(Token name){
-        super();
-        setName(name);
+        super(name);
     }
     @Override
     public boolean isCorrect() throws SemanticalErrorException {
@@ -33,6 +32,10 @@ public class AccessStaticClass extends AccessMember{
     }
 
     public boolean isStatic(){
+        return true;
+    }
+
+    public boolean isStaticClass(){
         return true;
     }
 }

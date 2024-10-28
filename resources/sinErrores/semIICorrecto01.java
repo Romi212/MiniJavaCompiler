@@ -1,3 +1,4 @@
+///[SinErrores]
 // Prueba un lado izquierdo simple
 
 class A {

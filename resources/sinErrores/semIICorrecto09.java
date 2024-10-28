@@ -3,11 +3,13 @@
 
 class A {
 
+    int w;
     int a2;
 
     void m1() {
+
         if(a2 > 5){
-            var w = 3;
+
             w += 5;
         }
 

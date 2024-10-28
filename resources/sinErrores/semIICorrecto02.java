@@ -1,3 +1,4 @@
+///[SinErrores]
 // Prueba una expresion con operadores binarios y unarios
 
 class A {

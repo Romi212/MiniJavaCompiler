@@ -4,6 +4,7 @@ import AST.LocalVar;
 import AST.Statements.StatementNode;
 import SymbolTable.Attributes.AttributeDeclaration;
 import SymbolTable.Clases.ClassDeclaration;
+import SymbolTable.Parameters.ParameterDeclaration;
 import SymbolTable.Types.*;
 import utils.Exceptions.CompilerException;
 import utils.Exceptions.SemanticalErrorException;
@@ -234,12 +235,13 @@ public class SymbolTable {
         return currentClass.isAtribute(name);
     }
 
-    public static MemberType visibleVar(Token name) throws SemanticalErrorException{
-        MemberType type = currentClass.visibleVar(name);
-        if(type == null) {
-            throw new SemanticalErrorException(name, "Variable " + name + " is not visible in current block");
-        }
-        return type;
+
+    public static ParameterDeclaration visibleParameter(Token name){
+        return currentClass.visibleParameter(name);
+    }
+
+    public static AttributeDeclaration visibleAttribute(Token name) {
+        return currentClass.visibleAttribute(name);
     }
 
     public static MethodDeclaration findMethod(Token name, int size) {

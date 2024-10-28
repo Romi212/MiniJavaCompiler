@@ -1,5 +1,6 @@
 package AST.Expressions.Access;
 
+import AST.LocalVar;
 import SymbolTable.MethodDeclaration;
 import SymbolTable.ConstructorDeclaration;
 import SymbolTable.SymbolTable;
@@ -12,8 +13,7 @@ public class AccessNewObject extends AccessMember{
 
     private ConstructorDeclaration constructor;
     public AccessNewObject(Token name, MemberObjectType type){
-        super();
-        setName(name);
+        super(name);
         this.type = type;
     }
     @Override
@@ -22,6 +22,7 @@ public class AccessNewObject extends AccessMember{
         ConstructorDeclaration constructor = SymbolTable.findConstructor(this.name,parameters.size());
         if(constructor == null) throw new SemanticalErrorException(getName(), "Constructor "+this.name.getLexeme()+" with "+parameters.size()+" parameters not found in class "+type.getToken().getLexeme());
         this.constructor = constructor;
+        //parent.addLocalVar(new LocalVar(name, type));
         return true;
     }
 
@@ -33,5 +34,8 @@ public class AccessNewObject extends AccessMember{
     @Override
     public void setMember(AccessMember hasMember) throws SemanticalErrorException{
 
+    }
+    public boolean isStatic(){
+        return true;
     }
 }

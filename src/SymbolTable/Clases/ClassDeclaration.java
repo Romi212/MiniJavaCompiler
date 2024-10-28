@@ -8,6 +8,7 @@ import AST.Statements.StatementNode;
 import SymbolTable.Attributes.*;
 import SymbolTable.ConstructorDeclaration;
 import SymbolTable.MethodDeclaration;
+import SymbolTable.Parameters.ParameterDeclaration;
 import SymbolTable.SymbolTable;
 import SymbolTable.Types.*;
 import utils.Exceptions.CompilerException;
@@ -272,13 +273,11 @@ public class ClassDeclaration {
         return this.attributes.containsKey(name.getLexeme());
     }
 
-    public MemberType visibleVar(Token name) {
-        MemberType type = currentMethod.visibleVar(name);
-        if(type == null){
-            MemberDeclaration m =  attributes.get(name.getLexeme());
-            if(m!= null) return m.getType();
-        }
-        return type;
+    public ParameterDeclaration visibleParameter(Token name) {
+        return currentMethod.visibleParameter(name);
+    }
+    public AttributeDeclaration visibleAttribute(Token name) {
+        return attributes.get(name.getLexeme());
     }
 
     public MethodDeclaration findMethod(Token name, int size) {

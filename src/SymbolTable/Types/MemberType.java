@@ -47,4 +47,6 @@ public abstract class MemberType {
     public boolean isVoid() {
         return false;
     }
+
+    abstract public boolean conformsTo(String type) throws SemanticalErrorException;
 }

@@ -24,7 +24,7 @@ abstract public class StatementNode {
     }
 
     public boolean isStaticContext(){
-        return this.staticContext;
+        return (parent == null && staticContext || parent.isStaticContext());
     }
 
     public void setName(Token name){
@@ -50,8 +50,8 @@ abstract public class StatementNode {
     }
 
     public void setParent(StatementNode parent){
+        if(parent == null) System.out.println(this+"Setting parent to null");
         this.parent = parent;
-        staticContext = parent.isStaticContext();
     }
 
     public boolean containsLocalVar(String name){

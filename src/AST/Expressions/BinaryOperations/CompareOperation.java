@@ -17,10 +17,12 @@ public class CompareOperation extends BinaryExpression{
         public boolean isCorrect() throws SemanticalErrorException {
             if(left == null) throw new SemanticalErrorException(operator,"Binary expression has no left expression");
             if(right == null) throw new SemanticalErrorException(operator,"Binary expression has no right expression");
+            left.setParent(parent);
+            right.setParent(parent);
             if(!left.isCorrect()) throw new SemanticalErrorException(operator,"Binary expression has incorrect left expression");
             if(!right.isCorrect()) throw new SemanticalErrorException(operator,"Binary expression has incorrect right expression");
-            if(!left.getExpressionType().conformsTo(new IntegerType(new Token("rw_int","int",-1)))) throw new SemanticalErrorException(operator,"Binary expression has left expression that does not conform to int");
-            if(!right.getExpressionType().conformsTo(new IntegerType(new Token("rw_int","int",-1)))) throw new SemanticalErrorException(operator,"Binary expression has right expression that does not conform to int");
+            if(!left.getExpressionType().conformsTo("int")) throw new SemanticalErrorException(operator,"Binary expression has left expression that does not conform to int");
+            if(!right.getExpressionType().conformsTo("int")) throw new SemanticalErrorException(operator,"Binary expression has right expression that does not conform to int");
             return true;
         }
         @Override

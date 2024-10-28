@@ -35,17 +35,18 @@ public class DeclarationStatement extends StatementNode{
     }
     @Override
     public boolean isCorrect() throws CompilerException {
-        boolean correct = true;
-        if(expression!= null) correct = expression.isCorrect();
-        if(correct){
-            for(Token t : variables){
-                LocalVar localVar = new LocalVar(t, type);
-                //SymbolTable.addLocalVar(localVar);
-                if(SymbolTable.isParameter(t)) throw new SemanticalErrorException(t,"Variable name is already used as a parameter");
-                parent.addLocalVar(localVar);
-            }
+
+        if(expression!= null) {
+            expression.setParent(parent);
+            if(!expression.isCorrect()) throw new SemanticalErrorException(expression.getName(),"Expression is not correct");
         }
-        return correct;
+
+        for(Token t : variables){
+            LocalVar localVar = new LocalVar(t, type);
+            if(SymbolTable.isParameter(t)) throw new SemanticalErrorException(t,"Variable name is already used as a parameter");
+            parent.addLocalVar(localVar);
+        }
+        return true;
     }
 
     public String toString(){

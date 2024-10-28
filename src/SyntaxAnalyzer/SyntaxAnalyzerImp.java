@@ -433,7 +433,7 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
     }
 
     private BLockDeclaration block() throws CompilerException {
-        BLockDeclaration block = new BLockDeclaration();
+        BLockDeclaration block = new BLockDeclaration(currentToken);
         match("pm_brace_open");
         statementsList(block);
         match("pm_brace_close");
@@ -455,9 +455,10 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
 
     private StatementNode statement() throws CompilerException {
 
-        StatementNode statementN = new SemicolonNode();
+        StatementNode statementN = null;
 
         if(currentToken.getToken().equals("pm_semicolon")){
+            statementN = new SemicolonNode(currentToken);
             match("pm_semicolon");
         }
         else if(currentToken.getToken().equals("id_class")){
@@ -769,7 +770,7 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         }
         else if(currentToken.getToken().equals("pm_brace_close")){
             //No more switch statements
-            return new SwitchNode();
+            return new SwitchNode(currentToken);
         }
         else{
             throw new SyntaxErrorException(currentToken, "switch statement or }");

@@ -15,21 +15,22 @@ public class IfNode extends StatementNode{
         public IfNode(ExpressionNode condition, StatementNode ifStatement, StatementNode elseStatement, Token name){
             super(name);
             this.condition = condition;
-            condition.setParent(this);
             this.ifStatement = ifStatement;
-            ifStatement.setParent(this);
             this.elseStatement = elseStatement;
-            if(elseStatement != null){
-                elseStatement.setParent(this);
-            }
+
         }
 
         @Override
         public boolean isCorrect() throws CompilerException {
+            condition.setParent(this);
             if(!condition.isCorrect()) throw new SemanticalErrorException(condition.getName(), "Condition is not correct");
+            ifStatement.setParent(this);
             if(!ifStatement.isCorrect()) throw new SemanticalErrorException(ifStatement.getName(), "If statement is not correct");
-            if(elseStatement != null && !elseStatement.isCorrect()) throw new SemanticalErrorException(elseStatement.getName(), "Else statement is not correct");
-            if(!condition.getExpressionType().conformsTo(new BooleanType(new Token("rw_boolean","boolean",-1)))) throw new SemanticalErrorException(name, "Condition is not boolean");
+            if(elseStatement != null){
+                elseStatement.setParent(this);
+                if(!elseStatement.isCorrect()) throw new SemanticalErrorException(elseStatement.getName(), "Else statement is not correct");
+            }
+            if(!condition.getExpressionType().conformsTo("boolean")) throw new SemanticalErrorException(name, "Condition is not boolean");
             return true;
         }
 

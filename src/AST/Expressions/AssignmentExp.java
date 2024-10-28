@@ -1,9 +1,7 @@
 package AST.Expressions;
 
-import AST.Statements.StatementNode;
 import SymbolTable.Types.IntegerType;
 import SymbolTable.Types.MemberType;
-import utils.Exceptions.CompilerException;
 import utils.Exceptions.SemanticalErrorException;
 import utils.Token;
 
@@ -16,8 +14,9 @@ public class AssignmentExp extends ExpressionNode{
 
 
         public AssignmentExp(Token operator){
+            super(operator);
             this.operator = operator;
-            setName(operator);
+
         }
 
         public void addAccess(ExpressionNode access){
@@ -28,16 +27,13 @@ public class AssignmentExp extends ExpressionNode{
             this.expression = expression;
 
         }
-        public void setParent(StatementNode parent){
-            this.parent = parent;
-            if(access != null) access.setParent(parent);
-            if(expression != null) expression.setParent(parent);
-            staticContext = parent.isStaticContext();
-        }
-        @Override
+
+    @Override
         public boolean isCorrect() throws SemanticalErrorException {
             if(access == null) throw new SemanticalErrorException(operator,"Assignment expression has no access");
             if(expression == null) throw new SemanticalErrorException(operator,"Assignment expression has no expression");
+            access.setParent(parent);
+            expression.setParent(parent);
             if(!access.isCorrect()) throw new SemanticalErrorException(operator,"Assignment expression has incorrect access");
             if(!access.isAssignable()) throw new SemanticalErrorException(operator,"Assignment expression access is not assignable");
             if(!expression.isCorrect()) throw new SemanticalErrorException(operator,"Assignment expression has incorrect expression");

@@ -11,13 +11,14 @@ public class AccessPE extends AccessMember{
 
     ExpressionNode exp;
     public AccessPE(ExpressionNode name){
-        super();
-        setName(name.getName());
+        super(name.getName());
         exp = name;
     }
     @Override
     public boolean isCorrect() throws SemanticalErrorException {
-        return exp.isCorrect();
+        exp.setParent(parent);
+        if(!exp.isCorrect()) throw new SemanticalErrorException(name,"Expression is not correct");
+        return true;
     }
 
     @Override
@@ -32,5 +33,9 @@ public class AccessPE extends AccessMember{
     @Override
     public void setMember(AccessMember hasMember) {
 
+    }
+
+    public boolean isStatic(){
+        return exp.isStatic();
     }
 }

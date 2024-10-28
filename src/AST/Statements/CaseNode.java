@@ -4,6 +4,7 @@ import AST.Expressions.ExpressionNode;
 import AST.Expressions.Literals.LiteralValue;
 import SymbolTable.Types.MemberType;
 import utils.Exceptions.CompilerException;
+import utils.Exceptions.SemanticalErrorException;
 import utils.Token;
 
 import java.util.ArrayList;
@@ -15,24 +16,26 @@ public class CaseNode extends StatementNode{
     public CaseNode(Token name, LiteralValue expression, StatementNode s){
         super(name);
         this.expression = expression;
-        if(expression!= null) {
-            expression.setParent(this);
-            //setName(expression.getName());
-        }
         statement = s;
-        statement.setParent(this);
     }
 
     public void setStatement(StatementNode statement){
         this.statement = statement;
-        statement.setParent(this);
     }
 
     @Override
     public boolean isCorrect() throws CompilerException {
-        boolean correct = (expression==null || expression.isCorrect()) && statement!= null  && statement.isCorrect();
 
-        return correct;
+        if(expression != null){
+            expression.setParent(this);
+            if(!expression.isCorrect()) throw new SemanticalErrorException(expression.getName(), "Case expression is not correct");
+        }
+        if(statement != null){
+            statement.setParent(this);
+            if(!statement.isCorrect()) throw new SemanticalErrorException(statement.getName(), "Case statement is not correct");
+        }
+        //if(expression == null && statement == null) throw new SemanticalErrorException(name, "Default case statement cant be empty");
+        return true;
     }
 
     public String toString(){

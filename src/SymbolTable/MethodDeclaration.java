@@ -26,7 +26,7 @@ public class MethodDeclaration extends MemberDeclaration {
         this.returnType = returnType;
         this.isStatic = false;
         this.visibility = new Token("pw_public", "public", -1);
-        block = new BLockDeclaration();
+        block = new BLockDeclaration(new Token("block", "block", -1));
     }
 
     public void addBlock(BLockDeclaration block){
@@ -130,15 +130,14 @@ public class MethodDeclaration extends MemberDeclaration {
         return parameters.containsKey(lexeme);
     }
 
-    public MemberType visibleVar(Token name) {
-        MemberType type = block.visibleVar(name);
-        if(type == null) {
-            ParameterDeclaration met = parameters.get(name.getLexeme());
-            if (met != null) {
-                return met.getType();
-            }
+    public ParameterDeclaration visibleParameter(Token name) {
+
+
+        ParameterDeclaration met = parameters.get(name.getLexeme());
+        if (met != null) {
+            return met;
         }
-        return type;
+        return null;
     }
 
     public boolean validStatements() throws CompilerException {

@@ -13,16 +13,18 @@ public class WhileNode extends  StatementNode{
     public WhileNode(ExpressionNode condition, StatementNode statement, Token name) {
         super(name);
         this.condition = condition;
-        condition.setParent(this);
         this.statement = statement;
-        statement.setParent(this);
     }
 
     @Override
     public boolean isCorrect() throws CompilerException {
+        if(condition == null) throw new SemanticalErrorException(name,"Condition is null");
+        if(statement == null) throw new SemanticalErrorException(name,"Statement is null");
+        condition.setParent(this);
+        statement.setParent(this);
         if(!condition.isCorrect()) throw new SemanticalErrorException(condition.getName(),"Condition is not correct");
         if(!statement.isCorrect()) throw new SemanticalErrorException(statement.getName(),"Statement is not correct");
-        if(!condition.getExpressionType().conformsTo(new BooleanType(new Token("rw_boolean","boolean",-1)))) throw new SemanticalErrorException(condition.getName(),"Condition is not boolean");
+        if(!condition.getExpressionType().conformsTo("boolean")) throw new SemanticalErrorException(condition.getName(),"Condition is not boolean");
         return true;
     }
 

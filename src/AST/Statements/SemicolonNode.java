@@ -1,9 +1,11 @@
 package AST.Statements;
 
+import utils.Token;
+
 public class SemicolonNode extends StatementNode{
 
-    public SemicolonNode(){
-        super(null);
+    public SemicolonNode(Token name){
+        super(name);
     }
 
     @Override

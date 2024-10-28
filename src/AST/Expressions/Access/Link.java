@@ -20,6 +20,7 @@ public class Link extends AccessExpression{
 
     public void setLink(AccessMember link){
         this.link = link;
+        setName(link.name);
     }
 
     public void setNext(Link next){
@@ -28,8 +29,11 @@ public class Link extends AccessExpression{
 
 
     public boolean isCorrect(AccessMember parent) throws SemanticalErrorException {
+        link.setParent(parent);
         link.setMember(parent);
-
+        if(parent.isStaticClass() && !link.isStatic()){
+            throw new SemanticalErrorException(link.getName(),"Static class can only access static members");
+        }
         if(next != null){
             return next.isCorrect(link);
         }

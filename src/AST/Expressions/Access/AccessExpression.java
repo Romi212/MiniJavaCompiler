@@ -14,7 +14,7 @@ public abstract class AccessExpression extends ExpressionNode {
     ArrayList<ExpressionNode> parameters;
 
     public AccessExpression(Token name){
-        this.name = name;
+        super(name);
     }
     public abstract boolean isCorrect() throws SemanticalErrorException;
     public void addParameter(ExpressionNode parameter){

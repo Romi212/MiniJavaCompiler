@@ -1,3 +1,4 @@
+///[SinErrores]
 // Prueba un lado izquierdo con dos encadenamiento y atributos heredados
 
 class A {

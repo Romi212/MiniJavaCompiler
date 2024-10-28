@@ -4,6 +4,7 @@ import AST.Expressions.ExpressionNode;
 import SymbolTable.Types.MemberType;
 import utils.Exceptions.CompilerException;
 import utils.Exceptions.SemanticalErrorException;
+import utils.Token;
 
 import java.util.ArrayList;
 
@@ -12,41 +13,40 @@ public class SwitchNode extends StatementNode{
     private ArrayList<CaseNode> cases;
     private CaseNode defaultCase;
 
-    public SwitchNode(){
-        super(null);
+    public SwitchNode(Token name){
+        super(name);
         this.cases = new ArrayList<>();
     }
 
     public void setExpression(ExpressionNode expression){
         this.expression = expression;
-        expression.setParent(this);
+
     }
 
     public void addCase(CaseNode c){
         if(c.getExpressionType() == null) defaultCase = c;
         else cases.addFirst(c);
-        c.setParent(this);
+
     }
 
-    public void setDefaultCase(CaseNode c){
-        defaultCase = c;
-        c.setParent(this);
-    }
 
     @Override
     public boolean isCorrect()  throws CompilerException {
         if(expression == null) throw new SemanticalErrorException(name,"Switch expression is null");
+        expression.setParent(this);
         if(!expression.isCorrect()) throw new SemanticalErrorException(expression.getName(),"Switch expression is not correct");
         MemberType expressionType = expression.getExpressionType();
         if(!expressionType.isOrdinal()) throw new SemanticalErrorException(expression.getName(),"Switch expression is not ordinal");
         boolean correct = true;
         for(CaseNode c : cases){
 
-            correct = correct && c.isCorrect();
+            c.setParent(this);
+            if(!c.isCorrect()) throw new SemanticalErrorException(c.getName(),"Case is not correct");
             if(!c.getExpressionType().conformsTo(expressionType)) throw  new SemanticalErrorException(c.getName(),"Case expression does not conform to switch expression");
         }
         if(defaultCase != null){
-            correct = correct && defaultCase.isCorrect();
+            defaultCase.setParent(this);
+            if( ! defaultCase.isCorrect()) throw new SemanticalErrorException(defaultCase.getName(),"Default case is not correct");
         }
         return correct;
     }
@@ -61,5 +61,9 @@ public class SwitchNode extends StatementNode{
         }
         result += "}";
         return result;
+    }
+
+    public boolean isBreakable(){
+        return true;
     }
 }
