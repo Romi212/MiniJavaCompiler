@@ -95,7 +95,7 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
     private ClassDeclaration classSignature() throws CompilerException {
         match("rw_class");
         ClassDeclaration newClass = className();
-        Token parent = parents();
+        Token parent = parents(newClass);
         newClass.setParent(parent);
         return newClass;
     }
@@ -147,13 +147,13 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         }
         return pTypes;
     }
-    private Token parents() throws CompilerException{
+    private Token parents(ClassDeclaration child) throws CompilerException{
         Token parentClass;
         if(currentToken.getToken().equals("rw_extends")){
             match("rw_extends");
             ClassDeclaration parent = className();
             parentClass = parent.getName();
-            SymbolTable.checkParent(parent);
+            SymbolTable.checkParent(parent, child);
         }
         else if(Follows.itFollows("Parents", currentToken.getToken())){
             parentClass = new Token("rw_object", "Object",0);

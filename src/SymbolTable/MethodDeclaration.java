@@ -70,10 +70,15 @@ public class MethodDeclaration extends MemberDeclaration {
         for (HashMap.Entry<String, ParameterDeclaration> entry : this.parameters.entrySet()) {
             String key = entry.getKey();
             if(!otherParameters.containsKey(key)) return false;
-            if(!entry.getValue().sameType(otherParameters.get(key))) return false;
+            if(!entry.getValue().sameType(otherParameters.get(key))){
+                if(!SymbolTable.instanciates(entry.getValue().getType(), otherParameters.get(key).getType())) return false;
+            }
         }
 
-        if(!this.returnType.getName().equals(otherMethod.getReturnType().getName())) return false;
+        if(!this.returnType.getName().equals(otherMethod.getReturnType().getName())) {
+            if(!SymbolTable.instanciates(this.returnType, otherMethod.getReturnType())) return false;
+        }
+
 
         if(this.isStatic != otherMethod.isStatic) return false;
 

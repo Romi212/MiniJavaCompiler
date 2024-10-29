@@ -32,6 +32,7 @@ public class ClassDeclaration {
     protected HashMap<String, ConstructorDeclaration> constructors;
 
     protected MemberDeclaration currentMember;
+    protected HashMap<String,String> instanceGenericTypes;
 
     public ClassDeclaration(Token name){
         this.name = name;
@@ -43,6 +44,7 @@ public class ClassDeclaration {
         constructors = new HashMap<>();
         constructors.put("default", new ConstructorDeclaration(name));
         orderedParametricTypes = new ArrayList<>();
+        instanceGenericTypes = new HashMap<>();
     }
 
     public ClassDeclaration(){
@@ -248,5 +250,18 @@ public class ClassDeclaration {
 
     public MemberDeclaration getCurrentMember() {
         return currentMember;
+    }
+
+    public void setInstanceType(MemberObjectType generic, MemberObjectType instance) {
+        instanceGenericTypes.put(generic.getName(), instance.getName());
+        parametricTypes.put(instance.getName(), instance);
+    }
+
+    public boolean instanciates(MemberType instance, MemberType generic) {
+        if(instanceGenericTypes.containsKey(generic.getName())) {
+            if (!instance.getName().equals(instanceGenericTypes.get(generic.getName())))
+                return false;
+        }
+        return true;
     }
 }

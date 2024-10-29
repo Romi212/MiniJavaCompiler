@@ -196,12 +196,14 @@ public class SymbolTable {
         return symbolTable.get(parent.getLexeme()).isAbstract();
     }
 
-    public static void checkParent(ClassDeclaration parent) throws SemanticalErrorException {
+    public static void checkParent(ClassDeclaration parent, ClassDeclaration child) throws SemanticalErrorException {
         if(symbolTable.containsKey(parent.getName().getLexeme())){
-            int expectedParameters = symbolTable.get(parent.getName().getLexeme()).genericParametersAmount();
-            if(expectedParameters != parent.genericParametersAmount())
+            ArrayList<MemberObjectType> expectedParameters = symbolTable.get(parent.getName().getLexeme()).getParametricTypes();
+            if(expectedParameters.size() != parent.genericParametersAmount())
                 throw new SemanticalErrorException(parent.getName(), "Parent class "+parent.getName().getLexeme()+" declared with "+parent.genericParametersAmount()+" generic parameters, expected "+expectedParameters);
-
+            for(int i = 0; i< expectedParameters.size(); i++){
+                child.setInstanceType(expectedParameters.get(i), parent.getParametricTypes().get(i));
+            }
         }
     }
 
@@ -211,5 +213,9 @@ public class SymbolTable {
 
     public static MemberDeclaration getCurrentMember() {
         return currentClass.getCurrentMember();
+    }
+
+    public static boolean instanciates(MemberType type, MemberType type1) {
+        return currentClass.instanciates(type, type1);
     }
 }
