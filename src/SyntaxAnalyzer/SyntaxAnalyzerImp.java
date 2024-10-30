@@ -540,8 +540,12 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
 
         }
         else if(currentToken.getToken().equals("op_less")|| currentToken.getToken().equals("id_met_var")){
-            generic();
-            return localVar();
+            ArrayList<Token> parametric = generic();
+            DeclarationStatement object = localVar();
+            MemberObjectType type = new MemberObjectType(name);
+            type.setParametricInstance(parametric);
+            object.setType(type);
+            return object;
         }
         else{
             throw new SyntaxErrorException(currentToken, "static call or local object declaration");

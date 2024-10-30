@@ -254,10 +254,13 @@ public class SymbolTable {
     }
 
     public static boolean isAncestor(String ancestor, String child) {
-        Token parent = symbolTable.get(child).getParent();
+        System.out.println("Chechiking if "+ancestor+" is ancestor of "+child);
+        ClassDeclaration chikldCHlas = symbolTable.get(child);
+        if(chikldCHlas == null) return false;
+        Token parent = chikldCHlas.getParent();
         if(parent == null || parent.getLexeme().equals("Object")) return false;
         if(parent.getLexeme().equals(ancestor)) return true;
-        else return isAncestor(ancestor, parent.getLexeme());
+        else return isAncestor(parent.getLexeme(), child);
     }
 
     public static MemberType getReturnType() {

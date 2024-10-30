@@ -49,4 +49,8 @@ public abstract class MemberType {
     }
 
     abstract public boolean conformsTo(String type) throws SemanticalErrorException;
+
+    public MemberType transformType(MemberType type) {
+        return type;
+    }
 }

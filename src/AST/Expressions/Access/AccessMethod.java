@@ -23,8 +23,9 @@ public class AccessMethod extends AccessMember{
             if(this.method == null){
                 throw new SemanticalErrorException(name,"Method "+this.name.getLexeme()+" with "+parameters.size()+" parameters not found in current class");
             }
-            this.type = method.getType();
+
             }
+        this.type = method.getType();
         System.out.println("Method: "+this.name.getLexeme());
         for( ExpressionNode e : parameters){
             e.setParent(parent);
@@ -38,12 +39,13 @@ public class AccessMethod extends AccessMember{
     }
     @Override
     public MemberType getExpressionType() {
-        return method.getType();
+        return type;
     }
 
     @Override
     public void setMember(AccessMember parent) throws SemanticalErrorException{
-        MethodDeclaration m = parent.getExpressionType().hasMethod(this);
+        MemberType parentType = parent.getExpressionType();
+        MethodDeclaration m = parentType.hasMethod(this);
         if(m == null) throw new SemanticalErrorException( this.name,"Method "+this.name.getLexeme()+" with "+parameters.size()+" not found in "+parent.getExpressionType().getName());
         //if(parent.isStatic() && !m.isStatic()) throw new SemanticalErrorException( this.name,"Method "+this.name.getLexeme()+" is not static and cannot be called from a static context");
         if (!m.isPublic()) throw new SemanticalErrorException(this.name, "Method cant be accessed because "+this.name.getLexeme()+" is not public");
@@ -53,10 +55,12 @@ public class AccessMethod extends AccessMember{
             MemberType type = e.getExpressionType();
             //System.out.println(parameters.indexOf(e) +")Parameter: "+type.getName());
             //System.out.println("Real parameter: "+m.getParameterType(parameters.indexOf(e)));
-            if(!type.conformsTo(m.getParameterType(parameters.indexOf(e)))) throw new SemanticalErrorException(name,"Method "+this.name.getLexeme()+" has parameter that does not conform to the method");
+            if(!type.conformsTo(parentType.transformType(m.getParameterType(parameters.indexOf(e))))) throw new SemanticalErrorException(name,"Method "+this.name.getLexeme()+" has parameter that does not conform to the method");
         }
         this.method = m;
-        this.type = method.getType();
+        this.type = parentType.transformType(method.getType());
+        System.out.println("PAremmt type"+ parentType);
+        System.out.println("Method: "+this.name.getLexeme()+ "type retunr: "+this.type.getName());
     }
     public boolean isStatement(){
         return true;

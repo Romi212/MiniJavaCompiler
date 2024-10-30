@@ -18,9 +18,15 @@ public class MemberObjectType extends MemberType{
 
     private ArrayList<MemberObjectType> attributes;
 
+    private ArrayList<Token> parametricInstance;
+
+    private HashMap<String,MemberObjectType> parametricMap;
+
     public MemberObjectType(Token name){
         this.name = name;
         attributes = new ArrayList<>();
+        parametricInstance = new ArrayList<>();
+        parametricMap = new HashMap<>();
     }
 
     public boolean isCorrect() throws SemanticalErrorException {
@@ -48,6 +54,8 @@ public class MemberObjectType extends MemberType{
                 return true;
             } else throw new SemanticalErrorException(name, "Class "+name.getLexeme()+" does not exist nor is a valid parametric type");
         }
+
+
 
     }
 
@@ -92,5 +100,36 @@ public class MemberObjectType extends MemberType{
 
     public boolean conformsTo(String type) {
         return name.getLexeme().equals(type) || SymbolTable.isAncestor(type, name.getLexeme());
+    }
+
+    public void setParametricInstance(ArrayList<Token> parametricInstance) {
+        this.parametricInstance = parametricInstance;
+    }
+
+    public MemberType transformType(MemberType type){
+        if(parametricInstance.size()>0 && parametricMap.size() == 0) generateMap();
+        if (parametricMap.containsKey(type.getName()))
+            return parametricMap.get(type.getName());
+        return type;
+    }
+
+    public void generateMap(){
+        ClassDeclaration classType = SymbolTable.getClass(this.name);
+        ArrayList<MemberObjectType> orderedParam = classType.getParametricTypes();
+        for( int i = 0; i< parametricInstance.size(); i++){
+            parametricMap.put(orderedParam.get(i).getName(),new MemberObjectType(parametricInstance.get(i)));
+            System.out.println("Parametric type: "+orderedParam.get(i).getName()+" = "+parametricInstance.get(i).getLexeme());
+        }
+    }
+    public String toString(){
+        String toReturn = name.getLexeme();
+        if(parametricInstance.size() > 0){
+            toReturn += "<";
+            for(Token attribute : parametricInstance){
+                toReturn += attribute.toString() + ",";
+            }
+            toReturn += ">";
+        }
+        return toReturn;
     }
 }
