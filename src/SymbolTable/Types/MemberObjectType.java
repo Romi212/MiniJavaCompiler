@@ -104,6 +104,9 @@ public class MemberObjectType extends MemberType{
 
     public void setParametricInstance(ArrayList<Token> parametricInstance) {
         this.parametricInstance = parametricInstance;
+        for(Token attribute : parametricInstance){
+            attributes.add(new MemberObjectType(attribute));
+        }
     }
 
     public MemberType transformType(MemberType type){

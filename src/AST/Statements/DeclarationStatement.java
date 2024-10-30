@@ -43,6 +43,7 @@ public class DeclarationStatement extends StatementNode{
 
         for(Token t : variables){
             LocalVar localVar = new LocalVar(t, type);
+            if(!type.isCorrect()) throw new SemanticalErrorException(t,"Type is not correct");
             if(SymbolTable.isParameter(t)) throw new SemanticalErrorException(t,"Variable name is already used as a parameter");
             parent.addLocalVar(localVar);
         }
