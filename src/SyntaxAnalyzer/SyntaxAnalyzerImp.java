@@ -500,7 +500,7 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
             return switchT();
         }
         else if(Firsts.isFirst("For", currentToken.getToken())){
-            forT();
+            return  forT();
         }
 
         else if (currentToken.getToken().equals("pm_brace_open")){
@@ -681,30 +681,38 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         }
     }
 
-    private void forT() throws CompilerException {
+    private ForStatement forT() throws CompilerException {
+        Token name = currentToken;
         match("rw_for");
         match("pm_par_open");
-        forExpression();
+        ForStatement forState = forExpression();
+        forState.setName(name);
         match("pm_par_close");
-        statement();
+        forState.setBody(statement());
+        return forState;
     }
 
-    private void forExpression() throws CompilerException {
+    private ForStatement forExpression() throws CompilerException {
         if(Firsts.isFirst("Type", currentToken.getToken())){
-            type();
+            MemberType t = type();
+            Token name = currentToken;
             match("id_met_var");
-            forSecondPart();
+            DeclarationStatement forVar = new DeclarationStatement(name);
+            forVar.setType(t);
+            return forSecondPart(forVar);
         }
         else if(Firsts.isFirst("BasicExpression", currentToken.getToken())){
-            nonStaticExp();
-            forRest();
+            ExpressionNode exp = nonStaticExp();
+            ForStatement f = forRest();
+            f.setInit(exp);
+            return f;
         }
         else {
             throw new SyntaxErrorException(currentToken, "first expression of for, or iterator variable declaration");
         }
     }
 
-    private void forSecondPart() throws CompilerException {
+    private ForStatement forSecondPart(DeclarationStatement varF) throws CompilerException {
         if(currentToken.getToken().equals("pm_colon")){
             match("pm_colon");
             expression();
@@ -716,6 +724,7 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         else{
             throw new SyntaxErrorException(currentToken, "second part of for");
         }
+        return new ForStatement(null);
     }
 
     private ExpressionNode initialize() throws CompilerException {
@@ -731,14 +740,17 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
             throw new SyntaxErrorException(currentToken, "var initialization or ;");
         }
     }
-    private void forRest() throws CompilerException {
+    private ForStatement forRest() throws CompilerException {
 
         match("pm_semicolon");
-        expression();
+        ExpressionNode condition  = expression();
         match("pm_semicolon");
 
-        expression();
-
+        ExpressionNode increment = expression();
+        ForStatement forS = new ForStatement(null);
+        forS.setCondition(condition);
+        forS.setIncrement(increment);
+        return forS;
     }
 
     private WhileNode whileT() throws CompilerException {

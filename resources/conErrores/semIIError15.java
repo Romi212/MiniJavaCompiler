@@ -1,11 +1,11 @@
-///[Error:for|8]
+///[Error:B|8]
 // Nombre de variable local o parametro repetido x - ln: 17
 class A {
     private int a1;
     
      void m1(int w1)
     {
-         for(int a = 3; a < 10; a = a + 1){}
+         for(B.m1; a < 10; a = a + 1){}
 
 
        
