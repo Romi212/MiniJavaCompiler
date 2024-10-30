@@ -543,7 +543,7 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
             ArrayList<Token> parametric = generic();
             DeclarationStatement object = localVar();
             MemberObjectType type = new MemberObjectType(name);
-            type.setParametricInstance(parametric);
+            type.addParametricTokens(parametric);
             object.setType(type);
             return object;
         }
