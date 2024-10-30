@@ -36,7 +36,7 @@ public class MemberObjectType extends MemberType{
             if(classType.genericParametersAmount() == attributes.size()){
                 for (MemberObjectType attribute : attributes) {
                     parametricMap.put(orderedParam.get(attributes.indexOf(attribute)).getName(),attribute);
-                    System.out.println(orderedParam.get(attributes.indexOf(attribute)).getName()+"->"+attribute.getName());
+
                     if (!SymbolTable.hasClass(attribute.getToken())) {
                         if (isStatic)
                             throw new SemanticalErrorException(attribute.getToken(), "Class " + attribute.getToken().getLexeme() + " does not exist AND because is static it cannot have a generic type");

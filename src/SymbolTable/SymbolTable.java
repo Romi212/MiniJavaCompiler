@@ -254,16 +254,16 @@ public class SymbolTable {
     }
 
     public static boolean isAncestor(String ancestor, String child) {
-        System.out.println("Chechiking if "+ancestor+" is ancestor of "+child);
+
         ClassDeclaration chikldCHlas = symbolTable.get(child);
         if(chikldCHlas == null) return false;
         Token parent = chikldCHlas.getParent();
         if(parent == null || parent.getLexeme().equals("Object")) {
-            System.out.println("No parent found");
+
             return false;
         }
         if(parent.getLexeme().equals(ancestor)){
-            System.out.println("YASSS");
+
             return true;
         }
         else return isAncestor(ancestor, parent.getLexeme());

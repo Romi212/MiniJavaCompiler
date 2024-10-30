@@ -26,7 +26,7 @@ public class AccessMethod extends AccessMember{
 
             }
         this.type = method.getType();
-        System.out.println("Method: "+this.name.getLexeme());
+
         for( ExpressionNode e : parameters){
             e.setParent(parent);
             if(!e.isCorrect()) throw new SemanticalErrorException(name,"Method "+this.name.getLexeme()+" has incorrect parameter");
