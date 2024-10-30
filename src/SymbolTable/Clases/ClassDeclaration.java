@@ -167,24 +167,28 @@ public class ClassDeclaration {
             HashMap<String, AttributeDeclaration> parentAttributes = SymbolTable.getAttributes(parent.getLexeme());
             HashMap<String, AttributeDeclaration> toAdd = new HashMap<>();
             for(HashMap.Entry<String, AttributeDeclaration> entry : parentAttributes.entrySet()){
-                if(entry.getKey().charAt(0)== '#') {
-                    if(attributes.containsKey(entry.getValue().getName().getLexeme())) toAdd.put("#"+entry.getKey(), entry.getValue());
-                    else toAdd.put(entry.getKey(), entry.getValue());
-                }else{
-                    if(attributes.containsKey(entry.getKey())) toAdd.put("#"+entry.getKey(), entry.getValue());
-                    else toAdd.put(entry.getKey(), entry.getValue());
+                if(entry.getValue().isPublic()) {
+                    if (entry.getKey().charAt(0) == '#') {
+                        if (attributes.containsKey(entry.getValue().getName().getLexeme()))
+                            toAdd.put("#" + entry.getKey(), entry.getValue());
+                        else toAdd.put(entry.getKey(), entry.getValue());
+                    } else {
+                        if (attributes.containsKey(entry.getKey())) toAdd.put("#" + entry.getKey(), entry.getValue());
+                        else toAdd.put(entry.getKey(), entry.getValue());
+                    }
                 }
-
             }
             attributes.putAll(toAdd);
             HashMap<String, MethodDeclaration> parentMethods = SymbolTable.getMethods(parent.getLexeme());
             for(HashMap.Entry<String, MethodDeclaration> entry : parentMethods.entrySet()){
-                if(methods.containsKey(entry.getKey())) {
-                    if(!methods.get(entry.getKey()).sameSignature(entry.getValue()))
-                        throw new SemanticalErrorException(methods.get(entry.getKey()).getName(), "Method "+entry.getValue().getName().getLexeme()+" in class "+name.getLexeme()+" cant redefine method with different signature in Parent class");
-                    }else {
-                    if(entry.getValue().isAbstract()&& !isAbstract) throw new SemanticalErrorException(name, "Method "+entry.getValue().getName().getLexeme()+" in class "+name.getLexeme()+" must be implemented!");
-                    methods.put(entry.getKey(), entry.getValue());
+                if(entry.getValue().isPublic()){
+                    if(methods.containsKey(entry.getKey())) {
+                        if(!methods.get(entry.getKey()).sameSignature(entry.getValue()))
+                            throw new SemanticalErrorException(methods.get(entry.getKey()).getName(), "Method "+entry.getValue().getName().getLexeme()+" in class "+name.getLexeme()+" cant redefine method with different signature in Parent class");
+                        }else {
+                        if(entry.getValue().isAbstract()&& !isAbstract) throw new SemanticalErrorException(name, "Method "+entry.getValue().getName().getLexeme()+" in class "+name.getLexeme()+" must be implemented!");
+                        methods.put(entry.getKey(), entry.getValue());
+                    }
                 }
             }
 

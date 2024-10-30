@@ -39,6 +39,7 @@ public class DeclarationStatement extends StatementNode{
         if(expression!= null) {
             expression.setParent(parent);
             if(!expression.isCorrect()) throw new SemanticalErrorException(expression.getName(),"Expression is not correct");
+            if(!expression.getExpressionType().conformsTo(type)) throw new SemanticalErrorException(expression.getName(),"Expression does not conform to type");
         }
 
         for(Token t : variables){

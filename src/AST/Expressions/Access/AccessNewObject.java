@@ -19,6 +19,7 @@ public class AccessNewObject extends AccessMember{
     @Override
     public boolean isCorrect() throws SemanticalErrorException {
         if( !SymbolTable.hasClass(type.getToken())) throw new SemanticalErrorException(getName(), "Class "+type.getToken().getLexeme()+" does not exist");
+        if(SymbolTable.getClass(type.getToken()).isAbstract()) throw new SemanticalErrorException(getName(), "Class "+type.getToken().getLexeme()+" is abstract and cannot be instantiated");
         ConstructorDeclaration constructor = SymbolTable.findConstructor(this.name,parameters.size());
         if(constructor == null) throw new SemanticalErrorException(getName(), "Constructor "+this.name.getLexeme()+" with "+parameters.size()+" parameters not found in class "+type.getToken().getLexeme());
         this.constructor = constructor;
