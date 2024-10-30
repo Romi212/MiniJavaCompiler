@@ -1119,32 +1119,37 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         match("rw_new");
         Token className = currentToken;
         match("id_class");
-        optionalGeneric();
+        ArrayList<Token> param = optionalGeneric();
         MemberObjectType type = new MemberObjectType(className);
+        if(param != null) type.addParametricTokens(param);
         AccessNewObject access = new AccessNewObject(className, type);
         actualArgs(access);
         return access;
     }
 
-    private void optionalGeneric() throws CompilerException {
+    private ArrayList<Token> optionalGeneric() throws CompilerException {
         if(currentToken.getToken().equals("op_less")){
             match("op_less");
-            optionalTypes();
+            ArrayList<Token> params = optionalTypes();
             match("op_greater");
+            return params;
         }
         else if(currentToken.getToken().equals("pm_par_open")){
-            //No generic
+            return null;
         }else{
             throw new SyntaxErrorException(currentToken, "generic or (");
         }
     }
-    private void optionalTypes() throws CompilerException {
+    private ArrayList<Token> optionalTypes() throws CompilerException {
 
         if(currentToken.getToken().equals("id_class")){
+            Token genericType = currentToken;
             match("id_class");
-            pTypesList();
+            ArrayList<Token> params = pTypesList();
+            params.add(genericType);
+            return params;
         }else if(currentToken.getToken().equals("op_greater")) {
-            //No parametric Types inside <>
+            return new ArrayList<Token>();
         }else{
             throw new SyntaxErrorException( currentToken, "parametric type or >");
         }

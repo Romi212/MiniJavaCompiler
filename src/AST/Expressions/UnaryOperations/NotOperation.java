@@ -16,8 +16,8 @@ public class NotOperation extends UnaryExpression{
     public boolean isCorrect() throws SemanticalErrorException {
         if(expression == null) throw new SemanticalErrorException(operator,"Unary expression has no expression");
         expression.setParent(parent);
-        if(!expression.isCorrect()) throw new SemanticalErrorException(operator,"Unary expression has incorrect expression");
-        if(!expression.getExpressionType().conformsTo(new IntegerType(new Token("rw_boolean","boolean",-1)))) throw new SemanticalErrorException(operator,"Unary expression has expression that does not conform to int");
+        if(!expression.isCorrect()) throw new SemanticalErrorException(operator,"Unary not expression has incorrect expression");
+        if(!expression.getExpressionType().conformsTo(new IntegerType(new Token("rw_boolean","boolean",-1)))) throw new SemanticalErrorException(operator,"Unary not expression has expression that does not conform to boolean");
         return true;
     }
     public String toString(){

@@ -19,8 +19,7 @@ public class ReturnNode extends StatementNode{
     @Override
     public boolean isCorrect() throws CompilerException {
         MemberType returnType = SymbolTable.getReturnType();
-       // if(returnType.conformsTo(null))
-         //   throw new SemanticalErrorException(this.getName(), "Invalid return statement in constructor function");
+
         if (expression != null) {
             expression.setParent(parent);
             if (!expression.isCorrect())

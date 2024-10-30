@@ -16,7 +16,6 @@ public class ChainedExpression extends AccessExpression{
 
     public void setFirst(AccessMember first){
         this.first = first;
-        System.out.println("Setting name to "+first.getName());
         setName(first.getName());
     }
 
@@ -28,7 +27,7 @@ public class ChainedExpression extends AccessExpression{
     public boolean isCorrect() throws SemanticalErrorException {
         first.setParent(parent);
         if (!first.isCorrect()) throw new SemanticalErrorException(name, "First expression is not correct");
-        if(SymbolTable.staticContext() && !first.isStatic()) throw new SemanticalErrorException(name,"Method "+this.name.getLexeme()+" is not static and cannot be called from a static context");
+        if(SymbolTable.staticContext() && !first.isStatic()) throw new SemanticalErrorException(name,"Member "+this.name.getLexeme()+" is not static and cannot be called from a static context");
         if(chain != null){
             chain.isCorrect(first);
 

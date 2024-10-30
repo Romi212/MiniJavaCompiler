@@ -20,8 +20,8 @@ public class NumberOperation extends BinaryExpression{
             right.setParent(parent);
             if(!left.isCorrect()) throw new SemanticalErrorException(operator,"Binary expression has incorrect left expression");
             if(!right.isCorrect()) throw new SemanticalErrorException(operator,"Binary expression has incorrect right expression");
-            if(!left.getExpressionType().conformsTo("int")) throw new SemanticalErrorException(operator,"Binary expression has left expression that does not conform to int");
-            if(!right.getExpressionType().conformsTo("int")) throw new SemanticalErrorException(operator,"Binary expression has right expression that does not conform to int");
+            if(!left.getExpressionType().conformsTo("int")) throw new SemanticalErrorException(operator,"Binary int expression has left expression that does not conform to int");
+            if(!right.getExpressionType().conformsTo("int")) throw new SemanticalErrorException(operator,"Binary int expression has right expression that does not conform to int");
             return true;
         }
         @Override

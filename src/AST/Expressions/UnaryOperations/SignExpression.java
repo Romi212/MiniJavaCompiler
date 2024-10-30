@@ -18,7 +18,7 @@ public class SignExpression extends UnaryExpression{
         if(expression == null) throw new SemanticalErrorException(operator,"Unary expression has no expression");
         expression.setParent(parent);
         if(!expression.isCorrect()) throw new SemanticalErrorException(operator,"Unary expression has incorrect expression");
-        if(!expression.getExpressionType().conformsTo(new IntegerType(new Token("rw_int","int",-1)))) throw new SemanticalErrorException(operator,"Unary expression has expression that does not conform to int");
+        if(!expression.getExpressionType().conformsTo(new IntegerType(new Token("rw_int","int",-1)))) throw new SemanticalErrorException(operator,"Unary sign expression has expression that does not conform to int");
         return true;
     }
 

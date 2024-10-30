@@ -54,7 +54,7 @@ public class AccessVar extends AccessMember{
         AttributeDeclaration a = parentType.hasAttribute(this);
         if(a == null) throw new SemanticalErrorException( this.name,"Attribute "+this.name.getLexeme()+" not found in "+parent.getExpressionType().getName());
         this.attribute = a;
-       //if(parent.isStatic() && !a.isStatic()) throw new SemanticalErrorException( this.name,"Attribute "+this.name.getLexeme()+" is not static and cannot be called from a static context");
+
         if (!a.isPublic()) throw new SemanticalErrorException(this.name, "Attribute cant be accessed because "+this.name.getLexeme()+" is not public");
         isStatic = a.isStatic();
         this.type = parentType.transformType(a.getType());

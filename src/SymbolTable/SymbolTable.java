@@ -258,9 +258,15 @@ public class SymbolTable {
         ClassDeclaration chikldCHlas = symbolTable.get(child);
         if(chikldCHlas == null) return false;
         Token parent = chikldCHlas.getParent();
-        if(parent == null || parent.getLexeme().equals("Object")) return false;
-        if(parent.getLexeme().equals(ancestor)) return true;
-        else return isAncestor(parent.getLexeme(), child);
+        if(parent == null || parent.getLexeme().equals("Object")) {
+            System.out.println("No parent found");
+            return false;
+        }
+        if(parent.getLexeme().equals(ancestor)){
+            System.out.println("YASSS");
+            return true;
+        }
+        else return isAncestor(ancestor, parent.getLexeme());
     }
 
     public static MemberType getReturnType() {

@@ -31,7 +31,7 @@ abstract public class StatementNode {
         this.name = name;
     }
     public void addLocalVar(LocalVar localVar) throws SemanticalErrorException {
-        //TODO CHECK REPETIDO
+
         if(localVars.containsKey(localVar.getName().getLexeme())){
             throw new SemanticalErrorException(localVar.getName(),"Variable " + localVar.getName().getLexeme() + " already declared in the same block");
         }
@@ -50,12 +50,10 @@ abstract public class StatementNode {
     }
 
     public void setParent(StatementNode parent){
-        if(parent == null) System.out.println(this+"Setting parent to null");
         this.parent = parent;
     }
 
     public boolean containsLocalVar(String name){
-        System.out.println("Checking if contains "+name + " in "+this);
 
         return this.localVars.containsKey(name) || (parent != null && parent.containsLocalVar(name));
     }

@@ -9,7 +9,7 @@ class A<T,X>{
 class B{
     int f() {}
     void h(int p1) {
-        A<String,B> a = new A();
+        var a = new A<String,B>();
         if(a.f() == "hola"){
             a.h("hola");
         }

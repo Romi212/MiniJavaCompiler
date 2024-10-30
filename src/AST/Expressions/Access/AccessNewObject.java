@@ -23,7 +23,6 @@ public class AccessNewObject extends AccessMember{
         ConstructorDeclaration constructor = SymbolTable.findConstructor(this.name,parameters.size());
         if(constructor == null) throw new SemanticalErrorException(getName(), "Constructor "+this.name.getLexeme()+" with "+parameters.size()+" parameters not found in class "+type.getToken().getLexeme());
         this.constructor = constructor;
-        //parent.addLocalVar(new LocalVar(name, type));
         return true;
     }
 

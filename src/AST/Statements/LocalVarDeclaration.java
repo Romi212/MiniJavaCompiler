@@ -29,7 +29,9 @@ public class LocalVarDeclaration extends StatementNode{
         initialization.setParent(parent);
         if(!initialization.isCorrect()) throw new SemanticalErrorException(initialization.getName(), "Local variable declared 'var' "+this.name.getLexeme()+" initialization is not correct");
         MemberType type = initialization.getExpressionType();
+        if(!type.isCorrect()) throw new SemanticalErrorException(initialization.getName(), "Local variable declared 'var' "+this.name.getLexeme()+" initialization is not correct");
         this.type = type;
+
         if(type == null || type.conformsTo((MemberType) null)) throw new SemanticalErrorException(this.name, "Local variable declared 'var' "+this.name.getLexeme()+" cant be initialized with null");
 
         if(type.isVoid()) throw new SemanticalErrorException(this.name, "Local variable declared 'var' "+this.name.getLexeme()+" cant be initialized with void");

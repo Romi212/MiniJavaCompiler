@@ -34,7 +34,7 @@ public class CaseNode extends StatementNode{
             statement.setParent(this);
             if(!statement.isCorrect()) throw new SemanticalErrorException(statement.getName(), "Case statement is not correct");
         }
-        //if(expression == null && statement == null) throw new SemanticalErrorException(name, "Default case statement cant be empty");
+
         return true;
     }
 

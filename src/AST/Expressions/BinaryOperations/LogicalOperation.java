@@ -22,8 +22,8 @@ public class LogicalOperation extends BinaryExpression {
         right.setParent(parent);
         if(!left.isCorrect()) throw new SemanticalErrorException(operator,"Binary expression has incorrect left expression");
         if(!right.isCorrect()) throw new SemanticalErrorException(operator,"Binary expression has incorrect right expression");
-        if(!left.getExpressionType().conformsTo("boolean")) throw new SemanticalErrorException(operator,"Binary expression has left expression that does not conform to int");
-        if(!right.getExpressionType().conformsTo("boolean")) throw new SemanticalErrorException(operator,"Binary expression has right expression that does not conform to int");
+        if(!left.getExpressionType().conformsTo("boolean")) throw new SemanticalErrorException(operator,"Binary logic expression has left expression that does not conform to boolean");
+        if(!right.getExpressionType().conformsTo("boolean")) throw new SemanticalErrorException(operator,"Binary logic expression has right expression that does not conform to boolean");
         return true;
     }
     @Override

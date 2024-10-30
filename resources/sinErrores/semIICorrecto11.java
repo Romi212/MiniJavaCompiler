@@ -12,6 +12,7 @@ class B extends A{
     void m1() {
         if(a2 > 5){
             w += 5;
+            A a = new B();
         }
     }
 }

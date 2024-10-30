@@ -36,6 +36,7 @@ public class MemberObjectType extends MemberType{
             if(classType.genericParametersAmount() == attributes.size()){
                 for (MemberObjectType attribute : attributes) {
                     parametricMap.put(orderedParam.get(attributes.indexOf(attribute)).getName(),attribute);
+                    System.out.println(orderedParam.get(attributes.indexOf(attribute)).getName()+"->"+attribute.getName());
                     if (!SymbolTable.hasClass(attribute.getToken())) {
                         if (isStatic)
                             throw new SemanticalErrorException(attribute.getToken(), "Class " + attribute.getToken().getLexeme() + " does not exist AND because is static it cannot have a generic type");
@@ -92,13 +93,24 @@ public class MemberObjectType extends MemberType{
 
     public boolean conformsTo(MemberType type) {
         if(type == null) return false;
-        if(name.getLexeme().equals(type.getName())) return true;
+        if(name.getLexeme().equals(type.getName())) {
+            if(attributes.size()>0){
+                MemberObjectType obj = (MemberObjectType) type;
+                ArrayList<MemberObjectType> params = obj.getAttributes();
+                if(params.size() != attributes.size()) return false;
+                for(int i = 0; i<attributes.size(); i++){
+                    if(!attributes.get(i).conformsTo(params.get(i))) return false;
+                }
+            }
+                return true;
+        }
         else{
             return SymbolTable.isAncestor(type.getName(), name.getLexeme());
         }
     }
 
     public boolean conformsTo(String type) {
+
         return name.getLexeme().equals(type) || SymbolTable.isAncestor(type, name.getLexeme());
     }
 
