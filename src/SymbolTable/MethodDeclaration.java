@@ -8,6 +8,7 @@ import SymbolTable.Types.MemberType;
 import utils.Exceptions.CompilerException;
 import utils.Exceptions.SemanticalErrorException;
 import utils.Token;
+import utils.fileWriter;
 
 import java.util.HashMap;
 
@@ -19,6 +20,7 @@ public class MethodDeclaration extends MemberDeclaration {
     protected HashMap<String, ParameterDeclaration> parameters = new HashMap<>();
 
     protected BLockDeclaration block;
+    protected String label;
 
 
     public MethodDeclaration(Token name, MemberType returnType){
@@ -27,6 +29,9 @@ public class MethodDeclaration extends MemberDeclaration {
         this.isStatic = false;
         this.visibility = new Token("pw_public", "public", -1);
         block = new BLockDeclaration(new Token("block", "block", -1));
+    }
+    public void setLabel(String label){
+        this.label = label;
     }
 
     public void addBlock(BLockDeclaration block){
@@ -149,5 +154,19 @@ public class MethodDeclaration extends MemberDeclaration {
             if(p.getPosition() == indexOf) return p.getType();
         }
         throw new SemanticalErrorException(name, "Method "+name.getLexeme()+" has no parameter at position "+indexOf);
+    }
+
+    public void generate() {
+        fileWriter.add(label+": LOADFP ;  comienza ejecucion de metodo "+name.getLexeme());
+        fileWriter.add("LOADSP \n STOREFP ; guardamos el ED y acomodamos FP");
+        block.generate();
+        fileWriter.add("STOREFP ; restauramos el ED y FP");
+        int ret = parameters.size();
+        if( !isStatic) ret++;
+        fileWriter.add("RET "+ret+" ; fin de ejecucion de metodo "+name.getLexeme());
+    }
+
+    public String getLabel() {
+        return label;
     }
 }

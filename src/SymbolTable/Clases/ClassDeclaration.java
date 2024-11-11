@@ -15,6 +15,7 @@ import utils.Exceptions.CompilerException;
 import utils.Exceptions.SemanticalErrorException;
 import utils.Token;
 import SymbolTable.MemberDeclaration;
+import utils.fileWriter;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -99,6 +100,7 @@ public class ClassDeclaration {
 
             currentMethod = newMethod;
             this.methods.put(key, newMethod);
+            newMethod.setLabel("lblMet"+key+"@"+name.getLexeme());
             return newMethod;
 
         }
@@ -342,5 +344,17 @@ public class ClassDeclaration {
 
     public boolean staticContext() {
         return currentMethod.isStatic();
+    }
+
+    public void generate() {
+        fileWriter.add(".DATA");
+        fileWriter.add("lblVT"+name.getLexeme()+": NOP" );
+        fileWriter.add(".CODE");
+        for(HashMap.Entry<String, ConstructorDeclaration> entry : constructors.entrySet()){
+            entry.getValue().generate();
+        }
+        for(HashMap.Entry<String, MethodDeclaration> entry : methods.entrySet()){
+            entry.getValue().generate();
+        }
     }
 }

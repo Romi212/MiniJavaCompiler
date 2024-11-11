@@ -9,6 +9,7 @@ import SymbolTable.Types.*;
 import utils.Exceptions.CompilerException;
 import utils.Exceptions.SemanticalErrorException;
 import utils.Token;
+import utils.fileWriter;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -283,5 +284,14 @@ public class SymbolTable {
 
     public static boolean staticContext() {
         return currentClass.staticContext();
+    }
+
+    public static void generate(){
+        fileWriter.add(".CODE\n PUSH "+mainMethod.getLabel()+"\n CALL\n HALT\n");
+        fileWriter.addHeapRoutines();
+        for (HashMap.Entry<String, ClassDeclaration> entry : symbolTable.entrySet()) {
+            ClassDeclaration classDeclaration = entry.getValue();
+            classDeclaration.generate();
+        }
     }
 }

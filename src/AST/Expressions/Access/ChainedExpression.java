@@ -68,4 +68,12 @@ public class ChainedExpression extends AccessExpression{
         return first.isStatic();
 
     }
+
+    @Override
+    public void generate() {
+        first.generate();
+        if(chain != null){
+            chain.generate();
+        }
+    }
 }

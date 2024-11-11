@@ -8,6 +8,7 @@ import SymbolTable.Types.MemberType;
 import utils.Exceptions.CompilerException;
 import utils.Exceptions.SemanticalErrorException;
 import utils.Token;
+import utils.fileWriter;
 
 public class AccessMethod extends AccessMember{
 
@@ -62,5 +63,15 @@ public class AccessMethod extends AccessMember{
 
     public boolean isStatic(){
         return method.isStatic();
+    }
+
+    public void generate(){
+        for( ExpressionNode e : parameters){
+            e.generate();
+        }
+        if(method.isStatic()){
+            fileWriter.add("PUSH "+method.getLabel()+" ; llamado a metodo estatico");
+            fileWriter.add("CALL");
+        }
     }
 }

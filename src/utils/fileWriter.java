@@ -5,7 +5,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
-public class CelVMCodeGenerator {
+public class fileWriter {
 
     private static final String OUTPUT_FILE = "output.celvm";
     private static BufferedWriter writer;
@@ -36,6 +36,22 @@ public class CelVMCodeGenerator {
         }
     }
 
+    public  static void addHeapRoutines(){
+        add("simple_heap_init: \n" +
+        "RET 0	; Retorna inmediatamente"+
+        "simple_malloc: \n  LOADFP	; Inicialización unidad"+
+        "LOADSP \n STOREFP ; Finaliza inicialización del RA "+
+        "LOADHL	; hl \n DUP	; hl "+
+        "PUSH 1	; 1"+
+        "ADD	; hl+1"+
+        "STORE 4 ; Guarda el resultado (un puntero a la primer celda de la región de memoria)"+
+        "LOAD 3	; Carga la cantidad de celdas a alojar (parámetro que debe ser positivo)"+
+        "ADD"+
+                "STOREHL ; Mueve el heap limit (hl). Expande el heap"+
+        "STOREFP"+
+        "RET 1	; Retorna eliminando el parámetro");
+
+    }
 
 
     // Method to close the BufferedWriter
@@ -48,4 +64,9 @@ public class CelVMCodeGenerator {
             e.printStackTrace();
         }
     }
+
+    public static void printFilePath() {
+        System.out.println("Output file path: " + new File(OUTPUT_FILE).getAbsolutePath());
+    }
+
 }

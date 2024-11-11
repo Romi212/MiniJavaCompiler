@@ -3,6 +3,7 @@ package AST.Expressions.Literals;
 import AST.Expressions.ExpressionNode;
 import SymbolTable.Types.MemberType;
 import utils.Token;
+import utils.fileWriter;
 
 public abstract class LiteralValue extends ExpressionNode {
 
@@ -23,5 +24,9 @@ public abstract class LiteralValue extends ExpressionNode {
 
     public String toString(){
         return value.getLexeme();
+    }
+
+    public void generate(){
+        fileWriter.add("PUSH "+value.getLexeme()+" ; Literal Value");
     }
 }

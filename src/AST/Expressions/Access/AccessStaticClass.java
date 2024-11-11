@@ -38,4 +38,8 @@ public class AccessStaticClass extends AccessMember{
     public boolean isStaticClass(){
         return true;
     }
+
+    public void generate(){
+
+    }
 }

@@ -31,4 +31,8 @@ public class AttributeDeclaration extends MemberDeclaration {
     public boolean isCorrectlyDeclared() throws SemanticalErrorException {
         return type.isCorrect();
     }
+
+    public void generate() {
+
+    }
 }

@@ -5,6 +5,7 @@ import SymbolTable.Types.MemberType;
 import utils.Exceptions.CompilerException;
 import utils.Exceptions.SemanticalErrorException;
 import utils.Token;
+import utils.fileWriter;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -55,6 +56,13 @@ public class BLockDeclaration extends StatementNode{
         }
         result += "}";
         return result;
+    }
+
+    public void generate(){
+        for(StatementNode statement : statements){
+            statement.generate();
+        }
+        fileWriter.add("FMEM 0");
     }
 
 

@@ -37,4 +37,8 @@ public class ExpressionStatement extends StatementNode{
     public String toString(){
         return expression.toString();
     }
+
+    public void generate(){
+        expression.generate();
+    }
 }

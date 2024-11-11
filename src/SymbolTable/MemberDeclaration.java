@@ -32,4 +32,6 @@ public abstract class MemberDeclaration {
     public boolean isPublic() {
         return this.visibility.getLexeme().equals("public");
     }
+
+    abstract public void generate() ;
 }

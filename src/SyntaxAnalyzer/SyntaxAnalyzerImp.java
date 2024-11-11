@@ -22,6 +22,7 @@ import utils.Exceptions.CompilerException;
 import utils.Exceptions.LexicalErrorException;
 import utils.Exceptions.SyntaxErrorException;
 import utils.Token;
+import utils.fileWriter;
 
 import java.util.ArrayList;
 
@@ -41,6 +42,9 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         initial();
 
         if(SymbolTable.isCorrect(currentToken)) System.out.println("[SinErrores]");
+        SymbolTable.generate();
+        fileWriter.closeWriter();
+        fileWriter.printFilePath();
         return "[SinErrores]";
     }
 
