@@ -100,7 +100,7 @@ public class ClassDeclaration {
 
             currentMethod = newMethod;
             this.methods.put(key, newMethod);
-            newMethod.setLabel("lblMet"+key+"@"+name.getLexeme());
+            newMethod.setLabel("lblMet"+newMethod.getParametersSize()+newMethod.getName().getLexeme()+"@"+name.getLexeme());
             return newMethod;
 
         }

@@ -7,23 +7,24 @@ import java.io.IOException;
 
 public class fileWriter {
 
-    private static final String OUTPUT_FILE = "output.celvm";
+    private static String OUTPUT_FILE ;
     private static BufferedWriter writer;
-    private static File file = createFile();
+    private static File file ;
 
     // Method to create a new file if it does not exist and initialize BufferedWriter
-    public static File createFile() {
-        File file = null;
+    public static void createFile(String name) {
+        File file2 = null;
+        OUTPUT_FILE = name;
         try {
-            file = new File(OUTPUT_FILE);
-            if (!file.exists()) {
-                file.createNewFile();
+            file2 = new File(OUTPUT_FILE);
+            if (!file2.exists()) {
+                file2.createNewFile();
             }
-            writer = new BufferedWriter(new FileWriter(OUTPUT_FILE, true));
+            writer = new BufferedWriter(new FileWriter(OUTPUT_FILE, false));
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return file;
+        file = file2;
     }
 
     // Method to add a sentence to the file

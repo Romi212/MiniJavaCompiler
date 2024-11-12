@@ -5,6 +5,7 @@ import SyntaxAnalyzer.SyntaxAnalyzerImp;
 import utils.Exceptions.CompilerException;
 import utils.Exceptions.LexicalErrorException;
 import utils.Exceptions.SyntaxErrorException;
+import utils.fileWriter;
 import utils.sourcemanager.SourceManagerImpl;
 
 public class MainSemantico {
@@ -16,9 +17,12 @@ public class MainSemantico {
         }
 
         String fileName = args[0];
+        String outputName = args[1];
 
-        System.out.println(fileName);
+        System.out.println(fileName +" output: "+ outputName);
 
+        fileWriter.createFile(outputName);
+       // fileWriter.add("HOLA");
         SourceManagerImpl sourceManager = new SourceManagerImpl();
         LexicalAnalyzerImp lexicalAnalyzer = new LexicalAnalyzerImp(sourceManager);
         try {
@@ -38,9 +42,9 @@ public class MainSemantico {
             System.out.println(e.getLongMessage());
         }
 
-
+        fileWriter.closeWriter();
         //Muestra una string con la tabla de simbolos
-        //System.out.println(SymbolTable.showString());
+        System.out.println(SymbolTable.showString());
     }
 
 }

@@ -28,8 +28,10 @@ public class SymbolTable {
 
         try {
             ClassDeclaration object = new ClassDeclaration(new Token("pc_object", "Object", -1));
-            MethodDeclaration debugPrint =  object.addMethod(new Token("pc_object", "debugPrint", -1), new VoidType(new Token("pc_object", "void", -1)));
+            MethodDeclaration debugPrint =  new MethodDeclaration(new Token("pc_object", "debugPrint", -1), new VoidType(new Token("pc_object", "void", -1)));
+            debugPrint.setStatic(true);
             debugPrint.addParameter(new Token("pc_object", "i", -1), new IntegerType(new Token("pc_object", "int", -1)));
+            object.addMethod(debugPrint);
             object.setConsolidated(true);
 
             symbolTable.put("Object", object);
