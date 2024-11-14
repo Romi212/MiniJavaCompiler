@@ -8,13 +8,20 @@ import SymbolTable.MemberDeclaration;
 import SymbolTable.Types.MemberType;
 import utils.Exceptions.SemanticalErrorException;
 import utils.Token;
+import utils.fileWriter;
 
 public class AccessVar extends AccessMember{
 
 
     AttributeDeclaration attribute;
 
+    private LocalVar localvar;
+
+    private ParameterDeclaration parameter;
+
     boolean isStatic = true;
+
+
 
     public AccessVar() {
         super(null);
@@ -23,6 +30,7 @@ public class AccessVar extends AccessMember{
     public boolean isCorrect() throws SemanticalErrorException{
         LocalVar var = parent.getLocalVar(this.name.getLexeme());
         if(var != null){
+            this.localvar = var;
             this.type = var.getType();
 
             return true;
@@ -36,6 +44,7 @@ public class AccessVar extends AccessMember{
                 isStatic = a.isStatic();
             }
         }else {
+            this.parameter = par;
             this.type = par.getType();
         }
 
@@ -77,4 +86,25 @@ public class AccessVar extends AccessMember{
         return isStatic;
     }
 
+
+    public void generate() {
+        if(localvar != null) {
+            if (write) {
+                fileWriter.add("STORE 0 ; guarda el rtado en la variable");
+            }
+            else fileWriter.add("LOAD 0 ; carga el valor de la variable");
+        }
+        else{
+            if(attribute != null){
+                if(write){
+                  fileWriter.add("LOAD 3 ; carga ref a this");
+                  fileWriter.add("SWAP");
+                  fileWriter.add("STOREREF "+(attribute.getPosition()+1)+" ; carga el valor del atributo");
+                }else{
+                    fileWriter.add("LOAD 3 ; carga ref a this");
+                    fileWriter.add("LOADREF "+(attribute.getPosition()+1)+" ; carga el valor del atributo");
+                }
+            }
+        }
+    }
 }

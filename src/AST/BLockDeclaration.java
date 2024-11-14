@@ -62,7 +62,7 @@ public class BLockDeclaration extends StatementNode{
         for(StatementNode statement : statements){
             statement.generate();
         }
-        fileWriter.add("FMEM 0");
+        fileWriter.add("FMEM "+ getLocalVarSize());
     }
 
 

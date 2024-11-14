@@ -7,6 +7,7 @@ import SymbolTable.Types.MemberType;
 import utils.Exceptions.CompilerException;
 import utils.Exceptions.SemanticalErrorException;
 import utils.Token;
+import utils.fileWriter;
 
 public class LocalVarDeclaration extends StatementNode{
 
@@ -48,5 +49,12 @@ public class LocalVarDeclaration extends StatementNode{
             toReturn += " = " + initialization.toString();
         }
         return toReturn+";";
+    }
+
+    public void generate(){
+        fileWriter.add("RMEM 1 ; Assignment expression");
+        initialization.generate();
+        fileWriter.add("STORE 0 ; guardamos el valor en la var local "+this.name.getLexeme());
+
     }
 }

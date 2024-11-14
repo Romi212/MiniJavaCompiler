@@ -19,6 +19,7 @@ import utils.fileWriter;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 public class ClassDeclaration {
 
@@ -31,6 +32,7 @@ public class ClassDeclaration {
     protected boolean isConsolidated;
     protected HashMap<String, AttributeDeclaration> attributes;
     protected HashMap<String, MethodDeclaration> methods;
+    protected ArrayList<MethodDeclaration> sortedMethods;
 
     protected HashMap<String, MemberType> parametricTypes;
 
@@ -53,6 +55,7 @@ public class ClassDeclaration {
         constructors.put("default", new ConstructorDeclaration(name));
         orderedParametricTypes = new ArrayList<>();
         instanceGenericTypes = new HashMap<>();
+        sortedMethods = new ArrayList<>();
 
     }
 
@@ -80,17 +83,7 @@ public class ClassDeclaration {
         }else throw new SemanticalErrorException(attribute, "Attribute "+attribute.getLexeme()+" in class "+name.getLexeme()+" already exists");
     }
 
-    public MethodDeclaration addMethod(Token method, MemberType returnType) throws  SemanticalErrorException{
-///TODO CHANGE THIS DELETE ARREGLAR BOOO
 
-        if(!methods.containsKey(method.getLexeme())) {
-            MethodDeclaration newMethod = new MethodDeclaration(method, returnType);
-            this.methods.put(method.getLexeme(), newMethod);
-            return newMethod;
-
-        }
-        throw new SemanticalErrorException(method, "Method "+method.getLexeme()+" in class "+name.getLexeme()+" already exists");
-    }
 
     public MethodDeclaration addMethod(MethodDeclaration newMethod) throws  SemanticalErrorException{
 
@@ -101,6 +94,8 @@ public class ClassDeclaration {
             currentMethod = newMethod;
             this.methods.put(key, newMethod);
             newMethod.setLabel("lblMet"+newMethod.getParametersSize()+newMethod.getName().getLexeme()+"@"+name.getLexeme());
+            if(newMethod.getVisibility().getLexeme().equals("public")) sortedMethods.addFirst(newMethod);
+            else sortedMethods.addLast(newMethod);
             return newMethod;
 
         }
@@ -127,6 +122,7 @@ public class ClassDeclaration {
 
         if(!name.getName().getLexeme().equals(this.name.getLexeme())) throw new SemanticalErrorException(name.getName(), "Constructor for class "+this.name.getLexeme()+" must have the same name as the class");
         String key = "#"+name.getParametersSize()+"#";
+        name.setLabel("lblCtr"+name.getParametersSize()+"@"+this.name.getLexeme());
         if(constructors.containsKey(key)) throw new SemanticalErrorException(name.getName(), "Constructor for class "+this.name.getLexeme()+" already exists with same amount of parameters");
         else{
             if(name.getParametersSize()== 0) constructors.remove("default");
@@ -149,10 +145,14 @@ public class ClassDeclaration {
             currentMember = entry.getValue();
             if(!entry.getValue().isCorrectlyDeclared()) return false;
         }
-        for(HashMap.Entry<String, MethodDeclaration> entry : methods.entrySet()){
-            currentMember = entry.getValue();
-            if(!entry.getValue().isCorrectlyDeclared()) return false;
+
+        for (int i = 0; i < sortedMethods.size(); i++) {
+            MethodDeclaration method = sortedMethods.get(i);
+            currentMethod = method;
+            if(!method.isCorrectlyDeclared()) return false;
+            //method.setOffset(i);
         }
+
         return true;
     }
 
@@ -168,28 +168,41 @@ public class ClassDeclaration {
             visited = false;
             HashMap<String, AttributeDeclaration> parentAttributes = SymbolTable.getAttributes(parent.getLexeme());
             HashMap<String, AttributeDeclaration> toAdd = new HashMap<>();
+            int position = 0;
             for(HashMap.Entry<String, AttributeDeclaration> entry : parentAttributes.entrySet()){
                 if(entry.getValue().isPublic()) {
+
                     if (entry.getKey().charAt(0) == '#') {
-                        if (attributes.containsKey(entry.getValue().getName().getLexeme()))
+                        if (attributes.containsKey(entry.getValue().getName().getLexeme())){
                             toAdd.put("#" + entry.getKey(), entry.getValue());
+                            attributes.get(entry.getValue().getName().getLexeme()).setPosition(entry.getValue().getPosition());}
                         else toAdd.put(entry.getKey(), entry.getValue());
                     } else {
                         if (attributes.containsKey(entry.getKey())) toAdd.put("#" + entry.getKey(), entry.getValue());
                         else toAdd.put(entry.getKey(), entry.getValue());
                     }
+                    position++;
                 }
             }
             attributes.putAll(toAdd);
-            HashMap<String, MethodDeclaration> parentMethods = SymbolTable.getMethods(parent.getLexeme());
-            for(HashMap.Entry<String, MethodDeclaration> entry : parentMethods.entrySet()){
-                if(entry.getValue().isPublic()){
-                    if(methods.containsKey(entry.getKey())) {
-                        if(!methods.get(entry.getKey()).sameSignature(entry.getValue()))
-                            throw new SemanticalErrorException(methods.get(entry.getKey()).getName(), "Method "+entry.getValue().getName().getLexeme()+" in class "+name.getLexeme()+" cant redefine method with different signature in Parent class");
-                        }else {
-                        if(entry.getValue().isAbstract()&& !isAbstract) throw new SemanticalErrorException(name, "Method "+entry.getValue().getName().getLexeme()+" in class "+name.getLexeme()+" must be implemented!");
-                        methods.put(entry.getKey(), entry.getValue());
+            for(HashMap.Entry<String, AttributeDeclaration> entry : attributes.entrySet()){
+                entry.getValue().setPosition(position);
+                position++;
+            }
+            ArrayList<MethodDeclaration> parentMethods = SymbolTable.getMethods(parent.getLexeme());
+
+            for(int i = parentMethods.size()-1; i>= 0; i--){
+                if(parentMethods.get(i).isPublic()){
+                    String key = "#"+parentMethods.get(i).getParametersSize()+"#"+parentMethods.get(i).getName().getLexeme();
+                    if(!methods.containsKey(key)){
+                        if(parentMethods.get(i).isAbstract() && !isAbstract) throw new SemanticalErrorException(name, "Method "+parentMethods.get(i).getName().getLexeme()+" in class "+name.getLexeme()+" must be implemented!");
+                        methods.put(key, parentMethods.get(i));
+                        sortedMethods.addFirst(parentMethods.get(i));
+                    } else{
+                        if(!methods.get(key).sameSignature(parentMethods.get(i)))
+                            throw new SemanticalErrorException(methods.get(key).getName(), "Method "+parentMethods.get(i).getName().getLexeme()+" in class "+name.getLexeme()+" cant redefine method with different signature in Parent class");
+                        sortedMethods.remove(methods.get(key));
+                        sortedMethods.addFirst(methods.get(key));
                     }
                 }
             }
@@ -206,9 +219,10 @@ public class ClassDeclaration {
         return attributes;
     }
 
-    public HashMap<String,MethodDeclaration> getMethods() {
-        return methods;
+    public ArrayList<MethodDeclaration> getMethods() {
+        return sortedMethods;
     }
+
 
     public void setConsolidated(boolean b) {
         this.isConsolidated = b;
@@ -348,7 +362,26 @@ public class ClassDeclaration {
 
     public void generate() {
         fileWriter.add(".DATA");
-        fileWriter.add("lblVT"+name.getLexeme()+": NOP" );
+
+        int i = 0;
+        int off = 0;
+        boolean hasMet = false;
+        while(i<sortedMethods.size()){
+            if(!sortedMethods.get(i).isAbstract() && !sortedMethods.get(i).isStatic()){
+                if(!hasMet){
+                    fileWriter.add("lblVT"+name.getLexeme()+": DW "+sortedMethods.get(i).getLabel());
+                    sortedMethods.get(i).setOffset(off);
+
+                    hasMet = true;
+                }
+                else fileWriter.add("DW "+sortedMethods.get(i).getLabel());
+
+                off++;
+            }
+            i++;
+        }
+        if(!hasMet) fileWriter.add("lblVT"+name.getLexeme()+": NOP" );
+
         fileWriter.add(".CODE");
         for(HashMap.Entry<String, ConstructorDeclaration> entry : constructors.entrySet()){
             entry.getValue().generate();
@@ -356,5 +389,9 @@ public class ClassDeclaration {
         for(HashMap.Entry<String, MethodDeclaration> entry : methods.entrySet()){
             entry.getValue().generate();
         }
+    }
+
+    public String getVtLabel() {
+        return "lblVT"+name.getLexeme();
     }
 }

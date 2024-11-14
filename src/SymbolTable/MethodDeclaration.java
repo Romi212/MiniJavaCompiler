@@ -22,6 +22,10 @@ public class MethodDeclaration extends MemberDeclaration {
     protected BLockDeclaration block;
     protected String label;
 
+    protected int offset;
+
+    protected  boolean isGenerated = false;
+
 
     public MethodDeclaration(Token name, MemberType returnType){
         this.name = name;
@@ -37,6 +41,9 @@ public class MethodDeclaration extends MemberDeclaration {
     public void addBlock(BLockDeclaration block){
         this.block = block;
         block.setStaticContext(isStatic);
+    }
+    public void setOffset(int offset){
+        this.offset = offset;
     }
     public Token getName(){
         return this.name;
@@ -157,6 +164,8 @@ public class MethodDeclaration extends MemberDeclaration {
     }
 
     public void generate() {
+        if(isGenerated) return;
+        isGenerated = true;
         fileWriter.add(label+": LOADFP ;  comienza ejecucion de metodo "+name.getLexeme());
         fileWriter.add("LOADSP \n STOREFP ; guardamos el ED y acomodamos FP");
         block.generate();

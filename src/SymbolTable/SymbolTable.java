@@ -1,5 +1,6 @@
 package SymbolTable;
 
+import AST.DefaultBlocks.BlockDebugPrint;
 import AST.LocalVar;
 import AST.Statements.StatementNode;
 import SymbolTable.Attributes.AttributeDeclaration;
@@ -29,7 +30,9 @@ public class SymbolTable {
         try {
             ClassDeclaration object = new ClassDeclaration(new Token("pc_object", "Object", -1));
             MethodDeclaration debugPrint =  new MethodDeclaration(new Token("pc_object", "debugPrint", -1), new VoidType(new Token("pc_object", "void", -1)));
+            debugPrint.setLabel("lblMetdebugPrint@Object");
             debugPrint.setStatic(true);
+            debugPrint.addBlock(new BlockDebugPrint());
             debugPrint.addParameter(new Token("pc_object", "i", -1), new IntegerType(new Token("pc_object", "int", -1)));
             object.addMethod(debugPrint);
             object.setConsolidated(true);
@@ -42,24 +45,50 @@ public class SymbolTable {
             symbolTable.put("String", string);
             ClassDeclaration system = new ClassDeclaration(new Token("pc_object", "System", -1));
             system.setConsolidated(true);
-            system.addMethod(new Token("pc_object", "read", -1), new IntegerType(new Token("pc_object", "int", -1)));
-            MethodDeclaration printB = system.addMethod(new Token("pc_object", "printB", -1), new VoidType(new Token("pc_object", "void", -1)));
+
+            MethodDeclaration printB = new MethodDeclaration(new Token("pc_object", "printB", -1), new VoidType(new Token("pc_object", "void", -1)));
+            printB.setLabel("lblMetprintB@System");
             printB.addParameter(new Token("pc_object", "b", -1), new BooleanType(new Token("pc_object", "boolean", -1)));
-            MethodDeclaration printC = system.addMethod(new Token("pc_object", "printC", -1), new VoidType(new Token("pc_object", "void", -1)));
+            system.addMethod(printB);
+
+            MethodDeclaration printC = new MethodDeclaration(new Token("pc_object", "printC", -1), new VoidType(new Token("pc_object", "void", -1)));
+            printC.setLabel("lblMetprintC@System");
             printC.addParameter(new Token("pc_object", "c", -1), new CharacterType(new Token("pc_object", "char", -1)));
-            MethodDeclaration printI = system.addMethod(new Token("pc_object", "printI", -1), new VoidType(new Token("pc_object", "void", -1)));
+            system.addMethod(printC);
+
+            MethodDeclaration printI = new MethodDeclaration(new Token("pc_object", "printI", -1), new VoidType(new Token("pc_object", "void", -1)));
+            printI.setLabel("lblMetprintI@System");
             printI.addParameter(new Token("pc_object", "i", -1), new IntegerType(new Token("pc_object", "int", -1)));
-            MethodDeclaration printS = system.addMethod(new Token("pc_object", "printS", -1), new VoidType(new Token("pc_object", "void", -1)));
+            system.addMethod(printI);
+
+            MethodDeclaration printS = new MethodDeclaration(new Token("pc_object", "printS", -1), new VoidType(new Token("pc_object", "void", -1)));
+            printS.setLabel("lblMetprintS@System");
             printS.addParameter(new Token("pc_object", "s", -1), new MemberObjectType(new Token("pc_object", "String", -1)));
-            system.addMethod(new Token("pc_object", "println", -1), new VoidType(new Token("pc_object", "void", -1)));
-            MethodDeclaration printBln = system.addMethod(new Token("pc_object", "printBln", -1), new VoidType(new Token("pc_object", "void", -1)));
+            system.addMethod(printS);
+
+            MethodDeclaration println = new MethodDeclaration(new Token("pc_object", "println", -1), new VoidType(new Token("pc_object", "void", -1)));
+            println.setLabel("lblMetprintln@System");
+            system.addMethod(println);
+
+            MethodDeclaration printBln = new MethodDeclaration(new Token("pc_object", "printBln", -1), new VoidType(new Token("pc_object", "void", -1)));
+            printBln.setLabel("lblMetprintBln@System");
             printBln.addParameter(new Token("pc_object", "b", -1), new BooleanType(new Token("pc_object", "boolean", -1)));
-            MethodDeclaration printCln = system.addMethod(new Token("pc_object", "printCln", -1), new VoidType(new Token("pc_object", "void", -1)));
+            system.addMethod(printBln);
+
+            MethodDeclaration printCln = new MethodDeclaration(new Token("pc_object", "printCln", -1), new VoidType(new Token("pc_object", "void", -1)));
+            printCln.setLabel("lblMetprintCln@System");
             printCln.addParameter(new Token("pc_object", "c", -1), new CharacterType(new Token("pc_object", "char", -1)));
-            MethodDeclaration printIln = system.addMethod(new Token("pc_object", "printIln", -1), new VoidType(new Token("pc_object", "void", -1)));
+            system.addMethod(printCln);
+
+            MethodDeclaration printIln = new MethodDeclaration(new Token("pc_object", "printIln", -1), new VoidType(new Token("pc_object", "void", -1)));
+            printIln.setLabel("lblMetprintIln@System");
             printIln.addParameter(new Token("pc_object", "i", -1), new IntegerType(new Token("pc_object", "int", -1)));
-            MethodDeclaration printSln = system.addMethod(new Token("pc_object", "printSln", -1), new VoidType(new Token("pc_object", "void", -1)));
+            system.addMethod(printIln);
+
+            MethodDeclaration printSln = new MethodDeclaration(new Token("pc_object", "printSln", -1), new VoidType(new Token("pc_object", "void", -1)));
+            printSln.setLabel("lblMetprintSln@System");
             printSln.addParameter(new Token("pc_object", "s", -1), new MemberObjectType(new Token("pc_object", "String", -1)));
+            system.addMethod(printSln);
             symbolTable.put("System", system);
         } catch (SemanticalErrorException e) {
             e.printStackTrace();
@@ -162,7 +191,7 @@ public class SymbolTable {
         return symbolTable.get(padre).getAttributes();
     }
 
-    public static HashMap<String,MethodDeclaration> getMethods(String padre) {
+    public static ArrayList<MethodDeclaration> getMethods(String padre) {
         return symbolTable.get(padre).getMethods();
     }
 
@@ -277,7 +306,7 @@ public class SymbolTable {
     }
 
     public static ConstructorDeclaration findConstructor(Token name, int size) {
-        return currentClass.findConstructor(name,size);
+        return getClass(name).findConstructor(name,size);
     }
 
     public static boolean instanciates(MemberType type, MemberType type1) {

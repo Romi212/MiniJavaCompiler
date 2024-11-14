@@ -79,4 +79,8 @@ abstract public class StatementNode {
 
     public void generate() {
     }
+
+    public int getLocalVarSize(){
+        return localVars.size();
+    }
 }

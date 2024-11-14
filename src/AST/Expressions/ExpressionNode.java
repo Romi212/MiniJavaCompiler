@@ -8,6 +8,9 @@ import utils.Token;
 
 public abstract class ExpressionNode extends StatementNode {
 
+
+        public boolean write = false;
+
         public ExpressionNode(Token name){
             super(name);
         }
@@ -15,6 +18,9 @@ public abstract class ExpressionNode extends StatementNode {
         abstract public boolean isCorrect() throws SemanticalErrorException;
 
         abstract public MemberType getExpressionType();
+    public void setWrite(boolean write){
+        this.write = write;
+    }
 
         public boolean isStatement() {
             return false;

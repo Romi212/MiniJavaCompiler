@@ -12,6 +12,8 @@ public class AttributeDeclaration extends MemberDeclaration {
     private Token name;
     private MemberType type;
 
+    private int position = -1;
+
     public AttributeDeclaration(Token name, MemberType type){
         this.name = name;
         this.type = type;
@@ -34,5 +36,13 @@ public class AttributeDeclaration extends MemberDeclaration {
 
     public void generate() {
 
+    }
+
+    public void setPosition(int position) {
+        this.position = position;
+    }
+
+    public int getPosition() {
+        return position;
     }
 }

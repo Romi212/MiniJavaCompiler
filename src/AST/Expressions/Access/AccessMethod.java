@@ -30,6 +30,7 @@ public class AccessMethod extends AccessMember{
 
         for( ExpressionNode e : parameters){
             e.setParent(parent);
+
             if(!e.isCorrect()) throw new SemanticalErrorException(name,"Method "+this.name.getLexeme()+" has incorrect parameter");
             MemberType type = e.getExpressionType();
             if(!type.conformsTo(method.getParameterType(parameters.indexOf(e)))) throw new SemanticalErrorException(name,"Method "+this.name.getLexeme()+" has parameter that does not conform to the method");
@@ -66,12 +67,21 @@ public class AccessMethod extends AccessMember{
     }
 
     public void generate(){
+        if( !method.getType().isVoid()){
+            fileWriter.add("RMEM 1 ; dejo espacio para el return");
+            if(hasPrevious) fileWriter.add("SWAP ; volvemos a dejar el label abajo");
+        }
         for( ExpressionNode e : parameters){
             e.generate();
+            if(hasPrevious) fileWriter.add("SWAP ; seguimos dejando la ref abajo");
         }
-        if(method.isStatic()){
+        if(!method.isStatic()){
+            fileWriter.add("DUP ; guardo el this");
+            fileWriter.add("LOADREF 0 ; cargamos la VT");
+            fileWriter.add("LOADREF 0 ; cargamos el label al metodo");
+        } else{
             fileWriter.add("PUSH "+method.getLabel()+" ; llamado a metodo estatico");
-            fileWriter.add("CALL");
         }
+        fileWriter.add("CALL");
     }
 }

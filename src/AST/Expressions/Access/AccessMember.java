@@ -15,12 +15,18 @@ public abstract class AccessMember extends AccessExpression{
 
     MemberType type;
 
+
+    boolean hasPrevious = false;
+
     public AccessMember(Token name){
         super(name);
         parameters = new ArrayList<>();
     }
 
 
+    public void setHasPrevious(boolean prev){
+        hasPrevious = prev;
+    }
 
     @Override
     public MemberType getExpressionType() {
@@ -45,6 +51,7 @@ public abstract class AccessMember extends AccessExpression{
     public Token getName() {
         return name;
     }
+
 
 
     abstract  public void setMember(AccessMember hasMember) throws SemanticalErrorException;

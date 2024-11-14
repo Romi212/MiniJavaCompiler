@@ -31,10 +31,14 @@ public class Link extends AccessExpression{
     public boolean isCorrect(AccessMember parent) throws SemanticalErrorException {
         link.setParent(parent);
         link.setMember(parent);
+        link.setHasPrevious(true);
         if(parent.isStaticClass() && !link.isStatic()){
             throw new SemanticalErrorException(link.getName(),"Static class can only access static members");
         }
+        link.setWrite(write);
         if(next != null){
+            link.setWrite(false);
+            next.setWrite(write);
             return next.isCorrect(link);
         }
         return true;
@@ -72,6 +76,13 @@ public class Link extends AccessExpression{
     public boolean isAssignable(){
         if(next == null) return link.isAssignable();
         else return next.isAssignable();
+    }
+
+    public void generate(){
+        link.generate();
+        if(next != null){
+            next.generate();
+        }
     }
 
 }

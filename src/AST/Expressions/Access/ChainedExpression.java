@@ -28,7 +28,10 @@ public class ChainedExpression extends AccessExpression{
         first.setParent(parent);
         if (!first.isCorrect()) throw new SemanticalErrorException(name, "First expression is not correct");
         if(SymbolTable.staticContext() && !first.isStatic()) throw new SemanticalErrorException(name,"Member "+this.name.getLexeme()+" is not static and cannot be called from a static context");
+        first.setWrite(write);
         if(chain != null){
+            first.setWrite(false);
+            chain.setWrite(write);
             chain.isCorrect(first);
 
         }

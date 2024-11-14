@@ -4,6 +4,7 @@ import SymbolTable.Types.IntegerType;
 import SymbolTable.Types.MemberType;
 import utils.Exceptions.SemanticalErrorException;
 import utils.Token;
+import utils.fileWriter;
 
 public class AssignmentExp extends ExpressionNode{
 
@@ -33,6 +34,7 @@ public class AssignmentExp extends ExpressionNode{
             if(access == null) throw new SemanticalErrorException(operator,"Assignment expression has no access");
             if(expression == null) throw new SemanticalErrorException(operator,"Assignment expression has no expression");
             access.setParent(parent);
+            access.setWrite(true);
             expression.setParent(parent);
             if(!access.isCorrect()) throw new SemanticalErrorException(operator,"Assignment expression has incorrect access");
             if(!access.isAssignable()) throw new SemanticalErrorException(operator,"Assignment expression access is not assignable");
@@ -56,5 +58,12 @@ public class AssignmentExp extends ExpressionNode{
 
     public boolean isStatement(){
         return true;
+    }
+
+    public void generate(){
+
+        expression.generate();
+        System.out.println("Ya cree el objeto lo guardo en: "+access.toString());
+        access.generate();
     }
 }
