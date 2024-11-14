@@ -6,6 +6,7 @@ import SymbolTable.Types.MemberType;
 import utils.Exceptions.CompilerException;
 import utils.Exceptions.SemanticalErrorException;
 import utils.Token;
+import utils.fileWriter;
 
 public class ReturnNode extends StatementNode{
     private ExpressionNode expression;
@@ -38,5 +39,12 @@ public class ReturnNode extends StatementNode{
             return "ReturnNode()";
         }
         return "ReturnNode(" + expression.toString() + ")";
+    }
+
+    public void generate(){
+        if(expression != null){
+            expression.generate();
+        }
+        fileWriter.add("STORE 4 ; guardamos el valor de retorno en la variable de retorno");
     }
 }
