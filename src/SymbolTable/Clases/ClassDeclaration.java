@@ -331,8 +331,8 @@ public class ClassDeclaration {
         return attributes.get(accessVar.getName().getLexeme());
     }
 
-    public MemberType getReturnType() {
-        return currentMethod.getType();
+    public MethodDeclaration getReturnType() {
+        return currentMethod;
     }
 
     public ConstructorDeclaration findConstructor(Token name, int size) {

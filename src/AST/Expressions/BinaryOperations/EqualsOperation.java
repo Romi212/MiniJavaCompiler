@@ -6,6 +6,7 @@ import SymbolTable.Types.MemberType;
 import utils.Exceptions.CompilerException;
 import utils.Exceptions.SemanticalErrorException;
 import utils.Token;
+import utils.fileWriter;
 
 public class EqualsOperation extends BinaryExpression{
 
@@ -27,5 +28,11 @@ public class EqualsOperation extends BinaryExpression{
     @Override
     public MemberType getExpressionType() {
         return new BooleanType(new Token("rw_boolean","boolean",-1));
+    }
+
+    public void generate(){
+        left.generate();
+        right.generate();
+        fileWriter.add("EQ");
     }
 }

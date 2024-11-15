@@ -23,10 +23,12 @@ public class SymbolTable {
     private static boolean hasMain;
     private static MethodDeclaration mainMethod;
 
+    private static int activeLocalVars;
+
     public static void createTable(){
         symbolTable = new HashMap<>();
         hasMain = false;
-
+        activeLocalVars = 0;
         try {
             ClassDeclaration object = new ClassDeclaration(new Token("pc_object", "Object", -1));
             MethodDeclaration debugPrint =  new MethodDeclaration(new Token("pc_object", "debugPrint", -1), new VoidType(new Token("pc_object", "void", -1)));
@@ -301,7 +303,7 @@ public class SymbolTable {
         else return isAncestor(ancestor, parent.getLexeme());
     }
 
-    public static MemberType getReturnType() {
+    public static MethodDeclaration getReturnType() {
         return currentClass.getReturnType();
     }
 
@@ -315,6 +317,18 @@ public class SymbolTable {
 
     public static boolean staticContext() {
         return currentClass.staticContext();
+    }
+
+    public static void addLocalVar() {
+        activeLocalVars++;
+    }
+
+    public static void removeLocalVar(int cant) {
+        activeLocalVars-= cant;
+    }
+
+    public static int getLocalVarSize() {
+        return activeLocalVars;
     }
 
     public static void generate(){

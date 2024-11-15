@@ -8,6 +8,8 @@ public class LocalVar {
     Token name;
     MemberType type;
 
+    int offset;
+
     public LocalVar(Token name, MemberType type){
         this.name = name;
         this.type = type;
@@ -19,5 +21,13 @@ public class LocalVar {
 
     public MemberType getType(){
         return type;
+    }
+
+    public void setOffset(int offset){
+        this.offset = offset;
+    }
+
+    public int getOffset(){
+        return offset;
     }
 }

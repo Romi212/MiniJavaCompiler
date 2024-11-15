@@ -1,10 +1,12 @@
 package AST.Statements;
 
 import AST.Expressions.ExpressionNode;
+import SymbolTable.SymbolTable;
 import SymbolTable.Types.MemberType;
 import utils.Exceptions.CompilerException;
 import utils.Exceptions.SemanticalErrorException;
 import utils.Token;
+import utils.fileWriter;
 
 import java.util.ArrayList;
 
@@ -48,6 +50,7 @@ public class SwitchNode extends StatementNode{
             defaultCase.setParent(this);
             if( ! defaultCase.isCorrect()) throw new SemanticalErrorException(defaultCase.getName(),"Default case is not correct");
         }
+        SymbolTable.removeLocalVar(getLocalVarSize());
         return correct;
     }
 
@@ -65,5 +68,24 @@ public class SwitchNode extends StatementNode{
 
     public boolean isBreakable(){
         return true;
+    }
+
+    public void generate(){
+        String end = "end@" + name.getLexeme() + name.getLine();
+        expression.generate();
+        for(CaseNode c : cases){
+            c.generate();
+            fileWriter.add("JUMP " + end);
+        }
+        if(defaultCase != null){
+            defaultCase.generate();
+        }
+        fileWriter.add(end + ": NOP");
+        int localVarSize = getLocalVarSize();
+        if (localVarSize > 0) {
+            fileWriter.add("RMEM " + localVarSize);
+
+        }
+
     }
 }

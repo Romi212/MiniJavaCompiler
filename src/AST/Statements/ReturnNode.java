@@ -1,6 +1,7 @@
 package AST.Statements;
 
 import AST.Expressions.ExpressionNode;
+import SymbolTable.MethodDeclaration;
 import SymbolTable.SymbolTable;
 import SymbolTable.Types.MemberType;
 import utils.Exceptions.CompilerException;
@@ -11,6 +12,8 @@ import utils.fileWriter;
 public class ReturnNode extends StatementNode{
     private ExpressionNode expression;
 
+    private MethodDeclaration method;
+
     public ReturnNode(Token name, ExpressionNode expression){
         super(name);
         this.expression = expression;
@@ -19,8 +22,8 @@ public class ReturnNode extends StatementNode{
 
     @Override
     public boolean isCorrect() throws CompilerException {
-        MemberType returnType = SymbolTable.getReturnType();
-
+        this.method = SymbolTable.getReturnType();
+        MemberType returnType = method.getType();
         if (expression != null) {
             expression.setParent(parent);
             if (!expression.isCorrect())
@@ -45,6 +48,7 @@ public class ReturnNode extends StatementNode{
         if(expression != null){
             expression.generate();
         }
-        fileWriter.add("STORE 4 ; guardamos el valor de retorno en la variable de retorno");
+        int offset = method.getParametersSize() + 4;
+        fileWriter.add("STORE "+offset+" ; guardamos el valor de retorno en la variable de retorno");
     }
 }

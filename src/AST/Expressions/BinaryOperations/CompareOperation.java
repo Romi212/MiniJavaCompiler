@@ -6,6 +6,7 @@ import SymbolTable.Types.MemberType;
 import utils.Exceptions.CompilerException;
 import utils.Exceptions.SemanticalErrorException;
 import utils.Token;
+import utils.fileWriter;
 
 public class CompareOperation extends BinaryExpression{
 
@@ -28,5 +29,19 @@ public class CompareOperation extends BinaryExpression{
         @Override
         public MemberType getExpressionType() {
             return new BooleanType(new Token("rw_boolean","boolean",-1));
+        }
+
+        public void generate(){
+            left.generate();
+            right.generate();
+            if(operator.getLexeme().equals("<")){
+                fileWriter.add("LT");
+            }else if(operator.getLexeme().equals(">")){
+                fileWriter.add("GT");
+            }else if(operator.getLexeme().equals("<=")){
+                fileWriter.add("LE");
+            }else if(operator.getLexeme().equals(">=")){
+                fileWriter.add("GE");
+            }
         }
 }

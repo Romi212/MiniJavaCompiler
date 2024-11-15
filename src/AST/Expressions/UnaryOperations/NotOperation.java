@@ -5,6 +5,7 @@ import SymbolTable.Types.MemberType;
 import utils.Exceptions.CompilerException;
 import utils.Exceptions.SemanticalErrorException;
 import utils.Token;
+import utils.fileWriter;
 
 public class NotOperation extends UnaryExpression{
 
@@ -23,4 +24,10 @@ public class NotOperation extends UnaryExpression{
     public String toString(){
                 return operator.getLexeme() + " " + expression.toString();
             }
+
+
+    public void generate(){
+        expression.generate();
+        fileWriter.add("NOT");
+    }
 }

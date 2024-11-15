@@ -2,10 +2,12 @@ package AST.Statements;
 
 import AST.Expressions.ExpressionNode;
 import AST.Expressions.Literals.LiteralValue;
+import SymbolTable.SymbolTable;
 import SymbolTable.Types.MemberType;
 import utils.Exceptions.CompilerException;
 import utils.Exceptions.SemanticalErrorException;
 import utils.Token;
+import utils.fileWriter;
 
 import java.util.ArrayList;
 
@@ -34,7 +36,7 @@ public class CaseNode extends StatementNode{
             statement.setParent(this);
             if(!statement.isCorrect()) throw new SemanticalErrorException(statement.getName(), "Case statement is not correct");
         }
-
+        SymbolTable.removeLocalVar(getLocalVarSize());
         return true;
     }
 
@@ -57,5 +59,19 @@ public class CaseNode extends StatementNode{
     }
     public boolean isBreakable(){
         return true;
+    }
+
+    public void generate(){
+        if(expression != null){
+            expression.generate();
+            fileWriter.add("BF end@" + name.getLexeme() + name.getLine());
+        }
+        statement.generate();
+        fileWriter.add("end@" + name.getLexeme() + name.getLine() + ": NOP");
+        int localVarSize = getLocalVarSize();
+        if (localVarSize > 0) {
+            fileWriter.add("RMEM " + localVarSize);
+        }
+
     }
 }

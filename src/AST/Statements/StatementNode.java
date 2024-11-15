@@ -1,6 +1,7 @@
 package AST.Statements;
 
 import AST.LocalVar;
+import SymbolTable.SymbolTable;
 import SymbolTable.Types.MemberType;
 import utils.Exceptions.CompilerException;
 import utils.Exceptions.SemanticalErrorException;
@@ -39,6 +40,9 @@ abstract public class StatementNode {
             throw new SemanticalErrorException(localVar.getName(),"Variable " + localVar.getName().getLexeme() + " already declared in ancestor block");
         }
         this.localVars.put(localVar.getName().getLexeme(), localVar);
+
+        localVar.setOffset(SymbolTable.getLocalVarSize());
+        SymbolTable.addLocalVar();
 
     }
 

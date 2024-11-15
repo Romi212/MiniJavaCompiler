@@ -1,6 +1,7 @@
 package AST;
 
 import AST.Statements.StatementNode;
+import SymbolTable.SymbolTable;
 import SymbolTable.Types.MemberType;
 import utils.Exceptions.CompilerException;
 import utils.Exceptions.SemanticalErrorException;
@@ -46,6 +47,7 @@ public class BLockDeclaration extends StatementNode{
             if(!statement.isCorrect()) throw new SemanticalErrorException(statement.getName(), "Statement is not correct");
         }
         cheked = true;
+        SymbolTable.removeLocalVar(getLocalVarSize());
         return true;
     }
 
@@ -62,7 +64,13 @@ public class BLockDeclaration extends StatementNode{
         for(StatementNode statement : statements){
             statement.generate();
         }
-        fileWriter.add("FMEM "+ getLocalVarSize());
+
+        int localVarSize = getLocalVarSize();
+        if (localVarSize > 0) {
+            fileWriter.add("FMEM " + localVarSize);
+
+        }
+
     }
 
 

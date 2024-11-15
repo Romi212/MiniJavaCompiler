@@ -5,6 +5,7 @@ import SymbolTable.Types.MemberType;
 import utils.Exceptions.CompilerException;
 import utils.Exceptions.SemanticalErrorException;
 import utils.Token;
+import utils.fileWriter;
 
 public class NumberOperation extends BinaryExpression{
 
@@ -27,5 +28,21 @@ public class NumberOperation extends BinaryExpression{
         @Override
         public MemberType getExpressionType() {
             return new IntegerType(new Token("rw_int","int",-1));
+        }
+
+        public void generate(){
+            left.generate();
+            right.generate();
+            if(operator.getLexeme().equals("+")){
+                fileWriter.add("ADD");
+            }else if(operator.getLexeme().equals("-")){
+                fileWriter.add("SUB");
+            }else if(operator.getLexeme().equals("*")){
+                fileWriter.add("MUL");
+            }else if(operator.getLexeme().equals("/")){
+                fileWriter.add("DIV");
+            }else if(operator.getLexeme().equals("%")){
+                fileWriter.add("MOD");
+            }
         }
 }

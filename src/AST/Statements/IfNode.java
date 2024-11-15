@@ -1,10 +1,12 @@
 package AST.Statements;
 
 import AST.Expressions.ExpressionNode;
+import SymbolTable.SymbolTable;
 import SymbolTable.Types.BooleanType;
 import utils.Exceptions.CompilerException;
 import utils.Exceptions.SemanticalErrorException;
 import utils.Token;
+import utils.fileWriter;
 
 public class IfNode extends StatementNode{
 
@@ -31,7 +33,29 @@ public class IfNode extends StatementNode{
                 if(!elseStatement.isCorrect()) throw new SemanticalErrorException(elseStatement.getName(), "Else statement is not correct");
             }
             if(!condition.getExpressionType().conformsTo("boolean")) throw new SemanticalErrorException(name, "Condition is not boolean");
+            SymbolTable.removeLocalVar(getLocalVarSize());
             return true;
+        }
+
+        public void generate(){
+            condition.generate();
+            fileWriter.add("BF else@" + name.getLexeme()+name.getLine());
+            ifStatement.generate();
+            if(elseStatement != null){
+                fileWriter.add("JUMP end@" + name.getLexeme()+name.getLine());
+                fileWriter.add("else@" + name.getLexeme()+name.getLine() + ": NOP");
+                elseStatement.generate();
+                fileWriter.add("end@" + name.getLexeme() +name.getLine()+ ": NOP");
+            }else{
+                fileWriter.add("else@" + name.getLexeme()+name.getLine() + ": NOP");
+            }
+            int localVarSize = getLocalVarSize();
+            if (localVarSize > 0) {
+                fileWriter.add("RMEM " + localVarSize);
+                SymbolTable.removeLocalVar(localVarSize);
+            }
+
+
         }
 
         public String toString(){

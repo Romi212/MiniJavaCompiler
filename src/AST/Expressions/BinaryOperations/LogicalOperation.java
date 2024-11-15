@@ -6,6 +6,7 @@ import SymbolTable.Types.MemberType;
 import utils.Exceptions.CompilerException;
 import utils.Exceptions.SemanticalErrorException;
 import utils.Token;
+import utils.fileWriter;
 
 public class LogicalOperation extends BinaryExpression {
 
@@ -31,5 +32,15 @@ public class LogicalOperation extends BinaryExpression {
         return new BooleanType(new Token("rw_boolean","boolean",-1));
     }
 
+
+    public void generate(){
+        left.generate();
+        right.generate();
+        if(operator.getLexeme().equals("&&")){
+            fileWriter.add("AND");
+        }else if(operator.getLexeme().equals("||")){
+            fileWriter.add("OR");
+        }
+    }
 
 }

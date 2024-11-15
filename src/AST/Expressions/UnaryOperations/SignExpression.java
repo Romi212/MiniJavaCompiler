@@ -5,6 +5,7 @@ import SymbolTable.Types.MemberType;
 import utils.Exceptions.CompilerException;
 import utils.Exceptions.SemanticalErrorException;
 import utils.Token;
+import utils.fileWriter;
 
 public class SignExpression extends UnaryExpression{
 
@@ -22,6 +23,17 @@ public class SignExpression extends UnaryExpression{
         return true;
     }
 
+    public void generate(){
+        expression.generate();
+        //if(operator.getLexeme().equals("+")){
+        //    fileWriter.add("PUSHI 1");
+        //    fileWriter.add("MUL");
+        //}else
+        if(operator.getLexeme().equals("-")){
+            fileWriter.add("NEG");
+
+        }
+    }
     public String toString(){
         return operator.getLexeme() + " " + expression.toString();
     }

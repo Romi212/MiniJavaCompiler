@@ -90,9 +90,9 @@ public class AccessVar extends AccessMember{
     public void generate() {
         if(localvar != null) {
             if (write) {
-                fileWriter.add("STORE 0 ; guarda el rtado en la variable");
+                fileWriter.add("STORE "+localvar.getOffset()+" ; guarda el rtado en la variable");
             }
-            else fileWriter.add("LOAD 0 ; carga el valor de la variable");
+            else fileWriter.add("LOAD "+localvar.getOffset()+" ; carga el valor de la variable");
         }
         else{
             if(attribute != null){
