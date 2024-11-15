@@ -40,4 +40,8 @@ public class ParameterDeclaration {
     public boolean isCorrectlyDeclared() throws SemanticalErrorException {
         return type.isCorrect();
     }
+
+    public void setPosition(int i) {
+        this.position = i;
+    }
 }

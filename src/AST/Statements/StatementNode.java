@@ -41,8 +41,7 @@ abstract public class StatementNode {
         }
         this.localVars.put(localVar.getName().getLexeme(), localVar);
 
-        localVar.setOffset(SymbolTable.getLocalVarSize());
-        SymbolTable.addLocalVar();
+
 
     }
 

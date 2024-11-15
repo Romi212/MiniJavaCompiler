@@ -53,7 +53,7 @@ public class AccessMethod extends AccessMember{
         for( ExpressionNode e : parameters){
             if(!e.isCorrect()) throw new SemanticalErrorException(name,"Method "+this.name.getLexeme()+" has incorrect parameter");
             MemberType type = e.getExpressionType();
-            if(!type.conformsTo(parentType.transformType(m.getParameterType(parameters.indexOf(e))))) throw new SemanticalErrorException(name,"Method "+this.name.getLexeme()+" has parameter that does not conform to the method");
+            if(!type.conformsTo(parentType.transformType(m.getParameterType(parameters.size() - parameters.indexOf(e)-1)))) throw new SemanticalErrorException(name,"Method "+this.name.getLexeme()+" has parameter that does not conform to the method");
         }
         this.method = m;
         this.type = parentType.transformType(method.getType());
@@ -78,7 +78,7 @@ public class AccessMethod extends AccessMember{
         if(!method.isStatic()){
             fileWriter.add("DUP ; guardo el this");
             fileWriter.add("LOADREF 0 ; cargamos la VT");
-            fileWriter.add("LOADREF 0 ; cargamos el label al metodo");
+            fileWriter.add("LOADREF "+method.getOffset()+" ; cargamos el label al metodo"+method.getLabel());
         } else{
             fileWriter.add("PUSH "+method.getLabel()+" ; llamado a metodo estatico");
         }

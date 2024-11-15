@@ -45,6 +45,10 @@ public class MethodDeclaration extends MemberDeclaration {
     public void setOffset(int offset){
         this.offset = offset;
     }
+
+    public int getOffset(){
+        return this.offset;
+    }
     public Token getName(){
         return this.name;
     }
@@ -78,6 +82,7 @@ public class MethodDeclaration extends MemberDeclaration {
                         throw new SemanticalErrorException(entry.getValue().getType().getToken(), "Parameter "+entry.getValue().getName().getLexeme()+" in method "+name.getLexeme()+" has an invalid type "+entry.getValue().getType().getName());
                     }
                 }
+                entry.getValue().setPosition(parameters.size() - entry.getValue().getPosition()-1);
             }
             if(isAbstract && !visibility.getLexeme().equals("public")) throw new SemanticalErrorException(visibility, "Abstract method "+name.getLexeme()+" must be public");
 

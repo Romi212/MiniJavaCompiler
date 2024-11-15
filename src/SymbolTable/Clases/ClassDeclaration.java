@@ -370,12 +370,12 @@ public class ClassDeclaration {
             if(!sortedMethods.get(i).isAbstract() && !sortedMethods.get(i).isStatic()){
                 if(!hasMet){
                     fileWriter.add("lblVT"+name.getLexeme()+": DW "+sortedMethods.get(i).getLabel());
-                    sortedMethods.get(i).setOffset(off);
+
 
                     hasMet = true;
                 }
                 else fileWriter.add("DW "+sortedMethods.get(i).getLabel());
-
+                sortedMethods.get(i).setOffset(off);
                 off++;
             }
             i++;

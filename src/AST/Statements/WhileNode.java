@@ -27,7 +27,6 @@ public class WhileNode extends  StatementNode{
         if(!condition.isCorrect()) throw new SemanticalErrorException(condition.getName(),"Condition is not correct");
         if(!statement.isCorrect()) throw new SemanticalErrorException(statement.getName(),"Statement is not correct");
         if(!condition.getExpressionType().conformsTo("boolean")) throw new SemanticalErrorException(condition.getName(),"Condition is not boolean");
-        SymbolTable.removeLocalVar(getLocalVarSize());
         return true;
     }
 
@@ -51,6 +50,7 @@ public class WhileNode extends  StatementNode{
         int localVarSize = getLocalVarSize();
         if (localVarSize > 0) {
             fileWriter.add("RMEM " + localVarSize);
+            SymbolTable.removeLocalVar(localVarSize);
         }
 
     }

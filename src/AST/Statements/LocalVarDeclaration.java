@@ -14,6 +14,8 @@ public class LocalVarDeclaration extends StatementNode{
     private MemberType type;
     private ExpressionNode initialization;
 
+    private LocalVar localVar;
+
     public LocalVarDeclaration(Token var) {
         super(var);
 
@@ -38,7 +40,9 @@ public class LocalVarDeclaration extends StatementNode{
         if(type.isVoid()) throw new SemanticalErrorException(this.name, "Local variable declared 'var' "+this.name.getLexeme()+" cant be initialized with void");
         //System.out.println("Adding local var "+this.name.getLexeme() + this.name.getLine() + parent);
         if(SymbolTable.isParameter(name)) throw new SemanticalErrorException(name,"Variable name is already used as a parameter");
-        parent.addLocalVar(new LocalVar(this.name, type));
+        localVar = new LocalVar(this.name, type);
+        parent.addLocalVar(localVar);
+
 
         return true;
     }
@@ -53,8 +57,11 @@ public class LocalVarDeclaration extends StatementNode{
 
     public void generate(){
         fileWriter.add("RMEM 1 ; Assignment expression");
+        localVar.setOffset(SymbolTable.getLocalVarSize());
+        SymbolTable.addLocalVar();
+
         initialization.generate();
-        fileWriter.add("STORE 0 ; guardamos el valor en la var local "+this.name.getLexeme());
+        fileWriter.add("STORE "+localVar.getOffset()+" ; guardamos el valor en la var local "+this.name.getLexeme());
 
     }
 }

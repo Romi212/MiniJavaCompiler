@@ -47,7 +47,7 @@ public class BLockDeclaration extends StatementNode{
             if(!statement.isCorrect()) throw new SemanticalErrorException(statement.getName(), "Statement is not correct");
         }
         cheked = true;
-        SymbolTable.removeLocalVar(getLocalVarSize());
+
         return true;
     }
 
@@ -67,6 +67,7 @@ public class BLockDeclaration extends StatementNode{
 
         int localVarSize = getLocalVarSize();
         if (localVarSize > 0) {
+            SymbolTable.removeLocalVar(localVarSize);
             fileWriter.add("FMEM " + localVarSize);
 
         }

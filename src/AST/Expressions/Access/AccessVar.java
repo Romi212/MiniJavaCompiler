@@ -104,6 +104,14 @@ public class AccessVar extends AccessMember{
                     fileWriter.add("LOAD 3 ; carga ref a this");
                     fileWriter.add("LOADREF "+(attribute.getPosition()+1)+" ; carga el valor del atributo");
                 }
+            }else{
+                if(parameter!= null){
+                    if(write){
+                        fileWriter.add("STOREFP "+(parameter.getPosition()+4)+" ; guarda el rtado en el parametro");
+                    }else{
+                        fileWriter.add("LOADFP "+(parameter.getPosition()+4)+" ; carga el valor del parametro");
+                    }
+                }
             }
         }
     }

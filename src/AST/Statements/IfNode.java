@@ -33,7 +33,7 @@ public class IfNode extends StatementNode{
                 if(!elseStatement.isCorrect()) throw new SemanticalErrorException(elseStatement.getName(), "Else statement is not correct");
             }
             if(!condition.getExpressionType().conformsTo("boolean")) throw new SemanticalErrorException(name, "Condition is not boolean");
-            SymbolTable.removeLocalVar(getLocalVarSize());
+
             return true;
         }
 

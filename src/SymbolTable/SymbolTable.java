@@ -320,11 +320,11 @@ public class SymbolTable {
     }
 
     public static void addLocalVar() {
-        activeLocalVars++;
+        activeLocalVars--;
     }
 
     public static void removeLocalVar(int cant) {
-        activeLocalVars-= cant;
+        activeLocalVars+= cant;
     }
 
     public static int getLocalVarSize() {
