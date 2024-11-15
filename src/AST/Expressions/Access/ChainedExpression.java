@@ -4,6 +4,7 @@ import SymbolTable.SymbolTable;
 import SymbolTable.Types.MemberType;
 import utils.Exceptions.CompilerException;
 import utils.Exceptions.SemanticalErrorException;
+import utils.fileWriter;
 
 public class ChainedExpression extends AccessExpression{
 
@@ -69,6 +70,16 @@ public class ChainedExpression extends AccessExpression{
 
     public boolean isStatic(){
         return first.isStatic();
+
+    }
+
+    public void printPop(){
+        if(chain != null){
+            chain.printPop();
+        }else if( !first.isAssignable() && !first.getExpressionType().isVoid() && !first.isNewObject()){
+            System.out.println(first.getExpressionType());
+            fileWriter.add("POP");
+        }
 
     }
 

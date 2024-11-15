@@ -3,6 +3,7 @@ package AST.Statements;
 import AST.Expressions.ExpressionNode;
 import utils.Exceptions.CompilerException;
 import utils.Exceptions.SemanticalErrorException;
+import utils.fileWriter;
 
 public class ExpressionStatement extends StatementNode{
 
@@ -40,5 +41,6 @@ public class ExpressionStatement extends StatementNode{
 
     public void generate(){
         expression.generate();
+        if(!expression.getExpressionType().isVoid()) fileWriter.add("POP");
     }
 }

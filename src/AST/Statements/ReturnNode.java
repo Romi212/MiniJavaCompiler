@@ -5,6 +5,7 @@ import SymbolTable.MethodDeclaration;
 import SymbolTable.SymbolTable;
 import SymbolTable.Types.MemberType;
 import utils.Exceptions.CompilerException;
+import utils.Exceptions.MethodReturnedValue;
 import utils.Exceptions.SemanticalErrorException;
 import utils.Token;
 import utils.fileWriter;
@@ -47,8 +48,10 @@ public class ReturnNode extends StatementNode{
     public void generate(){
         if(expression != null){
             expression.generate();
+            int offset = method.getParametersSize() + 4;
+            fileWriter.add("STORE "+offset+" ; guardamos el valor de retorno en la variable de retorno");
+
         }
-        int offset = method.getParametersSize() + 4;
-        fileWriter.add("STORE "+offset+" ; guardamos el valor de retorno en la variable de retorno");
+
     }
 }

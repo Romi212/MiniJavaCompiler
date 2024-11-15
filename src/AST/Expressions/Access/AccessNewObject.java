@@ -43,6 +43,9 @@ public class AccessNewObject extends AccessMember{
         return true;
     }
 
+    public boolean isNewObject(){
+        return true;
+    }
     public void generate(){
         /*RMEM 1  ; Reservamos memoria para el resultado del malloc (la referencia al nuevo CIR de A)
 PUSH 2  ;  Apilo la cantidad de var de instancia del CIR de A +1 por VT

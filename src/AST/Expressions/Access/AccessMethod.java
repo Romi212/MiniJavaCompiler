@@ -83,5 +83,6 @@ public class AccessMethod extends AccessMember{
             fileWriter.add("PUSH "+method.getLabel()+" ; llamado a metodo estatico");
         }
         fileWriter.add("CALL");
+
     }
 }

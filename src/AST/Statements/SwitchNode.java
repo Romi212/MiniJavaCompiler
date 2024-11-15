@@ -78,6 +78,7 @@ public class SwitchNode extends StatementNode{
             fileWriter.add("JUMP " + end);
         }
         if(defaultCase != null){
+            fileWriter.add("FMEM 1");
             defaultCase.generate();
         }
         fileWriter.add(end + ": NOP");

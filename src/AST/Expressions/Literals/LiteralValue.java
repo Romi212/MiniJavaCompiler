@@ -26,7 +26,5 @@ public abstract class LiteralValue extends ExpressionNode {
         return value.getLexeme();
     }
 
-    public void generate(){
-        fileWriter.add("PUSH "+value.getLexeme()+" ; Literal Value");
-    }
+
 }

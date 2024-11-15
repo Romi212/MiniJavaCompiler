@@ -64,6 +64,7 @@ public class AssignmentExp extends ExpressionNode{
 
         expression.generate();
         System.out.println("Ya cree el objeto lo guardo en: "+access.toString());
+        fileWriter.add("DUP");
         access.generate();
     }
 }

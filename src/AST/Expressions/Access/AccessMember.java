@@ -52,7 +52,9 @@ public abstract class AccessMember extends AccessExpression{
         return name;
     }
 
-
+    public boolean isNewObject(){
+        return false;
+    }
 
     abstract  public void setMember(AccessMember hasMember) throws SemanticalErrorException;
 

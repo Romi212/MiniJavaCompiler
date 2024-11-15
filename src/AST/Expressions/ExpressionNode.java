@@ -33,4 +33,8 @@ public abstract class ExpressionNode extends StatementNode {
     public boolean isStatic() {
             return false;
     }
+
+    public void printPop(){
+
+    }
 }

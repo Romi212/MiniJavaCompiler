@@ -13,4 +13,6 @@ public class LiteralChar extends LiteralValue{
     public MemberType getExpressionType() {
         return new CharacterType(new Token("rw_char", "char", -1));
     }
+
+
 }

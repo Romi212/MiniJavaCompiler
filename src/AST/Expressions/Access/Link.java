@@ -6,6 +6,7 @@ import SymbolTable.Types.MemberType;
 import utils.Exceptions.CompilerException;
 import utils.Exceptions.SemanticalErrorException;
 import utils.Token;
+import utils.fileWriter;
 
 import java.util.ArrayList;
 
@@ -76,6 +77,11 @@ public class Link extends AccessExpression{
     public boolean isAssignable(){
         if(next == null) return link.isAssignable();
         else return next.isAssignable();
+    }
+
+    public void printPop(){
+        if(next!= null) next.printPop();
+        else if( !link.isAssignable() && !link.getExpressionType().isVoid() && !link.isNewObject()) fileWriter.add("POP");
     }
 
     public void generate(){

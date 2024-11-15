@@ -107,9 +107,9 @@ public class AccessVar extends AccessMember{
             }else{
                 if(parameter!= null){
                     if(write){
-                        fileWriter.add("STOREFP "+(parameter.getPosition()+4)+" ; guarda el rtado en el parametro");
+                        fileWriter.add("STORE "+(parameter.getPosition()+4)+" ; guarda el rtado en el parametro");
                     }else{
-                        fileWriter.add("LOADFP "+(parameter.getPosition()+4)+" ; carga el valor del parametro");
+                        fileWriter.add("LOAD "+(parameter.getPosition()+4)+" ; carga el valor del parametro");
                     }
                 }
             }
