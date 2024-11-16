@@ -15,10 +15,17 @@ public class CaseNode extends StatementNode{
     private LiteralValue expression;
     private StatementNode statement;
 
+    private  String label;
+
     public CaseNode(Token name, LiteralValue expression, StatementNode s){
         super(name);
         this.expression = expression;
         statement = s;
+
+    }
+
+    public void setLabel(String label){
+        this.label = label;
     }
 
     public void setStatement(StatementNode statement){
@@ -61,17 +68,20 @@ public class CaseNode extends StatementNode{
         return true;
     }
 
-    public void generate(){
-        if(expression != null){
-            expression.generate();
-            fileWriter.add("BF end@" + name.getLexeme() + name.getLine());
-        }
-        statement.generate();
-        fileWriter.add("end@" + name.getLexeme() + name.getLine() + ": NOP");
-        int localVarSize = getLocalVarSize();
-        if (localVarSize > 0) {
-            fileWriter.add("RMEM " + localVarSize);
-        }
 
+    public void generateExpression(){
+        if(expression != null){
+            fileWriter.add("DUP");
+            expression.generate();
+            fileWriter.add("EQ ; evaluo si enta en el caso");
+            fileWriter.add("BT " + label);
+        }else{
+            fileWriter.add("JUMP " + label);
+        }
     }
+    public void generateStatement(){
+        fileWriter.add(label + ": NOP");
+        statement.generate();
+    }
+
 }

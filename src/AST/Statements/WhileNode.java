@@ -40,18 +40,18 @@ public class WhileNode extends  StatementNode{
 
     public void generate(){
         String start = "start@" + name.getLexeme() + name.getLine();
-        String end = "end@" + name.getLexeme() + name.getLine();
+
         fileWriter.add(start + ": NOP");
         condition.generate();
-        fileWriter.add("BF " + end);
+        fileWriter.add("BF " + getEndLabel());
         statement.generate();
         fileWriter.add("JUMP " + start);
-        fileWriter.add(end + ": NOP");
+
         int localVarSize = getLocalVarSize();
-        if (localVarSize > 0) {
-            fileWriter.add("RMEM " + localVarSize);
-            SymbolTable.removeLocalVar(localVarSize);
-        }
+
+        fileWriter.add(getEndLabel()+": FMEM " + localVarSize);
+        SymbolTable.removeLocalVar(localVarSize);
+
 
     }
 }

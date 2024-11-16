@@ -13,6 +13,7 @@ public class ChainedExpression extends AccessExpression{
     Link chain;
     public ChainedExpression(){
         super(null);
+        setParent(this);
     }
 
     public void setFirst(AccessMember first){
@@ -31,6 +32,7 @@ public class ChainedExpression extends AccessExpression{
         if(SymbolTable.staticContext() && !first.isStatic()) throw new SemanticalErrorException(name,"Member "+this.name.getLexeme()+" is not static and cannot be called from a static context");
         first.setWrite(write);
         if(chain != null){
+            chain.setParent(parent);
             first.setWrite(false);
             chain.setWrite(write);
             chain.isCorrect(first);

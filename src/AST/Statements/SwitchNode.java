@@ -71,22 +71,29 @@ public class SwitchNode extends StatementNode{
     }
 
     public void generate(){
-        String end = "end@" + name.getLexeme() + name.getLine();
+        String end = getEndLabel();
         expression.generate();
         for(CaseNode c : cases){
-            c.generate();
-            fileWriter.add("JUMP " + end);
+            c.setLabel("case" + cases.indexOf(c) + name.getLine());
+            c.generateExpression();
+        }
+        fileWriter.add("FMEM 1");
+        if(defaultCase != null){
+            defaultCase.generateExpression();
+        }
+
+        for (CaseNode c : cases){
+            c.generateStatement();
         }
         if(defaultCase != null){
-            fileWriter.add("FMEM 1");
-            defaultCase.generate();
+            defaultCase.generateStatement();
         }
-        fileWriter.add(end + ": NOP");
-        int localVarSize = getLocalVarSize();
-        if (localVarSize > 0) {
-            fileWriter.add("RMEM " + localVarSize);
 
-        }
+        int localVarSize = getLocalVarSize();
+
+        fileWriter.add(end+": FMEM " + localVarSize);
+
+
 
     }
 }

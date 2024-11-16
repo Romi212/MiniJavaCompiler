@@ -25,10 +25,13 @@ public class SymbolTable {
 
     private static int activeLocalVars;
 
+    private static int index;
+
     public static void createTable(){
         symbolTable = new HashMap<>();
         hasMain = false;
         activeLocalVars = 0;
+        index = 0;
         try {
             ClassDeclaration object = new ClassDeclaration(new Token("pc_object", "Object", -1));
             MethodDeclaration debugPrint =  new MethodDeclaration(new Token("pc_object", "debugPrint", -1), new VoidType(new Token("pc_object", "void", -1)));
@@ -338,5 +341,9 @@ public class SymbolTable {
             ClassDeclaration classDeclaration = entry.getValue();
             classDeclaration.generate();
         }
+    }
+
+    public static int getIndex() {
+        return index++;
     }
 }

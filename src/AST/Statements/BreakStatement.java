@@ -2,6 +2,7 @@ package AST.Statements;
 
 import utils.Exceptions.SemanticalErrorException;
 import utils.Token;
+import utils.fileWriter;
 
 public class BreakStatement extends StatementNode{
     public BreakStatement(Token name){
@@ -19,5 +20,9 @@ public class BreakStatement extends StatementNode{
 
     public boolean isStatement(){
         return true;
+    }
+
+    public void generate(){
+        fileWriter.add("JUMP " + parent.getEndLabel());
     }
 }

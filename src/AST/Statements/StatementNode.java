@@ -15,10 +15,13 @@ abstract public class StatementNode {
     public StatementNode parent;
     public boolean staticContext = false;
 
+    private String label;
+
     private HashMap<String, LocalVar> localVars;
     public StatementNode(Token name){
         this.name = name;
         this.localVars = new HashMap<>();
+        this.label = "end@"  + SymbolTable.getIndex();
     }
     public void setStaticContext(boolean isStatic){
         this.staticContext = isStatic;
@@ -85,5 +88,10 @@ abstract public class StatementNode {
 
     public int getLocalVarSize(){
         return localVars.size();
+    }
+
+    public String getEndLabel(){
+
+        return label;
     }
 }

@@ -66,11 +66,11 @@ public class BLockDeclaration extends StatementNode{
         }
 
         int localVarSize = getLocalVarSize();
-        if (localVarSize > 0) {
-            SymbolTable.removeLocalVar(localVarSize);
-            fileWriter.add("FMEM " + localVarSize);
 
-        }
+        SymbolTable.removeLocalVar(localVarSize);
+        fileWriter.add(getEndLabel()+": FMEM " + localVarSize);
+
+
 
     }
 
