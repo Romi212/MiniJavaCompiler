@@ -23,6 +23,6 @@ public class BreakStatement extends StatementNode{
     }
 
     public void generate(){
-        fileWriter.add("JUMP " + parent.getEndLabel());
+        fileWriter.add("JUMP " + parent.getBreakLabel());
     }
 }

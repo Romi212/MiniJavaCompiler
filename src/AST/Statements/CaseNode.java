@@ -81,6 +81,7 @@ public class CaseNode extends StatementNode{
     }
     public void generateStatement(){
         fileWriter.add(label + ": NOP");
+        statement.setBreakLabel(getBreakLabel());
         statement.generate();
     }
 

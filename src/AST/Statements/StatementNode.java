@@ -15,6 +15,8 @@ abstract public class StatementNode {
     public StatementNode parent;
     public boolean staticContext = false;
 
+    private String breakLabel;
+
     private String label;
 
     private HashMap<String, LocalVar> localVars;
@@ -51,7 +53,7 @@ abstract public class StatementNode {
     public LocalVar getLocalVar(String name){
 
         if(this.localVars.containsKey(name)) return this.localVars.get(name);
-        if(parent != null) return parent.getLocalVar(name);
+        if(parent != null && parent!= this) return parent.getLocalVar(name);
         return null;
     }
 
@@ -88,6 +90,14 @@ abstract public class StatementNode {
 
     public int getLocalVarSize(){
         return localVars.size();
+    }
+
+    public String getBreakLabel(){
+        return breakLabel;
+    }
+
+    public void setBreakLabel(String label){
+        this.breakLabel = label;
     }
 
     public String getEndLabel(){

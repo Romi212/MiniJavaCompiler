@@ -57,6 +57,7 @@ public class SwitchNode extends StatementNode{
     public String toString(){
         String result = "SwitchNode(" + expression.toString() + "){ \n";
         for(CaseNode c : cases){
+
             result += c.toString() + "\n";
         }
         if(defaultCase != null){
@@ -74,10 +75,11 @@ public class SwitchNode extends StatementNode{
         String end = getEndLabel();
         expression.generate();
         for(CaseNode c : cases){
+            c.setBreakLabel(end);
             c.setLabel("case" + cases.indexOf(c) + name.getLine());
             c.generateExpression();
         }
-        fileWriter.add("FMEM 1");
+
         if(defaultCase != null){
             defaultCase.generateExpression();
         }
@@ -91,7 +93,8 @@ public class SwitchNode extends StatementNode{
 
         int localVarSize = getLocalVarSize();
 
-        fileWriter.add(end+": FMEM " + localVarSize);
+
+        fileWriter.add(end+": FMEM " + (localVarSize+1));
 
 
 

@@ -44,6 +44,7 @@ public class WhileNode extends  StatementNode{
         fileWriter.add(start + ": NOP");
         condition.generate();
         fileWriter.add("BF " + getEndLabel());
+        statement.setBreakLabel(getEndLabel());
         statement.generate();
         fileWriter.add("JUMP " + start);
 

@@ -59,6 +59,7 @@ public class AccessVar extends AccessMember{
 
     @Override
     public void setMember(AccessMember parent) throws SemanticalErrorException{
+
         MemberType parentType = parent.getExpressionType();
         AttributeDeclaration a = parentType.hasAttribute(this);
         if(a == null) throw new SemanticalErrorException( this.name,"Attribute "+this.name.getLexeme()+" not found in "+parent.getExpressionType().getName());
@@ -67,6 +68,7 @@ public class AccessVar extends AccessMember{
         if (!a.isPublic()) throw new SemanticalErrorException(this.name, "Attribute cant be accessed because "+this.name.getLexeme()+" is not public");
         isStatic = a.isStatic();
         this.type = parentType.transformType(a.getType());
+        hasPrevious = true;
     }
 
     public String toString(){
@@ -97,19 +99,21 @@ public class AccessVar extends AccessMember{
         else{
             if(attribute != null){
                 if(write){
-                  fileWriter.add("LOAD 3 ; carga ref a this");
+                  if(!hasPrevious) fileWriter.add("LOAD 3 ; carga ref a this >:(");
                   fileWriter.add("SWAP");
                   fileWriter.add("STOREREF "+(attribute.getPosition()+1)+" ; carga el valor del atributo");
                 }else{
-                    fileWriter.add("LOAD 3 ; carga ref a this");
+                    if(!hasPrevious) fileWriter.add("LOAD 3 ; carga ref a this");
                     fileWriter.add("LOADREF "+(attribute.getPosition()+1)+" ; carga el valor del atributo");
                 }
             }else{
                 if(parameter!= null){
+                    int frame = 3;
+
                     if(write){
-                        fileWriter.add("STORE "+(parameter.getPosition()+4)+" ; guarda el rtado en el parametro");
+                        fileWriter.add("STORE "+(parameter.getPosition()+frame)+" ; guarda el rtado en el parametro");
                     }else{
-                        fileWriter.add("LOAD "+(parameter.getPosition()+4)+" ; carga el valor del parametro");
+                        fileWriter.add("LOAD "+(parameter.getPosition()+frame)+" ; carga el valor del parametro");
                     }
                 }
             }

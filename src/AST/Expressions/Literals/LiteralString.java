@@ -17,6 +17,10 @@ public class LiteralString extends LiteralValue{
     }
 
     public void generate(){
-        fileWriter.add("string@"+SymbolTable.getIndex()+": DW \""+value.getLexeme()+"\", 0");
+        fileWriter.add(".DATA");
+        String label = "string@"+SymbolTable.getIndex();
+        fileWriter.add(label+": DW "+value.getLexeme()+", 0");
+        fileWriter.add(".CODE");
+        fileWriter.add("PUSH "+label+" ; Pushing string");
     }
 }

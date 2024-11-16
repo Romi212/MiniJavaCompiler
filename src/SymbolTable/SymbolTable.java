@@ -1,6 +1,7 @@
 package SymbolTable;
 
 import AST.DefaultBlocks.BlockDebugPrint;
+import AST.DefaultBlocks.BlockSysPrint;
 import AST.LocalVar;
 import AST.Statements.StatementNode;
 import SymbolTable.Attributes.AttributeDeclaration;
@@ -54,45 +55,63 @@ public class SymbolTable {
             MethodDeclaration printB = new MethodDeclaration(new Token("pc_object", "printB", -1), new VoidType(new Token("pc_object", "void", -1)));
             printB.setLabel("lblMetprintB@System");
             printB.addParameter(new Token("pc_object", "b", -1), new BooleanType(new Token("pc_object", "boolean", -1)));
+            printB.addBlock(new BlockSysPrint("bool", false));
+            printB.setStatic(true);
             system.addMethod(printB);
 
             MethodDeclaration printC = new MethodDeclaration(new Token("pc_object", "printC", -1), new VoidType(new Token("pc_object", "void", -1)));
             printC.setLabel("lblMetprintC@System");
             printC.addParameter(new Token("pc_object", "c", -1), new CharacterType(new Token("pc_object", "char", -1)));
+            printC.addBlock(new BlockSysPrint("char", false));
+            printC.setStatic(true);
             system.addMethod(printC);
 
             MethodDeclaration printI = new MethodDeclaration(new Token("pc_object", "printI", -1), new VoidType(new Token("pc_object", "void", -1)));
             printI.setLabel("lblMetprintI@System");
             printI.addParameter(new Token("pc_object", "i", -1), new IntegerType(new Token("pc_object", "int", -1)));
+            printI.addBlock(new BlockSysPrint("int", false));
+            printI.setStatic(true);
             system.addMethod(printI);
 
             MethodDeclaration printS = new MethodDeclaration(new Token("pc_object", "printS", -1), new VoidType(new Token("pc_object", "void", -1)));
             printS.setLabel("lblMetprintS@System");
             printS.addParameter(new Token("pc_object", "s", -1), new MemberObjectType(new Token("pc_object", "String", -1)));
+            printS.addBlock(new BlockSysPrint("string", false));
+            printS.setStatic(true);
             system.addMethod(printS);
 
             MethodDeclaration println = new MethodDeclaration(new Token("pc_object", "println", -1), new VoidType(new Token("pc_object", "void", -1)));
             println.setLabel("lblMetprintln@System");
+            println.addBlock(new BlockSysPrint("nope", true));
+            println.setStatic(true);
             system.addMethod(println);
 
             MethodDeclaration printBln = new MethodDeclaration(new Token("pc_object", "printBln", -1), new VoidType(new Token("pc_object", "void", -1)));
             printBln.setLabel("lblMetprintBln@System");
             printBln.addParameter(new Token("pc_object", "b", -1), new BooleanType(new Token("pc_object", "boolean", -1)));
+            printBln.addBlock(new BlockSysPrint("bool", true));
+            printBln.setStatic(true);
             system.addMethod(printBln);
 
             MethodDeclaration printCln = new MethodDeclaration(new Token("pc_object", "printCln", -1), new VoidType(new Token("pc_object", "void", -1)));
             printCln.setLabel("lblMetprintCln@System");
             printCln.addParameter(new Token("pc_object", "c", -1), new CharacterType(new Token("pc_object", "char", -1)));
+            printCln.addBlock(new BlockSysPrint("char", true));
+            printCln.setStatic(true);
             system.addMethod(printCln);
 
             MethodDeclaration printIln = new MethodDeclaration(new Token("pc_object", "printIln", -1), new VoidType(new Token("pc_object", "void", -1)));
             printIln.setLabel("lblMetprintIln@System");
             printIln.addParameter(new Token("pc_object", "i", -1), new IntegerType(new Token("pc_object", "int", -1)));
+            printIln.addBlock(new BlockSysPrint("int", true));
+            printIln.setStatic(true);
             system.addMethod(printIln);
 
             MethodDeclaration printSln = new MethodDeclaration(new Token("pc_object", "printSln", -1), new VoidType(new Token("pc_object", "void", -1)));
             printSln.setLabel("lblMetprintSln@System");
             printSln.addParameter(new Token("pc_object", "s", -1), new MemberObjectType(new Token("pc_object", "String", -1)));
+            printSln.addBlock(new BlockSysPrint("string", true));
+            printSln.setStatic(true);
             system.addMethod(printSln);
             symbolTable.put("System", system);
         } catch (SemanticalErrorException e) {

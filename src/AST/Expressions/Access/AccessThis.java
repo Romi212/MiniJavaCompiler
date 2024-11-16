@@ -5,6 +5,7 @@ import SymbolTable.SymbolTable;
 import SymbolTable.Types.MemberObjectType;
 import SymbolTable.Types.MemberType;
 import utils.Token;
+import utils.fileWriter;
 
 public class AccessThis extends AccessMember{
 
@@ -25,5 +26,9 @@ public class AccessThis extends AccessMember{
     @Override
     public void setMember(AccessMember hasMember) {
 
+    }
+
+    public void generate(){
+        fileWriter.add("LOAD 3");
     }
 }

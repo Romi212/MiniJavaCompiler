@@ -41,6 +41,7 @@ public class MethodDeclaration extends MemberDeclaration {
     public void addBlock(BLockDeclaration block){
         this.block = block;
         block.setStaticContext(isStatic);
+        block.setParent(null);
     }
     public void setOffset(int offset){
         this.offset = offset;
@@ -82,7 +83,8 @@ public class MethodDeclaration extends MemberDeclaration {
                         throw new SemanticalErrorException(entry.getValue().getType().getToken(), "Parameter "+entry.getValue().getName().getLexeme()+" in method "+name.getLexeme()+" has an invalid type "+entry.getValue().getType().getName());
                     }
                 }
-                entry.getValue().setPosition(parameters.size() - entry.getValue().getPosition()-1);
+                int frame = !isStatic ? 0 : 1;
+                entry.getValue().setPosition(parameters.size() - entry.getValue().getPosition()-frame);
             }
             if(isAbstract && !visibility.getLexeme().equals("public")) throw new SemanticalErrorException(visibility, "Abstract method "+name.getLexeme()+" must be public");
 

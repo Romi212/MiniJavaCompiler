@@ -38,4 +38,8 @@ public class AccessPE extends AccessMember{
     public boolean isStatic(){
         return exp.isStatic();
     }
+
+    public void generate(){
+        exp.generate();
+    }
 }

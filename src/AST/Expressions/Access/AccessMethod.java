@@ -53,7 +53,8 @@ public class AccessMethod extends AccessMember{
         for( ExpressionNode e : parameters){
             if(!e.isCorrect()) throw new SemanticalErrorException(name,"Method "+this.name.getLexeme()+" has incorrect parameter");
             MemberType type = e.getExpressionType();
-            if(!type.conformsTo(parentType.transformType(m.getParameterType(parameters.size() - parameters.indexOf(e)-1)))) throw new SemanticalErrorException(name,"Method "+this.name.getLexeme()+" has parameter that does not conform to the method");
+            int frame = !m.isStatic() ? 0 : 1;
+            if(!type.conformsTo(parentType.transformType(m.getParameterType(parameters.size() - parameters.indexOf(e)-frame)))) throw new SemanticalErrorException(name,"Method "+this.name.getLexeme()+" has parameter that does not conform to the method");
         }
         this.method = m;
         this.type = parentType.transformType(method.getType());

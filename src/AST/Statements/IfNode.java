@@ -38,6 +38,7 @@ public class IfNode extends StatementNode{
         }
 
         public void generate(){
+            setBreakLabel(parent.getBreakLabel());
             condition.generate();
             fileWriter.add("BF else@" + name.getLexeme()+name.getLine());
             ifStatement.generate();
