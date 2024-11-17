@@ -1,4 +1,4 @@
-///5&3&exitosamente
+///3&3&exitosamente
 
 class B{
     int a;

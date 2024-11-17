@@ -1,5 +1,6 @@
 package AST.Expressions.Access;
 
+import AST.Expressions.ExpressionNode;
 import AST.LocalVar;
 import SymbolTable.Clases.ClassDeclaration;
 import SymbolTable.MethodDeclaration;
@@ -57,14 +58,18 @@ STOREREF 0  ; Guardamos la Referencia a la VT en el CIR que creamos
 DUP
 PUSH lblConstructor@A
 CALL  ; Llamo al constructor lblConstructor@A*/
-        fileWriter.add("RMEM 1  ; Reservamos memoria para el resultado del malloc (la referencia al nuevo CIR de A)");
-        fileWriter.add("PUSH "+(classD.getAttributes().size()+1)+"  ;  Apilo la cantidad de var de instancia del CIR de A +1 por VT");
+        fileWriter.add("RMEM 1  ; Reservamos memoria para el resultado del malloc (la referencia al nuevo CIR de"+classD.getName().getLexeme()+")");
+        fileWriter.add("PUSH "+(classD.getAttAmount()+1)+"  ;  Apilo la cantidad de var de instancia del CIR de "+classD.getName().getLexeme()+" +1 por VT");
         fileWriter.add("PUSH simple_malloc  ; La dirección de la rutina para alojar memoria en el heap");
         fileWriter.add("CALL  ; Llamo a malloc");
         fileWriter.add("DUP  ; Para no perder la referencia al nuevo CIR");
-        fileWriter.add("PUSH "+classD.getVtLabel()+"  ; Apilamos la dirección del comienzo de la VT de la clase A");
+        fileWriter.add("PUSH "+classD.getVtLabel()+"  ; Apilamos la dirección del comienzo de la VT de la clase "+classD.getName().getLexeme()+"");
         fileWriter.add("STOREREF 0  ; Guardamos la Referencia a la VT en el CIR que creamos");
         fileWriter.add("DUP");
+        for (ExpressionNode parameter : parameters) {
+            parameter.generate();
+            fileWriter.add("SWAP");
+        }
         fileWriter.add("PUSH "+constructor.getLabel()+"");
         fileWriter.add("CALL  ; Llamo al constructor "+constructor.getLabel());
 

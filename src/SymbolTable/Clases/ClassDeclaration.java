@@ -25,12 +25,13 @@ public class ClassDeclaration {
 
     protected Token name;
     protected Token parent;
-
+    protected int dynamicAtt;
     protected boolean visited = false;
     protected boolean isAbstract = false;
     protected boolean hasConstructor =false;
     protected boolean isConsolidated;
     protected HashMap<String, AttributeDeclaration> attributes;
+    protected ArrayList<AttributeDeclaration> sortedAttributes;
     protected HashMap<String, MethodDeclaration> methods;
     protected ArrayList<MethodDeclaration> sortedMethods;
 
@@ -49,6 +50,7 @@ public class ClassDeclaration {
         isAbstract = false;
         this.isConsolidated = false;
         this.attributes = new HashMap<>();
+        this.sortedAttributes = new ArrayList<>();
         this.methods = new HashMap<>();
         this.parametricTypes = new HashMap<>();
         constructors = new HashMap<>();
@@ -79,6 +81,9 @@ public class ClassDeclaration {
             if(typeT.getName().equals("void")) throw new SemanticalErrorException(typeT.getToken(), "Attribute "+attribute.getLexeme()+" cannot be of type void");
             AttributeDeclaration newAtr = new AttributeDeclaration(attribute, typeT);
             this.attributes.put(attribute.getLexeme(), newAtr);
+            if(!newAtr.isStatic()){
+                sortedAttributes.add(newAtr);
+            }
             return newAtr;
         }else throw new SemanticalErrorException(attribute, "Attribute "+attribute.getLexeme()+" in class "+name.getLexeme()+" already exists");
     }
@@ -178,17 +183,21 @@ public class ClassDeclaration {
                             attributes.get(entry.getValue().getName().getLexeme()).setPosition(entry.getValue().getPosition());}
                         else toAdd.put(entry.getKey(), entry.getValue());
                     } else {
-                        if (attributes.containsKey(entry.getKey())) toAdd.put("#" + entry.getKey(), entry.getValue());
+                        if (attributes.containsKey(entry.getKey())) {
+                            toAdd.put("#" + entry.getKey(), entry.getValue());
+                            sortedAttributes.remove(attributes.get(entry.getKey()));
+                        }
                         else toAdd.put(entry.getKey(), entry.getValue());
                     }
-                    position++;
+                    if(!entry.getValue().isStatic()) position++;
                 }
             }
             attributes.putAll(toAdd);
-            for(HashMap.Entry<String, AttributeDeclaration> entry : attributes.entrySet()){
-                entry.getValue().setPosition(position);
-                position++;
+            for( AttributeDeclaration a: sortedAttributes){
+                if(!a.isStatic()) a.setPosition(position++);
+
             }
+            dynamicAtt = position;
             ArrayList<MethodDeclaration> parentMethods = SymbolTable.getMethods(parent.getLexeme());
 
             for(int i = parentMethods.size()-1; i>= 0; i--){
@@ -356,6 +365,10 @@ public class ClassDeclaration {
         return true;
     }
 
+    public int getAttAmount() {
+        return dynamicAtt;
+    }
+
     public boolean staticContext() {
         return currentMethod.isStatic();
     }
@@ -382,6 +395,13 @@ public class ClassDeclaration {
         }
         if(!hasMet) fileWriter.add("lblVT"+name.getLexeme()+": NOP" );
 
+        for(HashMap.Entry<String, AttributeDeclaration> entry : attributes.entrySet()){
+            if(entry.getValue().isStatic()) {
+                String staticLabel = "lblAttr"+entry.getValue().getName().getLexeme()+"@"+name.getLexeme();
+                fileWriter.add(staticLabel+": DW 0");
+                entry.getValue().setStaticLabel(staticLabel);
+            }
+        }
         fileWriter.add(".CODE");
         for(HashMap.Entry<String, ConstructorDeclaration> entry : constructors.entrySet()){
             entry.getValue().generate();

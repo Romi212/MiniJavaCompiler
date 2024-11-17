@@ -98,13 +98,25 @@ public class AccessVar extends AccessMember{
         }
         else{
             if(attribute != null){
-                if(write){
-                  if(!hasPrevious) fileWriter.add("LOAD 3 ; carga ref a this >:(");
-                  fileWriter.add("SWAP");
-                  fileWriter.add("STOREREF "+(attribute.getPosition()+1)+" ; carga el valor del atributo");
-                }else{
-                    if(!hasPrevious) fileWriter.add("LOAD 3 ; carga ref a this");
-                    fileWriter.add("LOADREF "+(attribute.getPosition()+1)+" ; carga el valor del atributo");
+                if(attribute.isStatic()){
+                    if(hasPrevious) fileWriter.add("POP");
+                    fileWriter.add("PUSH "+attribute.getLabel()+" ; guarda el rtado en el atributo");
+
+                    if(write){
+                        fileWriter.add("SWAP");
+                        fileWriter.add("STOREREF 0 ; guarda el rtado en el atributo");
+                    }else{
+                        fileWriter.add("LOADREF 0  ; carga el valor del atributo");
+                    }
+                } else {
+                    if(write){
+                      if(!hasPrevious) fileWriter.add("LOAD 3 ; carga ref a this >:(");
+                      fileWriter.add("SWAP");
+                      fileWriter.add("STOREREF "+(attribute.getPosition()+1)+" ; carga el valor del atributo");
+                    }else{
+                        if(!hasPrevious) fileWriter.add("LOAD 3 ; carga ref a this");
+                        fileWriter.add("LOADREF "+(attribute.getPosition()+1)+" ; carga el valor del atributo");
+                    }
                 }
             }else{
                 if(parameter!= null){

@@ -20,6 +20,10 @@ public abstract class LiteralValue extends ExpressionNode {
         return true;
     }
 
+    public boolean isStatic(){
+        return true;
+    }
+
     public abstract MemberType getExpressionType();
 
     public String toString(){

@@ -33,7 +33,8 @@ public class AccessMethod extends AccessMember{
 
             if(!e.isCorrect()) throw new SemanticalErrorException(name,"Method "+this.name.getLexeme()+" has incorrect parameter");
             MemberType type = e.getExpressionType();
-            if(!type.conformsTo(method.getParameterType(parameters.indexOf(e)))) throw new SemanticalErrorException(name,"Method "+this.name.getLexeme()+" has parameter that does not conform to the method");
+            int frame = !method.isStatic() ? 0 : 1;
+            if(!type.conformsTo(method.getParameterType(parameters.size() - parameters.indexOf(e)-frame))) throw new SemanticalErrorException(name,"Method "+this.name.getLexeme()+" has parameter that does not conform to the method");
         }
         return true;
     }

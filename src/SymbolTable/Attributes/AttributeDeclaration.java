@@ -12,6 +12,8 @@ public class AttributeDeclaration extends MemberDeclaration {
     private Token name;
     private MemberType type;
 
+    private  String label;
+
     private int position = -1;
 
     public AttributeDeclaration(Token name, MemberType type){
@@ -36,6 +38,7 @@ public class AttributeDeclaration extends MemberDeclaration {
 
     public void generate() {
 
+
     }
 
     public void setPosition(int position) {
@@ -44,5 +47,13 @@ public class AttributeDeclaration extends MemberDeclaration {
 
     public int getPosition() {
         return position;
+    }
+
+    public void setStaticLabel(String staticLabel) {
+        this.label = staticLabel;
+    }
+
+    public String getLabel(){
+        return label;
     }
 }
