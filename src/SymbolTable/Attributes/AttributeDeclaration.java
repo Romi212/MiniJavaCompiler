@@ -14,12 +14,22 @@ public class AttributeDeclaration extends MemberDeclaration {
 
     private  String label;
 
+    private boolean isCovered = false;
+
     private int position = -1;
 
     public AttributeDeclaration(Token name, MemberType type){
         this.name = name;
         this.type = type;
         this.isStatic = false;
+    }
+
+    public void setCovered(boolean isCovered){
+        this.isCovered = isCovered;
+    }
+
+    public boolean isCovered(){
+        return isCovered;
     }
 
     public Token getName(){

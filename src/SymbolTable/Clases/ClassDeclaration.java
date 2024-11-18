@@ -30,9 +30,13 @@ public class ClassDeclaration {
     protected boolean isAbstract = false;
     protected boolean hasConstructor =false;
     protected boolean isConsolidated;
+    protected int coveredAtt;
     protected HashMap<String, AttributeDeclaration> attributes;
     protected ArrayList<AttributeDeclaration> sortedAttributes;
+
+    protected HashMap<String, AttributeDeclaration> blindAttributes;
     protected HashMap<String, MethodDeclaration> methods;
+    protected HashMap<String, MethodDeclaration> ancestorMethods;
     protected ArrayList<MethodDeclaration> sortedMethods;
 
     protected HashMap<String, MemberType> parametricTypes;
@@ -58,6 +62,9 @@ public class ClassDeclaration {
         orderedParametricTypes = new ArrayList<>();
         instanceGenericTypes = new HashMap<>();
         sortedMethods = new ArrayList<>();
+        blindAttributes = new HashMap<>();
+        ancestorMethods = new HashMap<>();
+
 
     }
 
@@ -173,31 +180,36 @@ public class ClassDeclaration {
             visited = false;
             HashMap<String, AttributeDeclaration> parentAttributes = SymbolTable.getAttributes(parent.getLexeme());
             HashMap<String, AttributeDeclaration> toAdd = new HashMap<>();
+            HashMap<String, AttributeDeclaration> toAddPrivate = new HashMap<>();
             int position = 0;
+            int covered = 0;
             for(HashMap.Entry<String, AttributeDeclaration> entry : parentAttributes.entrySet()){
-                if(entry.getValue().isPublic()) {
 
-                    if (entry.getKey().charAt(0) == '#') {
-                        if (attributes.containsKey(entry.getValue().getName().getLexeme())){
-                            toAdd.put("#" + entry.getKey(), entry.getValue());
-                            attributes.get(entry.getValue().getName().getLexeme()).setPosition(entry.getValue().getPosition());}
-                        else toAdd.put(entry.getKey(), entry.getValue());
-                    } else {
-                        if (attributes.containsKey(entry.getKey())) {
-                            toAdd.put("#" + entry.getKey(), entry.getValue());
-                            sortedAttributes.remove(attributes.get(entry.getKey()));
-                        }
-                        else toAdd.put(entry.getKey(), entry.getValue());
-                    }
+                if(attributes.containsKey(entry.getValue().getName().getLexeme())){
+                    AttributeDeclaration coveredAtt = new AttributeDeclaration(entry.getValue().getName(), entry.getValue().getType());
+                    coveredAtt.setCovered(true);
+                    if(entry.getValue().isPublic())toAdd.put("#"+entry.getKey(), coveredAtt);
+                    else toAddPrivate.put("#"+entry.getKey(), coveredAtt);
+                    coveredAtt.setPosition(covered++);
+                    attributes.get(entry.getValue().getName().getLexeme()).setPosition(entry.getValue().getPosition());
+                    if(sortedAttributes.remove(attributes.get(entry.getValue().getName().getLexeme()))) if(!entry.getValue().isStatic()) position++;
+                }else{
+                    if(entry.getValue().isPublic())toAdd.put(entry.getKey(), entry.getValue());
+                    else toAddPrivate.put(entry.getKey(), entry.getValue());
                     if(!entry.getValue().isStatic()) position++;
                 }
+
             }
+
             attributes.putAll(toAdd);
+            blindAttributes.putAll(toAddPrivate);
+            position += toAddPrivate.size();
             for( AttributeDeclaration a: sortedAttributes){
                 if(!a.isStatic()) a.setPosition(position++);
 
             }
             dynamicAtt = position;
+            coveredAtt = covered;
             ArrayList<MethodDeclaration> parentMethods = SymbolTable.getMethods(parent.getLexeme());
 
             for(int i = parentMethods.size()-1; i>= 0; i--){
@@ -206,12 +218,14 @@ public class ClassDeclaration {
                     if(!methods.containsKey(key)){
                         if(parentMethods.get(i).isAbstract() && !isAbstract) throw new SemanticalErrorException(name, "Method "+parentMethods.get(i).getName().getLexeme()+" in class "+name.getLexeme()+" must be implemented!");
                         methods.put(key, parentMethods.get(i));
+                        ancestorMethods.put(key, parentMethods.get(i));
                         sortedMethods.addFirst(parentMethods.get(i));
                     } else{
                         if(!methods.get(key).sameSignature(parentMethods.get(i)))
                             throw new SemanticalErrorException(methods.get(key).getName(), "Method "+parentMethods.get(i).getName().getLexeme()+" in class "+name.getLexeme()+" cant redefine method with different signature in Parent class");
                         sortedMethods.remove(methods.get(key));
                         sortedMethods.addFirst(methods.get(key));
+
                     }
                 }
             }
@@ -366,7 +380,7 @@ public class ClassDeclaration {
     }
 
     public int getAttAmount() {
-        return dynamicAtt;
+        return dynamicAtt + coveredAtt;
     }
 
     public boolean staticContext() {
