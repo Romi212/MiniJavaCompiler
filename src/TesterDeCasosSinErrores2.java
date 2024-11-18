@@ -18,10 +18,10 @@ import static org.hamcrest.MatcherAssert.assertThat;
 public class TesterDeCasosSinErrores2 {
 
     private static final String msgExito = "[SinErrores]";
-    private static final String testFilesDirectoryPath = "resources/sinErroresSYNTAX/";
+    private static final String testFilesDirectoryPath = "resources/sinErrores4/";
 
     //TODO: el tipo de esta variable init tiene que ser la clase que tiene el main
-    private static final MainSemantico init = null;
+    private static final MainSemantico2 init = null;
    
     private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
     private final PrintStream originalOut = System.out;

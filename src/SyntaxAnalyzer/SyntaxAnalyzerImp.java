@@ -42,9 +42,9 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         initial();
 
         if(SymbolTable.isCorrect(currentToken)) System.out.println("[SinErrores]");
-        SymbolTable.generate();
-        fileWriter.closeWriter();
-        fileWriter.printFilePath();
+        //SymbolTable.generate();
+        //fileWriter.closeWriter();
+        //fileWriter.printFilePath();
         return "[SinErrores]";
     }
 

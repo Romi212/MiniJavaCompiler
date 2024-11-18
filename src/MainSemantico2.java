@@ -15,11 +15,11 @@ public class MainSemantico2 {
         }
 
         String fileName = args[0];
-        String outputName = args[1];
+       // String outputName = args[1];
 
-        System.out.println(fileName +" output: "+ outputName);
+        //System.out.println(fileName +" output: "+ outputName);
 
-        fileWriter.createFile(outputName);
+        //fileWriter.createFile(outputName);
        // fileWriter.add("HOLA");
         SourceManagerImpl sourceManager = new SourceManagerImpl();
         LexicalAnalyzerImp lexicalAnalyzer = new LexicalAnalyzerImp(sourceManager);

@@ -202,7 +202,7 @@ public class ClassDeclaration {
                     MemberType type = entry.getValue().getType();
                     AttributeDeclaration att = entry.getValue();
                     if(instanceGenericTypes.containsKey(type.getName())){
-                        type = new MemberObjectType(new Token(instanceGenericTypes.get(type.getName()), instanceGenericTypes.get(type.getName()), type.getToken().getLine()));
+                        type = parametricTypes.get(instanceGenericTypes.get(type.getName()));
                         att = new AttributeDeclaration(entry.getValue().getName(), type);
                         att.setPosition(entry.getValue().getPosition());
                     }
@@ -230,7 +230,7 @@ public class ClassDeclaration {
                     if(!methods.containsKey(key)){
                         if(parentMethods.get(i).isAbstract() && !isAbstract) throw new SemanticalErrorException(name, "Method "+parentMethods.get(i).getName().getLexeme()+" in class "+name.getLexeme()+" must be implemented!");
                         if(instanceGenericTypes.containsKey(parentMethods.get(i).getType().getName())){
-                            MemberType type = new MemberObjectType(new Token(instanceGenericTypes.get(parentMethods.get(i).getType().getName()), instanceGenericTypes.get(parentMethods.get(i).getType().getName()), parentMethods.get(i).getType().getToken().getLine()));
+                            MemberType type = parametricTypes.get(instanceGenericTypes.get(parentMethods.get(i).getType().getName()));
                             MethodDeclaration m = new MethodDeclaration(parentMethods.get(i).getName(), type);
                             m.copy(parentMethods.get(i));
                             methods.put(key, m);
