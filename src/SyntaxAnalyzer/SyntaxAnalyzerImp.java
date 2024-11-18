@@ -527,9 +527,9 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
             staticClass.setFirst(new AccessStaticClass(name));
             ExpressionNode exp = staticCall(staticClass);
             exp.setName(name);
-            BinaryExpression binexp = possibleOp();
+            BinaryExpression binexp = possibleOp(exp);
             if(binexp != null){
-                binexp.addLeft(exp);
+                //binexp.addLeft(exp);
                 exp = binexp;
             }
             AssignmentExp ass = possibleExp();
@@ -631,9 +631,9 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
 
     private ExpressionNode nSComplexExpression() throws CompilerException {
         ExpressionNode exp = basicExpression();
-        BinaryExpression operation  = possibleOp();
+        BinaryExpression operation  = possibleOp(exp);
         if(operation!= null){
-            operation.addLeft(exp);
+           // operation.addLeft(exp);
             return operation;
         }else return exp;
     }
@@ -881,9 +881,9 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
             ChainedExpression staticClass = new ChainedExpression();
             staticClass.setFirst(new AccessStaticClass(name));
             ExpressionNode staticCall = staticCall(staticClass);
-            BinaryExpression operation = possibleOp();
+            BinaryExpression operation = possibleOp(staticCall);
             if(operation != null) {
-                operation.addLeft(staticCall);
+                //operation.addLeft(staticCall);
                 return operation;
             }
             return staticCall;
@@ -891,9 +891,9 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         }
         else if(Firsts.isFirst("BasicExpression", currentToken.getToken())){
             ExpressionNode operand = basicExpression();
-            BinaryExpression operation = possibleOp();
+            BinaryExpression operation = possibleOp(operand);
             if(operation != null){
-                operation.addLeft(operand);
+               // operation.addLeft(operand);
                 return operation;
             }else return operand;
         }
@@ -902,13 +902,14 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
         }
     }
 
-    private BinaryExpression possibleOp() throws CompilerException {
+    private BinaryExpression possibleOp(ExpressionNode LeftExp) throws CompilerException {
         if(Firsts.isFirst("BinaryOp", currentToken.getToken())){
             BinaryExpression operation = binaryOp();
             ExpressionNode right = complexExpression();
 
-            operation.addRight(right);
-            return operation;
+            BinaryExpression bE = right.extendAST(LeftExp, operation);
+            //operation.addRight(right);
+            return bE;
         }
         else if(Follows.itFollows("PossibleExp", currentToken.getToken()) || Firsts.isFirst("AssignmentOp", currentToken.getToken())){
             //End of expression

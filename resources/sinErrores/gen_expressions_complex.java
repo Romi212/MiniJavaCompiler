@@ -1,4 +1,4 @@
-///7&12&30&2&7&6&1&true&false&exitosamente
+///1&12&30&2&9&6&1&true&false&exitosamente
 class Main {
     static void main() {
         numeric();
@@ -7,12 +7,17 @@ class Main {
     }
 
     static void numeric() {
-        debugPrint(1 + (2 / 3 * 7));          //7
+        debugPrint(1 + 2 / 3 * 7);          //1
+        System.println();
         debugPrint(3*(3+1));                //12
+        System.println();
         debugPrint(25 - -5);                //30
-        debugPrint((3 / 2) + 1);              //2
-        debugPrint((2 * 2 / 3 * 3 )+ 6);      //7
-        debugPrint(((2*2)/(3*3))+6);          //6
+        System.println();
+        debugPrint(3 / 2 + 1);              //2
+        System.println();
+        debugPrint(2 * 2 / 3 * 3 + 6);      //7
+        System.println();
+        debugPrint((2*2)/(3*3)+6);          //6
     }
 
     static void looksWeird() {

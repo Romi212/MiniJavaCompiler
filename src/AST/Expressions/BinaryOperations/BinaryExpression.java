@@ -36,4 +36,18 @@ abstract public class BinaryExpression extends ExpressionNode {
     public String toString(){
         return left.toString() + " " + operator.getLexeme() + " " + right.toString();
     }
+
+    public boolean precedes(Token operator){
+        return true;
+    }
+
+    public BinaryExpression extendAST(ExpressionNode leftExp, BinaryExpression operation) {
+        if(precedes(operation.getName()))
+            return super.extendAST(leftExp, operation);
+        else{
+            BinaryExpression leftNode = this.left.extendAST(leftExp, operation);
+            this.left = leftNode;
+        }
+        return this;
+    }
 }

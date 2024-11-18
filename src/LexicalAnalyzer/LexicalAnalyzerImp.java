@@ -222,7 +222,7 @@ public class LexicalAnalyzerImp implements LexicalAnalyzer {
             throw new LexicalErrorException(lexeme,sourceManager.getLineNumber(),sourceManager.getLineIndexNumber(), sourceManager.getCurrentLine(), "Char literal empty.");
         }
         if(currentChar == '\\'){
-            lexeme += currentChar;
+            //lexeme += currentChar;
             currentChar = sourceManager.getNextChar();
         }
 

@@ -1,5 +1,6 @@
 package AST.Expressions;
 
+import AST.Expressions.BinaryOperations.BinaryExpression;
 import AST.Statements.StatementNode;
 import SymbolTable.Types.MemberType;
 import utils.Exceptions.CompilerException;
@@ -36,5 +37,11 @@ public abstract class ExpressionNode extends StatementNode {
 
     public void printPop(){
 
+    }
+
+    public BinaryExpression extendAST(ExpressionNode leftExp, BinaryExpression operation) {
+        operation.addLeft(leftExp);
+        operation.addRight(this);
+        return operation;
     }
 }

@@ -1,5 +1,6 @@
 package AST.Expressions.BinaryOperations;
 
+import AST.Expressions.ExpressionNode;
 import SymbolTable.Types.IntegerType;
 import SymbolTable.Types.MemberType;
 import utils.Exceptions.CompilerException;
@@ -45,4 +46,14 @@ public class NumberOperation extends BinaryExpression{
                 fileWriter.add("MOD");
             }
         }
+
+
+
+        public boolean precedes(Token operator){
+
+            if (operator.getLexeme().equals("*") || operator.getLexeme().equals("/") || operator.getLexeme().equals("%")) return false;
+            if((this.operator.getLexeme().equals("+") || this.operator.getLexeme().equals("-"))&& (operator.getLexeme().equals("+")|| operator.getLexeme().equals("-"))) return false;
+            return true;
+        }
+
 }

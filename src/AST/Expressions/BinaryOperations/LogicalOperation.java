@@ -43,4 +43,7 @@ public class LogicalOperation extends BinaryExpression {
         }
     }
 
+    public boolean precedes(Token operator){
+        return (this.operator.getLexeme()=="&&" && operator.getLexeme()=="||");
+    }
 }

@@ -44,4 +44,8 @@ public class CompareOperation extends BinaryExpression{
                 fileWriter.add("GE");
             }
         }
+
+        public boolean precedes(Token operator){
+            return !(operator.getLexeme()=="+" || operator.getLexeme()=="-" || operator.getLexeme()=="*" || operator.getLexeme()=="/" || operator.getLexeme()=="%");
+        }
 }

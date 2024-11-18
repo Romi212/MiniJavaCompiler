@@ -39,4 +39,8 @@ public class EqualsOperation extends BinaryExpression{
             fileWriter.add("NOT");
         }
     }
+
+    public boolean precedes(Token operator){
+        return !(operator.getLexeme()=="+" || operator.getLexeme()=="-" || operator.getLexeme()=="*" || operator.getLexeme()=="/" || operator.getLexeme()=="%" || operator.getLexeme()=="<" || operator.getLexeme()==">" || operator.getLexeme()=="<=" || operator.getLexeme()==">=");
+    }
 }

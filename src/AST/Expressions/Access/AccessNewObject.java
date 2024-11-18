@@ -52,6 +52,10 @@ public class AccessNewObject extends AccessMember{
         return true;
     }
 
+    public boolean isStatement(){
+        return true;
+    }
+
     public boolean isNewObject(){
         return true;
     }

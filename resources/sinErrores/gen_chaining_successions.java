@@ -36,21 +36,27 @@ class StaticC {
         a = new A(2);
         b = new B(a, 1);
 
-        var p1 = b.y;					//1
-        var p2 = b.getY();				//1
+        //var p1 = b.y;					//1
+       // debugPrint(p1);
+       // var p2 = b.getY();				//1
+       // debugPrint(p2);
 
-        var p3 = b.a.x;					//2
+       // var p3 = b.a.x;					//2
+        //debugPrint(p3);
         var p4 = b.a.getX();			//2
-
-        var p5 = b.getA().x;			//2
-        var p6 = b.getA().getX();		//2
-
-        debugPrint(p1);
-        debugPrint(p2);
-        debugPrint(p3);
         debugPrint(p4);
-        debugPrint(p5);
+
+        //var p5 = b.getA().x;			//2
+        //debugPrint(p5);
+        var p6 = b.getA().getX();		//2
         debugPrint(p6);
+
+
+
+
+
+
+
         System.println();
     }
 }
