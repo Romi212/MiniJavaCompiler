@@ -6,6 +6,7 @@ import SymbolTable.Types.MemberType;
 import utils.Exceptions.CompilerException;
 import utils.Exceptions.SemanticalErrorException;
 import utils.Token;
+import utils.fileWriter;
 
 import java.util.HashMap;
 
@@ -103,5 +104,13 @@ abstract public class StatementNode {
     public String getEndLabel(){
 
         return label;
+    }
+
+    protected void freeVars() {
+        //SymbolTable.removeLocalVar(getLocalVarSize());
+        if(parent == null) return;
+        fileWriter.add("FMEM " + getLocalVarSize());
+
+        parent.freeVars();
     }
 }

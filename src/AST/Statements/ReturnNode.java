@@ -48,8 +48,10 @@ public class ReturnNode extends StatementNode{
     public void generate(){
         if(expression != null){
             expression.generate();
-            int offset = method.getParametersSize() + 4;
+            int offset = method.getParametersSize() + 3 + (method.isStatic() ? 0 : 1);
             fileWriter.add("STORE "+offset+" ; guardamos el valor de retorno en la variable de retorno");
+            parent.freeVars();
+            fileWriter.add("JUMP "+method.getEndLabel()+" ; saltamos al final del metodo");
 
         }
 

@@ -5,7 +5,12 @@ class A{
     int a1;
     int a2;
     String a3;
-    
+
+
+    void print(){
+        a1 = 20;
+        debugPrint(a1);
+    }
     
       void setall(int p1){
         a1 = p1;
@@ -24,7 +29,8 @@ class A{
 class B extends A{
      int a4;
      int a5;
-    
+
+
     
       void seta4(){
         a4 = 4000;

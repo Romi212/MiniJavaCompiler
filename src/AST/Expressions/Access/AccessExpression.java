@@ -18,7 +18,9 @@ public abstract class AccessExpression extends ExpressionNode {
     }
     public abstract boolean isCorrect() throws SemanticalErrorException;
     public void addParameter(ExpressionNode parameter){
+
         parameters.add(parameter);
+
     }
 
     public int getParametersSize(){

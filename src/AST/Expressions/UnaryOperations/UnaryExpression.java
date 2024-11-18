@@ -22,6 +22,10 @@ abstract public class UnaryExpression extends ExpressionNode {
         }
 
 
+        public boolean isStatic(){
+            return expression.isStatic();
+        }
+
 
 
         @Override

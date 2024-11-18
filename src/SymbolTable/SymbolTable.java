@@ -47,9 +47,10 @@ public class SymbolTable {
 
             ClassDeclaration string = new ClassDeclaration(new Token("pc_object", "String", -1));
             string.setConsolidated(true);
-
+            string.setParent(new Token("pc_object", "Object", -1));
             symbolTable.put("String", string);
             ClassDeclaration system = new ClassDeclaration(new Token("pc_object", "System", -1));
+
             system.setConsolidated(true);
 
             MethodDeclaration printB = new MethodDeclaration(new Token("pc_object", "printB", -1), new VoidType(new Token("pc_object", "void", -1)));
@@ -314,7 +315,8 @@ public class SymbolTable {
         ClassDeclaration chikldCHlas = symbolTable.get(child);
         if(chikldCHlas == null) return false;
         Token parent = chikldCHlas.getParent();
-        if(parent == null || parent.getLexeme().equals("Object")) {
+
+        if(parent == null || (parent.getLexeme().equals("Object") && !ancestor.equals("Object"))) {
 
             return false;
         }

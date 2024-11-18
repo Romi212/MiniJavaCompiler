@@ -41,6 +41,7 @@ public class IfNode extends StatementNode{
             setBreakLabel(parent.getBreakLabel());
             condition.generate();
             fileWriter.add("BF else@" + name.getLexeme()+name.getLine());
+
             ifStatement.generate();
             if(elseStatement != null){
                 fileWriter.add("JUMP end@" + name.getLexeme()+name.getLine());

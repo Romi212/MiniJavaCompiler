@@ -41,6 +41,7 @@ public class LocalVarDeclaration extends StatementNode{
         //System.out.println("Adding local var "+this.name.getLexeme() + this.name.getLine() + parent);
         if(SymbolTable.isParameter(name)) throw new SemanticalErrorException(name,"Variable name is already used as a parameter");
         localVar = new LocalVar(this.name, type);
+        //System.out.println("Adding local var "+this.name.getLexeme() + " "+this.name.getLine() + type);
         parent.addLocalVar(localVar);
 
 

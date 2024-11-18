@@ -52,6 +52,7 @@ public class AccessMethod extends AccessMember{
         if (!m.isPublic()) throw new SemanticalErrorException(this.name, "Method cant be accessed because "+this.name.getLexeme()+" is not public");
 
         for( ExpressionNode e : parameters){
+            e.setParent(parent);
             if(!e.isCorrect()) throw new SemanticalErrorException(name,"Method "+this.name.getLexeme()+" has incorrect parameter");
             MemberType type = e.getExpressionType();
             int frame = !m.isStatic() ? 0 : 1;
@@ -78,10 +79,12 @@ public class AccessMethod extends AccessMember{
             if(hasPrevious) fileWriter.add("SWAP ; seguimos dejando la ref abajo");
         }
         if(!method.isStatic()){
-            fileWriter.add("DUP ; guardo el this");
+            if(hasPrevious) fileWriter.add("DUP ; guardo el this");
+            else fileWriter.add("LOAD 3 ; cargamos el this \nDUP ; guardo el this");
             fileWriter.add("LOADREF 0 ; cargamos la VT");
             fileWriter.add("LOADREF "+method.getOffset()+" ; cargamos el label al metodo"+method.getLabel());
         } else{
+            if(hasPrevious) fileWriter.add("POP");
             fileWriter.add("PUSH "+method.getLabel()+" ; llamado a metodo estatico");
         }
         fileWriter.add("CALL");

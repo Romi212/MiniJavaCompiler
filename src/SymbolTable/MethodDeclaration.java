@@ -185,4 +185,8 @@ public class MethodDeclaration extends MemberDeclaration {
     public String getLabel() {
         return label;
     }
+
+    public String getEndLabel() {
+        return  block.getEndLabel();
+    }
 }

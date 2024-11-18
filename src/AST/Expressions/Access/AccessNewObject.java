@@ -24,10 +24,18 @@ public class AccessNewObject extends AccessMember{
     public boolean isCorrect() throws SemanticalErrorException {
         if( !SymbolTable.hasClass(type.getToken())) throw new SemanticalErrorException(getName(), "Class "+type.getToken().getLexeme()+" does not exist");
         classD = SymbolTable.getClass(type.getToken());
+        if(classD == null) throw new SemanticalErrorException(getName(), "Class "+type.getToken().getLexeme()+" does not exist");
         if(classD.isAbstract()) throw new SemanticalErrorException(getName(), "Class "+type.getToken().getLexeme()+" is abstract and cannot be instantiated");
         ConstructorDeclaration constructor = SymbolTable.findConstructor(type.getToken(),parameters.size());
         if(constructor == null) throw new SemanticalErrorException(getName(), "Constructor "+this.name.getLexeme()+" with "+parameters.size()+" parameters not found in class "+type.getToken().getLexeme());
         this.constructor = constructor;
+
+        for( ExpressionNode e : parameters){
+            e.setParent(parent);
+            if(!e.isCorrect()) throw new SemanticalErrorException(getName(),"Constructor "+this.name.getLexeme()+" has incorrect parameter");
+            MemberType type = e.getExpressionType();
+            if(!type.conformsTo(constructor.getParameterType(parameters.size() - parameters.indexOf(e)))) throw new SemanticalErrorException(getName(),"Constructor "+this.name.getLexeme()+" has parameter that does not conform to the constructor");
+        }
         return true;
     }
 

@@ -27,6 +27,9 @@ abstract public class BinaryExpression extends ExpressionNode {
 
 
 
+    public boolean isStatic(){
+        return left.isStatic() && right.isStatic();
+    }
 
     abstract public MemberType getExpressionType();
 

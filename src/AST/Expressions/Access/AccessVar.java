@@ -112,10 +112,10 @@ public class AccessVar extends AccessMember{
                     if(write){
                       if(!hasPrevious) fileWriter.add("LOAD 3 ; carga ref a this >:(");
                       fileWriter.add("SWAP");
-                      fileWriter.add("STOREREF "+(attribute.getPosition()+1)+" ; carga el valor del atributo");
+                      fileWriter.add("STOREREF "+(attribute.getPosition()+1)+" ; guarda el valor en el atributo"+ attribute.getName().getLexeme());
                     }else{
                         if(!hasPrevious) fileWriter.add("LOAD 3 ; carga ref a this");
-                        fileWriter.add("LOADREF "+(attribute.getPosition()+1)+" ; carga el valor del atributo");
+                        fileWriter.add("LOADREF "+(attribute.getPosition()+1)+" ; carga el valor del atributo"+ attribute.getName().getLexeme());
                     }
                 }
             }else{
@@ -123,9 +123,9 @@ public class AccessVar extends AccessMember{
                     int frame = 3;
 
                     if(write){
-                        fileWriter.add("STORE "+(parameter.getPosition()+frame)+" ; guarda el rtado en el parametro");
+                        fileWriter.add("STORE "+(parameter.getPosition()+frame)+" ; guarda el rtado en el parametro" + parameter.getName().getLexeme());
                     }else{
-                        fileWriter.add("LOAD "+(parameter.getPosition()+frame)+" ; carga el valor del parametro");
+                        fileWriter.add("LOAD "+(parameter.getPosition()+frame)+" ; carga el valor del parametro"+ parameter.getName().getLexeme());
                     }
                 }
             }

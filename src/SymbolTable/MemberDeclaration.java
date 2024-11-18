@@ -34,4 +34,6 @@ public abstract class MemberDeclaration {
     }
 
     abstract public void generate() ;
+
+
 }

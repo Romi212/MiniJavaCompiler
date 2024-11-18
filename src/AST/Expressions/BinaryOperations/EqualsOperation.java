@@ -22,6 +22,7 @@ public class EqualsOperation extends BinaryExpression{
         right.setParent(parent);
         if(!left.isCorrect()) throw new SemanticalErrorException(operator,"Binary equals expression has incorrect left expression");
         if(!right.isCorrect()) throw new SemanticalErrorException(operator,"Binary equals expression has incorrect right expression");
+        System.out.println(left.getExpressionType().getName()+"=="+right.getExpressionType().getName());
         if(!left.getExpressionType().conformsTo(right.getExpressionType()) && !right.getExpressionType().conformsTo(left.getExpressionType())) throw new SemanticalErrorException(operator,"Binary equals expression has expressions that do not conform to each other");
         return true;
     }
@@ -34,5 +35,8 @@ public class EqualsOperation extends BinaryExpression{
         left.generate();
         right.generate();
         fileWriter.add("EQ");
+        if(operator.getLexeme().equals("!=")){
+            fileWriter.add("NOT");
+        }
     }
 }
