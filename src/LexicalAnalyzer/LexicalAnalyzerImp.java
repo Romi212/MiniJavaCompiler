@@ -217,6 +217,7 @@ public class LexicalAnalyzerImp implements LexicalAnalyzer {
     private Token possibleChar() throws LexicalErrorException, IOException{
         lexeme += currentChar;
         currentChar = sourceManager.getNextChar();
+
         if (currentChar == '\''){
             currentChar = sourceManager.getNextChar();
             throw new LexicalErrorException(lexeme,sourceManager.getLineNumber(),sourceManager.getLineIndexNumber(), sourceManager.getCurrentLine(), "Char literal empty.");

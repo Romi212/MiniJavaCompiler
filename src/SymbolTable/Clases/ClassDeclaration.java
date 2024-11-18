@@ -130,7 +130,7 @@ public class ClassDeclaration {
         name.setLabel("lblCtr"+name.getParametersSize()+"@"+this.name.getLexeme());
         if(constructors.containsKey(key)) throw new SemanticalErrorException(name.getName(), "Constructor for class "+this.name.getLexeme()+" already exists with same amount of parameters");
         else{
-            if(name.getParametersSize()== 0) constructors.remove("default");
+            if(!hasConstructor) constructors.remove("default");
             constructors.put(key, name);
         }
         hasConstructor = true;
