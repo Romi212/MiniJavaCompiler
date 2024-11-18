@@ -185,8 +185,13 @@ public class ClassDeclaration {
             int covered = 0;
             for(HashMap.Entry<String, AttributeDeclaration> entry : parentAttributes.entrySet()){
 
+
                 if(attributes.containsKey(entry.getValue().getName().getLexeme())){
-                    AttributeDeclaration coveredAtt = new AttributeDeclaration(entry.getValue().getName(), entry.getValue().getType());
+                    MemberType type = entry.getValue().getType();
+                    if(instanceGenericTypes.containsKey(type.getName())){
+                        type = new MemberObjectType(new Token(instanceGenericTypes.get(type.getName()), instanceGenericTypes.get(type.getName()), type.getToken().getLine()));
+                    }
+                    AttributeDeclaration coveredAtt = new AttributeDeclaration(entry.getValue().getName(), type);
                     coveredAtt.setCovered(true);
                     if(entry.getValue().isPublic())toAdd.put("#"+entry.getKey(), coveredAtt);
                     else toAddPrivate.put("#"+entry.getKey(), coveredAtt);
@@ -194,8 +199,15 @@ public class ClassDeclaration {
                     attributes.get(entry.getValue().getName().getLexeme()).setPosition(entry.getValue().getPosition());
                     if(sortedAttributes.remove(attributes.get(entry.getValue().getName().getLexeme()))) if(!entry.getValue().isStatic()) position++;
                 }else{
-                    if(entry.getValue().isPublic())toAdd.put(entry.getKey(), entry.getValue());
-                    else toAddPrivate.put(entry.getKey(), entry.getValue());
+                    MemberType type = entry.getValue().getType();
+                    AttributeDeclaration att = entry.getValue();
+                    if(instanceGenericTypes.containsKey(type.getName())){
+                        type = new MemberObjectType(new Token(instanceGenericTypes.get(type.getName()), instanceGenericTypes.get(type.getName()), type.getToken().getLine()));
+                        att = new AttributeDeclaration(entry.getValue().getName(), type);
+                        att.setPosition(entry.getValue().getPosition());
+                    }
+                    if(entry.getValue().isPublic())toAdd.put(entry.getKey(), att);
+                    else toAddPrivate.put(entry.getKey(), att);
                     if(!entry.getValue().isStatic()) position++;
                 }
 
@@ -217,7 +229,12 @@ public class ClassDeclaration {
                     String key = "#"+parentMethods.get(i).getParametersSize()+"#"+parentMethods.get(i).getName().getLexeme();
                     if(!methods.containsKey(key)){
                         if(parentMethods.get(i).isAbstract() && !isAbstract) throw new SemanticalErrorException(name, "Method "+parentMethods.get(i).getName().getLexeme()+" in class "+name.getLexeme()+" must be implemented!");
-                        methods.put(key, parentMethods.get(i));
+                        if(instanceGenericTypes.containsKey(parentMethods.get(i).getType().getName())){
+                            MemberType type = new MemberObjectType(new Token(instanceGenericTypes.get(parentMethods.get(i).getType().getName()), instanceGenericTypes.get(parentMethods.get(i).getType().getName()), parentMethods.get(i).getType().getToken().getLine()));
+                            MethodDeclaration m = new MethodDeclaration(parentMethods.get(i).getName(), type);
+                            m.copy(parentMethods.get(i));
+                            methods.put(key, m);
+                        }else methods.put(key, parentMethods.get(i));
                         ancestorMethods.put(key, parentMethods.get(i));
                         sortedMethods.addFirst(parentMethods.get(i));
                     } else{

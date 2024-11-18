@@ -189,4 +189,17 @@ public class MethodDeclaration extends MemberDeclaration {
     public String getEndLabel() {
         return  block.getEndLabel();
     }
+
+    public void copy(MethodDeclaration methodDeclaration) {
+        this.label = methodDeclaration.label;
+        this.offset = methodDeclaration.offset;
+        this.isGenerated = methodDeclaration.isGenerated;
+        this.isStatic = methodDeclaration.isStatic();
+        this.visibility = methodDeclaration.getVisibility();
+        this.isAbstract = methodDeclaration.isAbstract();
+        this.parameters = methodDeclaration.getParameters();
+        this.block = methodDeclaration.block;
+
+
+    }
 }
