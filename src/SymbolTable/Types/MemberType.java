@@ -29,7 +29,7 @@ public abstract class MemberType {
     }
 
     public ArrayList<MemberObjectType> getAttributes() {
-        return null;
+        return new ArrayList<>();
     }
 
     abstract public MemberDeclaration hasMember(AccessMember link) throws SemanticalErrorException;

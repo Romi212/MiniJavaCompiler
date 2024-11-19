@@ -16,7 +16,7 @@ class A {
 }
 
 class B{
-    static att;
+    static int att;
     static void m1(){
 
     }

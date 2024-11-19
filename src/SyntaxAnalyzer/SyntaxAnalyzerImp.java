@@ -162,7 +162,8 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
             match("rw_extends");
             ClassDeclaration parent = className();
             parentClass = parent.getName();
-            SymbolTable.checkParent(parent, child);
+            child.addHeritageGenerics(parent.getParametricTypes());
+            //SymbolTable.checkParent(parent, child);
         }
         else if(Follows.itFollows("Parents", currentToken.getToken())){
             parentClass = new Token("rw_object", "Object",0);

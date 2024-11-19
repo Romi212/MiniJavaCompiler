@@ -7,8 +7,8 @@ class Gen1<T>{
 class Prueba extends Gen1<Base>{
     Base atr;
     void m1(){
-        atr = a;
-        atr = dar();
+        //atr = a;
+       // atr = dar();
     }
 }
 class Init{

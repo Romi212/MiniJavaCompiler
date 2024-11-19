@@ -4,12 +4,14 @@ import AST.BLockDeclaration;
 import AST.LocalVar;
 import AST.Statements.StatementNode;
 import SymbolTable.Parameters.ParameterDeclaration;
+import SymbolTable.Types.MemberObjectType;
 import SymbolTable.Types.MemberType;
 import utils.Exceptions.CompilerException;
 import utils.Exceptions.SemanticalErrorException;
 import utils.Token;
 import utils.fileWriter;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class MethodDeclaration extends MemberDeclaration {
@@ -94,7 +96,7 @@ public class MethodDeclaration extends MemberDeclaration {
 
     }
 
-    public boolean sameSignature(MethodDeclaration otherMethod) {
+    public boolean sameSignature(MethodDeclaration otherMethod) throws SemanticalErrorException {
         if(!this.name.getLexeme().equals(otherMethod.getName().getLexeme())) return false;
 
         HashMap<String, ParameterDeclaration> otherParameters = otherMethod.getParameters();
@@ -108,9 +110,22 @@ public class MethodDeclaration extends MemberDeclaration {
                 if(!SymbolTable.instanciates(entry.getValue().getType(), otherParameters.get(key).getType())) return false;
             }
         }
-
+        if(this.returnType == null || otherMethod.getType() == null) {
+            System.out.println("Comparing "+this.name.getLexeme()+" with type "+this.returnType+" with "+otherMethod.getName().getLexeme()+"with "+otherMethod.getType());
+            return false;
+        }
         if(!this.returnType.getName().equals(otherMethod.getType().getName())) {
             if(!SymbolTable.instanciates(this.returnType, otherMethod.getType())) return false;
+        }
+
+        ArrayList<MemberObjectType> thisParametricTypes = this.returnType.getAttributes();
+        ArrayList<MemberObjectType> otherParametricTypes = otherMethod.getType().getAttributes();
+        for(int i = 0; i < otherParametricTypes.size(); i++){
+            if(!SymbolTable.instanciates(thisParametricTypes.get(i), otherParametricTypes.get(i))){
+                if(!((SymbolTable.hasClass(thisParametricTypes.get(i).getToken()) && thisParametricTypes.get(i).equals(otherParametricTypes.get(i))))){
+                    return false;
+                }
+            }
         }
 
         if(this.isStatic != otherMethod.isStatic) return false;
@@ -199,6 +214,7 @@ public class MethodDeclaration extends MemberDeclaration {
         this.isAbstract = methodDeclaration.isAbstract();
         this.parameters = methodDeclaration.getParameters();
         this.block = methodDeclaration.block;
+
 
 
     }

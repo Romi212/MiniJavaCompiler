@@ -42,12 +42,13 @@ public class ClassDeclaration {
     protected HashMap<String, MemberType> parametricTypes;
 
     protected ArrayList<MemberObjectType> orderedParametricTypes;
+    protected ArrayList<MemberObjectType> parentGenericInstance;
     protected HashMap<String, ConstructorDeclaration> constructors;
 
     protected MethodDeclaration currentMethod;
     protected MemberDeclaration currentMember;
 
-    protected HashMap<String,String> instanceGenericTypes;
+    protected HashMap<String,MemberObjectType> instanceGenericTypes;
 
     public ClassDeclaration(Token name){
         this.name = name;
@@ -64,6 +65,9 @@ public class ClassDeclaration {
         sortedMethods = new ArrayList<>();
         blindAttributes = new HashMap<>();
         ancestorMethods = new HashMap<>();
+        dynamicAtt = 0;
+        coveredAtt = 0;
+        parentGenericInstance = new ArrayList<>();
 
 
     }
@@ -165,6 +169,24 @@ public class ClassDeclaration {
             //method.setOffset(i);
         }
 
+        if(parametricTypes.size() != orderedParametricTypes.size()) throw new SemanticalErrorException(name, "More than one parametric type declared with same name in class "+name.getLexeme());
+
+        for(MemberObjectType t : orderedParametricTypes){
+            if(SymbolTable.hasClass(t.getToken())){ throw new SemanticalErrorException(t.getToken(), "Parametric Type "+t.getName()+" in class "+name.getLexeme()+" is already declared as a class");}
+        }
+
+        ClassDeclaration parentC = SymbolTable.getClass(parent);
+        if(parentC == null) throw new SemanticalErrorException(parent, "Parent class "+parent.getLexeme()+" doesn't exist");
+        ArrayList<MemberObjectType> parentTypes = parentC.getParametricTypes();
+
+        if(parentTypes.size() != parentGenericInstance.size()) throw new SemanticalErrorException(name, "Parent class "+parent.getLexeme()+" has "+parentTypes.size()+" parametric types, but "+name.getLexeme()+" has "+parentGenericInstance.size());
+        for(MemberObjectType t: parentGenericInstance){
+            if(!SymbolTable.hasClass(t.getToken())){
+                if (!parametricTypes.containsKey(t.getName())) throw new SemanticalErrorException(t.getToken(), "Parametric Type instance "+t.getName()+" in class "+name.getLexeme()+" doesn't exist");
+            }
+            setInstanceType(parentTypes.get(parentGenericInstance.indexOf(t)), t);
+        }
+
         return true;
     }
 
@@ -178,6 +200,9 @@ public class ClassDeclaration {
             else visited = true;
             SymbolTable.isConsolidated(parent);
             visited = false;
+
+            //HashMap<String,MemberType> parentInstances = SymbolTable.getClass(parent).getParametricTypesSet();
+
             HashMap<String, AttributeDeclaration> parentAttributes = SymbolTable.getAttributes(parent.getLexeme());
             HashMap<String, AttributeDeclaration> toAdd = new HashMap<>();
             HashMap<String, AttributeDeclaration> toAddPrivate = new HashMap<>();
@@ -189,7 +214,7 @@ public class ClassDeclaration {
                 if(attributes.containsKey(entry.getValue().getName().getLexeme())){
                     MemberType type = entry.getValue().getType();
                     if(instanceGenericTypes.containsKey(type.getName())){
-                        type = new MemberObjectType(new Token(instanceGenericTypes.get(type.getName()), instanceGenericTypes.get(type.getName()), type.getToken().getLine()));
+                        type = instanceGenericTypes.get(type.getName());
                     }
                     AttributeDeclaration coveredAtt = new AttributeDeclaration(entry.getValue().getName(), type);
                     coveredAtt.setCovered(true);
@@ -202,7 +227,7 @@ public class ClassDeclaration {
                     MemberType type = entry.getValue().getType();
                     AttributeDeclaration att = entry.getValue();
                     if(instanceGenericTypes.containsKey(type.getName())){
-                        type = parametricTypes.get(instanceGenericTypes.get(type.getName()));
+                        type = instanceGenericTypes.get(type.getName());
                         att = new AttributeDeclaration(entry.getValue().getName(), type);
                         att.setPosition(entry.getValue().getPosition());
                     }
@@ -223,20 +248,24 @@ public class ClassDeclaration {
             dynamicAtt = position;
             coveredAtt = covered;
             ArrayList<MethodDeclaration> parentMethods = SymbolTable.getMethods(parent.getLexeme());
-
+            System.out.println("Cheking class "+name.getLexeme());
             for(int i = parentMethods.size()-1; i>= 0; i--){
                 if(parentMethods.get(i).isPublic()){
                     String key = "#"+parentMethods.get(i).getParametersSize()+"#"+parentMethods.get(i).getName().getLexeme();
                     if(!methods.containsKey(key)){
                         if(parentMethods.get(i).isAbstract() && !isAbstract) throw new SemanticalErrorException(name, "Method "+parentMethods.get(i).getName().getLexeme()+" in class "+name.getLexeme()+" must be implemented!");
+
+                        MethodDeclaration m = parentMethods.get(i);
                         if(instanceGenericTypes.containsKey(parentMethods.get(i).getType().getName())){
-                            MemberType type = parametricTypes.get(instanceGenericTypes.get(parentMethods.get(i).getType().getName()));
-                            MethodDeclaration m = new MethodDeclaration(parentMethods.get(i).getName(), type);
+                            MemberType type = instanceGenericTypes.get(parentMethods.get(i).getType().getName());
+                            m = new MethodDeclaration(parentMethods.get(i).getName(), type);
                             m.copy(parentMethods.get(i));
-                            methods.put(key, m);
-                        }else methods.put(key, parentMethods.get(i));
-                        ancestorMethods.put(key, parentMethods.get(i));
-                        sortedMethods.addFirst(parentMethods.get(i));
+
+
+                        }else methods.put(key, m);
+                        ancestorMethods.put(key,m);
+                        sortedMethods.addFirst(m);
+                        System.out.println("Adding "+m.getName().getLexeme()+" type "+m.getType());
                     } else{
                         if(!methods.get(key).sameSignature(parentMethods.get(i)))
                             throw new SemanticalErrorException(methods.get(key).getName(), "Method "+parentMethods.get(i).getName().getLexeme()+" in class "+name.getLexeme()+" cant redefine method with different signature in Parent class");
@@ -288,12 +317,12 @@ public class ClassDeclaration {
     }
 
     public void addParametricType(Token genericType) throws SemanticalErrorException {
+        MemberObjectType newType = new MemberObjectType(genericType);
         if(!parametricTypes.containsKey(genericType.getLexeme())){
-            MemberObjectType newType = new MemberObjectType(genericType);
             parametricTypes.put(genericType.getLexeme(), newType);
-            orderedParametricTypes.add(newType);
         }
-        else throw new SemanticalErrorException(genericType, "Parametric Type "+genericType.getLexeme()+" already exists in class "+name.getLexeme());
+        orderedParametricTypes.add(newType);
+       // else throw new SemanticalErrorException(genericType, "Parametric Type "+genericType.getLexeme()+" already exists in class "+name.getLexeme());
     }
 
     public void addParametricTypes(ArrayList<Token> generic) throws  SemanticalErrorException{
@@ -384,16 +413,18 @@ public class ClassDeclaration {
     }
 
     public void setInstanceType(MemberObjectType generic, MemberObjectType instance) {
-        instanceGenericTypes.put(generic.getName(), instance.getName());
-        parametricTypes.put(instance.getName(), instance);
+        System.out.println("IN class"+name.getLexeme()+" setting "+generic.getName()+" to "+instance.getName());
+        instanceGenericTypes.put(generic.getName(), instance);
+
     }
 
     public boolean instanciates(MemberType instance, MemberType generic) {
+        System.out.println("Is "+instance.getName()+" instance of "+generic.getName()+"?");
         if(instanceGenericTypes.containsKey(generic.getName())) {
-            if (!instance.getName().equals(instanceGenericTypes.get(generic.getName())))
-                return false;
+            if (instance.getName().equals(instanceGenericTypes.get(generic.getName()).getName()))
+                return true;
         }
-        return true;
+        return false;
     }
 
     public int getAttAmount() {
@@ -444,5 +475,9 @@ public class ClassDeclaration {
 
     public String getVtLabel() {
         return "lblVT"+name.getLexeme();
+    }
+
+    public void addHeritageGenerics(ArrayList<MemberObjectType> parametricTypes) {
+        parentGenericInstance = parametricTypes;
     }
 }
