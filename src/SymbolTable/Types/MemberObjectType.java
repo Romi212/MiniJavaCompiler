@@ -83,7 +83,8 @@ public class MemberObjectType extends MemberType{
         return SymbolTable.getClass(this.name).getMember(link);
     }
 
-    public MethodDeclaration hasMethod(AccessMethod accessMethod) {
+    public MethodDeclaration hasMethod(AccessMethod accessMethod) throws SemanticalErrorException {
+        if(!SymbolTable.hasClass(this.name)) throw new SemanticalErrorException(accessMethod.getName(),"Generic member of type "+this.name.getLexeme()+" cant access methods");
         return SymbolTable.getClass(this.name).getMethod(accessMethod);
     }
 
