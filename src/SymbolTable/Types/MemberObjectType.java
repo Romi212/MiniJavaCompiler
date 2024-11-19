@@ -60,6 +60,8 @@ public class MemberObjectType extends MemberType{
 
     }
 
+
+
     public void addAttribute(MemberObjectType attribute) {
         attributes.add(attribute);
     }

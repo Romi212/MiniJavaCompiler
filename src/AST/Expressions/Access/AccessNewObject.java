@@ -23,7 +23,7 @@ public class AccessNewObject extends AccessMember{
     @Override
     public boolean isCorrect() throws SemanticalErrorException {
         if( !SymbolTable.hasClass(type.getToken())) throw new SemanticalErrorException(getName(), "Class "+type.getToken().getLexeme()+" does not exist");
-        //if(!type.isCorrect()) throw new SemanticalErrorException(getName(), "Class "+type.getToken().getLexeme()+" does not exist");
+        if(!type.isCorrect()) throw new SemanticalErrorException(getName(), "Class "+type.getToken().getLexeme()+" does not exist");
         classD = SymbolTable.getClass(type.getToken());
         if(classD == null) throw new SemanticalErrorException(getName(), "Class "+type.getToken().getLexeme()+" does not exist");
         if(classD.isAbstract()) throw new SemanticalErrorException(getName(), "Class "+type.getToken().getLexeme()+" is abstract and cannot be instantiated");
