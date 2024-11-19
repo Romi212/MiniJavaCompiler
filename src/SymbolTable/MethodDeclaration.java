@@ -205,14 +205,24 @@ public class MethodDeclaration extends MemberDeclaration {
         return  block.getEndLabel();
     }
 
-    public void copy(MethodDeclaration methodDeclaration) {
+    public void copy(MethodDeclaration methodDeclaration, HashMap<String, MemberObjectType> instances) {
         this.label = methodDeclaration.label;
         this.offset = methodDeclaration.offset;
-        this.isGenerated = methodDeclaration.isGenerated;
+        this.isGenerated = true;
+        if(instances.containsKey(methodDeclaration.getType().getName())) this.returnType = instances.get(methodDeclaration.getType().getName());
+        else this.returnType = methodDeclaration.getType();
         this.isStatic = methodDeclaration.isStatic();
         this.visibility = methodDeclaration.getVisibility();
         this.isAbstract = methodDeclaration.isAbstract();
-        this.parameters = methodDeclaration.getParameters();
+        for(HashMap.Entry<String, ParameterDeclaration> entry : methodDeclaration.getParameters().entrySet()){
+            System.out.println("Checking parameter "+ entry.getKey() + "wuth type "+ entry.getValue().getType().getName());
+            ParameterDeclaration parameterDeclaration = entry.getValue();
+            if(instances.containsKey(parameterDeclaration.getType().getName())){
+                parameterDeclaration = new ParameterDeclaration(entry.getValue().getName(), instances.get(entry.getValue().getType().getName()), entry.getValue().getPosition());
+            }
+            this.parameters.put(entry.getKey(), parameterDeclaration);
+        }
+
         this.block = methodDeclaration.block;
 
 

@@ -250,7 +250,7 @@ public class ClassDeclaration {
             }
             dynamicAtt = position;
             coveredAtt = covered;
-            ArrayList<MethodDeclaration> parentMethods = SymbolTable.getMethods(parent.getLexeme());
+            ArrayList<MethodDeclaration> parentMethods = SymbolTable.getMethods(parent.getLexeme()); // [m1,m2,m3,m4] // [m1, m2,mc, mx, m4]  ancestor =[m1]
             System.out.println("Cheking class "+name.getLexeme());
             for(int i = parentMethods.size()-1; i>= 0; i--){
                 if(parentMethods.get(i).isPublic()){
@@ -258,14 +258,8 @@ public class ClassDeclaration {
                     if(!methods.containsKey(key)){
                         if(parentMethods.get(i).isAbstract() && !isAbstract) throw new SemanticalErrorException(name, "Method "+parentMethods.get(i).getName().getLexeme()+" in class "+name.getLexeme()+" must be implemented!");
 
-                        MethodDeclaration m = parentMethods.get(i);
-                        if(instanceGenericTypes.containsKey(parentMethods.get(i).getType().getName())){
-                            MemberType type = instanceGenericTypes.get(parentMethods.get(i).getType().getName());
-                            m = new MethodDeclaration(parentMethods.get(i).getName(), type);
-                            m.copy(parentMethods.get(i));
-
-
-                        }
+                        MethodDeclaration m = new MethodDeclaration(parentMethods.get(i).getName(), parentMethods.get(i).getType());
+                        m.copy(parentMethods.get(i), instanceGenericTypes);
                         methods.put(key, m);
                         ancestorMethods.put(key,m);
                         sortedMethods.addFirst(m);

@@ -9,6 +9,7 @@ class Main {
     static void main() {
         var h = new H();
         h.x = 1;
+
         var x = h.x;
         debugPrint(x);
     }
