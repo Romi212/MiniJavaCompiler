@@ -7,24 +7,22 @@ class Generic<X>{
     public void setX(X x){
         this.x = x;
     }
-    public X getX(){
-        return x;
-    }
 
 }
+
 
 class Init{
     static void main()
     {
         var g = new Generic<String>();
         g.setX("hola");
+        var a = g.x;
         System.printSln(g.x);
-        //g.x = "hola";
-        System.printSln(g.getX());
+        System.printSln(a);
+
         var s = "chau";
         System.printSln(s);
-        s = g.getX();
+        s = a;
         System.printSln(s);
-
     }
 }

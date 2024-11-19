@@ -280,6 +280,15 @@ public class ClassDeclaration {
                 }
             }
 
+            int i = 0;
+            int offset = 0;
+            while(i< sortedMethods.size()){
+                if(!sortedMethods.get(i).isStatic() && !sortedMethods.get(i).isAbstract()){
+                    sortedMethods.get(i).setOffset(offset);
+                    offset++;
+                }
+                i++;
+            }
 
             isConsolidated = true;
         }
@@ -450,7 +459,7 @@ public class ClassDeclaration {
         int i = 0;
         int off = 0;
         boolean hasMet = false;
-        while(i<sortedMethods.size()){
+        while(i< sortedMethods.size()){
             if(!sortedMethods.get(i).isAbstract() && !sortedMethods.get(i).isStatic()){
                 if(!hasMet){
                     fileWriter.add("lblVT"+name.getLexeme()+": DW "+sortedMethods.get(i).getLabel());

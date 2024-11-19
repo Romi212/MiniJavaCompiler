@@ -54,6 +54,8 @@ public class AccessVar extends AccessMember{
     }
 
     public MemberType getExpressionType(){
+
+        System.out.println("AccessVar: "+this.name.getLexeme()+" type "+this.type.getName());
         return this.type;
     }
 
