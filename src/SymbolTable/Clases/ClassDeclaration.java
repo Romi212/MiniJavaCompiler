@@ -48,6 +48,8 @@ public class ClassDeclaration {
     protected MethodDeclaration currentMethod;
     protected MemberDeclaration currentMember;
 
+    protected boolean validatedStatements= false;
+
     protected HashMap<String,MemberObjectType> instanceGenericTypes;
 
     public ClassDeclaration(Token name){
@@ -218,6 +220,7 @@ public class ClassDeclaration {
                     }
                     AttributeDeclaration coveredAtt = new AttributeDeclaration(entry.getValue().getName(), type);
                     coveredAtt.setCovered(true);
+                    coveredAtt.copy(entry.getValue());
                     if(entry.getValue().isPublic())toAdd.put("#"+entry.getKey(), coveredAtt);
                     else toAddPrivate.put("#"+entry.getKey(), coveredAtt);
                     coveredAtt.setPosition(covered++);
@@ -262,7 +265,8 @@ public class ClassDeclaration {
                             m.copy(parentMethods.get(i));
 
 
-                        }else methods.put(key, m);
+                        }
+                        methods.put(key, m);
                         ancestorMethods.put(key,m);
                         sortedMethods.addFirst(m);
                         System.out.println("Adding "+m.getName().getLexeme()+" type "+m.getType());
@@ -366,12 +370,14 @@ public class ClassDeclaration {
         return currentMethod.visibleParameter(name);
     }
     public AttributeDeclaration visibleAttribute(Token name) {
+        System.out.println("Looking for "+name.getLexeme()+" in class "+this.name.getLexeme());
         return attributes.get(name.getLexeme());
     }
 
     public MethodDeclaration findMethod(Token name, int size) {
         String key = "#"+size+"#"+name.getLexeme();
         if(methods.containsKey(key)) return methods.get(key);
+        System.out.println("Method "+name.getLexeme()+" not found in class "+this.name);
         return null;
     }
 
@@ -381,6 +387,8 @@ public class ClassDeclaration {
     }
 
     public boolean validStatements() throws CompilerException{
+        if(validatedStatements) return true;
+        SymbolTable.validStatments(parent);
         for (HashMap.Entry<String, ConstructorDeclaration> entry : constructors.entrySet()){
             currentMethod = entry.getValue();
             if(!entry.getValue().validStatements()) return false;
@@ -389,6 +397,7 @@ public class ClassDeclaration {
             currentMethod = entry.getValue();
             if(!entry.getValue().validStatements()) return false;
         }
+        validatedStatements = true;
         return true;
     }
 
@@ -479,5 +488,9 @@ public class ClassDeclaration {
 
     public void addHeritageGenerics(ArrayList<MemberObjectType> parametricTypes) {
         parentGenericInstance = parametricTypes;
+    }
+
+    public void setValidatedStatement(boolean b) {
+        this.validatedStatements = b;
     }
 }

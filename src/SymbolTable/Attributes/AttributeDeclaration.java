@@ -22,6 +22,7 @@ public class AttributeDeclaration extends MemberDeclaration {
         this.name = name;
         this.type = type;
         this.isStatic = false;
+        this.visibility = new Token("pw_public", "public", -1);
     }
 
     public void setCovered(boolean isCovered){
@@ -65,5 +66,13 @@ public class AttributeDeclaration extends MemberDeclaration {
 
     public String getLabel(){
         return label;
+    }
+
+    public void copy(AttributeDeclaration value) throws SemanticalErrorException {
+        this.label = value.label;
+        this.position = value.position;
+        setVisibility(value.getVisibility());
+        this.isStatic = value.isStatic;
+
     }
 }

@@ -99,7 +99,7 @@ public class MemberObjectType extends MemberType{
                 ArrayList<MemberObjectType> params = obj.getAttributes();
                 if(params.size() != attributes.size()) return false;
                 for(int i = 0; i<attributes.size(); i++){
-                    if(!attributes.get(i).conformsTo(params.get(i))) return false;
+                    if(!attributes.get(i).getName().equals((params.get(i).getName()))) return false;
                 }
             }
                 return true;

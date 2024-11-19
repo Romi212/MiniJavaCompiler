@@ -42,12 +42,16 @@ public class SymbolTable {
             debugPrint.addParameter(new Token("pc_object", "i", -1), new IntegerType(new Token("pc_object", "int", -1)));
             object.addMethod(debugPrint);
             object.setConsolidated(true);
+            object.setValidatedStatement(true);
 
             symbolTable.put("Object", object);
 
             ClassDeclaration string = new ClassDeclaration(new Token("pc_object", "String", -1));
             string.setConsolidated(true);
             string.setParent(new Token("pc_object", "Object", -1));
+            string.setValidatedStatement(true);
+
+
             symbolTable.put("String", string);
             ClassDeclaration system = new ClassDeclaration(new Token("pc_object", "System", -1));
 
@@ -114,6 +118,7 @@ public class SymbolTable {
             printSln.addBlock(new BlockSysPrint("string", true));
             printSln.setStatic(true);
             system.addMethod(printSln);
+            system.setValidatedStatement(true);
             symbolTable.put("System", system);
         } catch (SemanticalErrorException e) {
             e.printStackTrace();
@@ -366,5 +371,12 @@ public class SymbolTable {
 
     public static int getIndex() {
         return index++;
+    }
+
+    public static void validStatments(Token parent) throws CompilerException {
+        ClassDeclaration child = currentClass;
+        currentClass = symbolTable.get(parent.getLexeme());
+        currentClass.validStatements();
+        currentClass = child;
     }
 }
