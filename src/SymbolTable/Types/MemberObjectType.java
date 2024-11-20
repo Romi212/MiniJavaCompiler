@@ -46,7 +46,11 @@ public class MemberObjectType extends MemberType{
                 }
                 return true;
             } else {
-                if(attributes.size() == 0 && SymbolTable.ImAStar()) return true;
+                if(attributes.size() == 0 && SymbolTable.ImAStar()) {
+                    for (MemberObjectType attribute : attributes)
+                        parametricMap.put(orderedParam.get(attributes.indexOf(attribute)).getName(),attribute);
+                    return true;
+                }
             throw new SemanticalErrorException(name, "Class "+name.getLexeme()+" has "+classType.genericParametersAmount()+" generic parameters, but "+attributes.size()+" were given");
             }
         } else{

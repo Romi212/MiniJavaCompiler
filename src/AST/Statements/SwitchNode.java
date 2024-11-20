@@ -10,7 +10,8 @@ import utils.fileWriter;
 
 import java.util.ArrayList;
 
-public class SwitchNode extends StatementNode{
+public class
+SwitchNode extends StatementNode{
     private ExpressionNode expression;
     private ArrayList<CaseNode> cases;
     private CaseNode defaultCase;

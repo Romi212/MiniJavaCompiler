@@ -35,7 +35,7 @@ public class AccessNewObject extends AccessMember{
             e.setParent(parent);
             if(!e.isCorrect()) throw new SemanticalErrorException(getName(),"Constructor "+this.name.getLexeme()+" has incorrect parameter");
             MemberType type = e.getExpressionType();
-            if(!type.conformsTo(constructor.getParameterType(parameters.size() - parameters.indexOf(e)))) throw new SemanticalErrorException(getName(),"Constructor "+this.name.getLexeme()+" has parameter that does not conform to the constructor");
+            if(!type.conformsTo(this.type.transformType(constructor.getParameterType(parameters.size() - parameters.indexOf(e))))) throw new SemanticalErrorException(getName(),"Constructor "+this.name.getLexeme()+" has parameter that does not conform to the constructor");
         }
         return true;
     }
