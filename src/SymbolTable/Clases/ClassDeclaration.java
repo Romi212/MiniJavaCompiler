@@ -252,7 +252,7 @@ public class ClassDeclaration {
             dynamicAtt = position;
             coveredAtt = covered;
             ArrayList<MethodDeclaration> parentMethods = SymbolTable.getMethods(parent.getLexeme()); // [m1,m2,m3,m4] // [m1, m2,mc, mx, m4]  ancestor =[m1]
-            System.out.println("Cheking class "+name.getLexeme());
+
             for(int i = parentMethods.size()-1; i>= 0; i--){
                 if(parentMethods.get(i).isPublic()){
                     String key = "#"+parentMethods.get(i).getParametersSize()+"#"+parentMethods.get(i).getName().getLexeme();
@@ -264,7 +264,7 @@ public class ClassDeclaration {
                         methods.put(key, m);
                         ancestorMethods.put(key,m);
                         sortedMethods.addFirst(m);
-                        System.out.println("Adding "+m.getName().getLexeme()+" type "+m.getType());
+
                     } else{
                         if(!methods.get(key).sameSignature(parentMethods.get(i)))
                             throw new SemanticalErrorException(methods.get(key).getName(), "Method "+parentMethods.get(i).getName().getLexeme()+" in class "+name.getLexeme()+" cant redefine method with different signature in Parent class");
@@ -374,14 +374,12 @@ public class ClassDeclaration {
         return currentMethod.visibleParameter(name);
     }
     public AttributeDeclaration visibleAttribute(Token name) {
-        System.out.println("Looking for "+name.getLexeme()+" in class "+this.name.getLexeme());
         return attributes.get(name.getLexeme());
     }
 
     public MethodDeclaration findMethod(Token name, int size) {
         String key = "#"+size+"#"+name.getLexeme();
         if(methods.containsKey(key)) return methods.get(key);
-        System.out.println("Method "+name.getLexeme()+" not found in class "+this.name);
         return null;
     }
 
@@ -426,13 +424,10 @@ public class ClassDeclaration {
     }
 
     public void setInstanceType(MemberObjectType generic, MemberObjectType instance) {
-        System.out.println("IN class"+name.getLexeme()+" setting "+generic.getName()+" to "+instance.getName());
         instanceGenericTypes.put(generic.getName(), instance);
-
     }
 
     public boolean instanciates(MemberType instance, MemberType generic) {
-        System.out.println("Is "+instance.getName()+" instance of "+generic.getName()+"?");
         if(instanceGenericTypes.containsKey(generic.getName())) {
             if (instance.getName().equals(instanceGenericTypes.get(generic.getName()).getName()))
                 return true;

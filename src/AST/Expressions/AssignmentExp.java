@@ -39,7 +39,7 @@ public class AssignmentExp extends ExpressionNode{
             if(!access.isCorrect()) throw new SemanticalErrorException(operator,"Assignment expression has incorrect access");
             if(!access.isAssignable()) throw new SemanticalErrorException(operator,"Assignment expression access is not assignable");
             if(!expression.isCorrect()) throw new SemanticalErrorException(operator,"Assignment expression has incorrect expression");
-            System.out.println(access.getExpressionType().getName()+"=="+expression.getExpressionType());
+
             if(!expression.getExpressionType().conformsTo(access.getExpressionType())) throw new SemanticalErrorException(operator,"Assignment expression "+expression.getExpressionType().getName()+" type does not conform to access type "+access.getExpressionType().getName());
             if(operator.getLexeme().equals("+=") || operator.getLexeme().equals("-=")){
                 if(!expression.getExpressionType().conformsTo(new IntegerType(new Token("rw_int","int",-1)))) throw new SemanticalErrorException(operator,"Assignment expression is not an integer type, cant increment/decrement");
@@ -64,7 +64,6 @@ public class AssignmentExp extends ExpressionNode{
     public void generate(){
 
         expression.generate();
-        System.out.println("Ya cree el objeto lo guardo en: "+access.toString());
         fileWriter.add("DUP");
         access.generate();
     }

@@ -82,7 +82,6 @@ public class ChainedExpression extends AccessExpression{
         if(chain != null){
             chain.printPop();
         }else if( !first.isAssignable() && !first.getExpressionType().isVoid() && !first.isNewObject()){
-            System.out.println(first.getExpressionType());
             fileWriter.add("POP");
         }
 

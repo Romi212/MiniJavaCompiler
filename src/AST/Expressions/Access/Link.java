@@ -62,7 +62,6 @@ public class Link extends AccessExpression{
     public String toString(){
         String toReturn = link.toString();
 
-        System.out.println("Link: " + toReturn);
         if(next != null){
             toReturn += "."+next.toString();
         }

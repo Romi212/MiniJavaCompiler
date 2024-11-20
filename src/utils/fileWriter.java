@@ -69,7 +69,7 @@ public class fileWriter {
     }
 
     public static void printFilePath() {
-        System.out.println("Output file path: " + new File(OUTPUT_FILE).getAbsolutePath());
+       // System.out.println("Output file path: " + new File(OUTPUT_FILE).getAbsolutePath());
     }
 
 }

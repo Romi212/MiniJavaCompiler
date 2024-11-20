@@ -112,7 +112,7 @@ public class MethodDeclaration extends MemberDeclaration {
             }
         }
         if(this.returnType == null || otherMethod.getType() == null) {
-            System.out.println("Comparing "+this.name.getLexeme()+" with type "+this.returnType+" with "+otherMethod.getName().getLexeme()+"with "+otherMethod.getType());
+
             return false;
         }
         if(!this.returnType.getName().equals(otherMethod.getType().getName())) {
@@ -217,7 +217,6 @@ public class MethodDeclaration extends MemberDeclaration {
         this.visibility = methodDeclaration.getVisibility();
         this.isAbstract = methodDeclaration.isAbstract();
         for(HashMap.Entry<String, ParameterDeclaration> entry : methodDeclaration.getParameters().entrySet()){
-            System.out.println("Checking parameter "+ entry.getKey() + "wuth type "+ entry.getValue().getType().getName());
             ParameterDeclaration parameterDeclaration = entry.getValue();
             if(instances.containsKey(parameterDeclaration.getType().getName())){
                 parameterDeclaration = new ParameterDeclaration(entry.getValue().getName(), instances.get(entry.getValue().getType().getName()), entry.getValue().getPosition());

@@ -54,7 +54,7 @@ public class MemberObjectType extends MemberType{
             throw new SemanticalErrorException(name, "Class "+name.getLexeme()+" has "+classType.genericParametersAmount()+" generic parameters, but "+attributes.size()+" were given");
             }
         } else{
-            System.out.println("Checking "+name.getLexeme());
+
             if(validParametrictypes.containsKey(name.getLexeme())){
                 if(isStatic) throw new SemanticalErrorException(name, "Member is static so it cannot be declared of a generic type.");
                 if (attributes.size()>0) throw new SemanticalErrorException(name, "Generic type "+name.getLexeme()+" cannot have generic parameters");
