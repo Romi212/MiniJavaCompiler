@@ -6,7 +6,7 @@ import utils.Exceptions.CompilerException;
 import utils.fileWriter;
 import utils.sourcemanager.SourceManagerImpl;
 
-public class MainSemantico {
+public class Main {
     public static void main(String[] args) {
 
         if (args.length == 0) {
@@ -15,11 +15,11 @@ public class MainSemantico {
         }
 
         String fileName = args[0];
-       // String outputName = args[1];
+        String outputName = args[1];
 
-        //System.out.println(fileName +" output: "+ outputName);
+        System.out.println(fileName +" output: "+ outputName);
 
-        //fileWriter.createFile(outputName);
+        fileWriter.createFile(outputName);
        // fileWriter.add("HOLA");
         SourceManagerImpl sourceManager = new SourceManagerImpl();
         LexicalAnalyzerImp lexicalAnalyzer = new LexicalAnalyzerImp(sourceManager);
@@ -33,7 +33,7 @@ public class MainSemantico {
         SyntaxAnalyzer syntaxAnalyzer = new SyntaxAnalyzerImp(lexicalAnalyzer);
 
         try {
-            syntaxAnalyzer.analyzeSintax(4);
+            syntaxAnalyzer.analyzeSintax(5);
 
         } catch (CompilerException e) {
             System.out.println(e.getMessage());

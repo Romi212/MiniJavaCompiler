@@ -26,7 +26,7 @@ class A  {
 
 
             default:{
-                int x;
+                int x ;
             }
             case 11:{
 

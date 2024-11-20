@@ -1,4 +1,4 @@
-///[Error:A|12]
+///[Error:B|12]
 //
 class A<T,X> {
     public char att;

@@ -41,7 +41,8 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
 
         initial();
 
-        if(stage>3) if(SymbolTable.isCorrect(currentToken)) System.out.println("[SinErrores]");
+        SymbolTable.stage = stage;
+        if(stage>=3) if(SymbolTable.isCorrect(currentToken)) System.out.println("[SinErrores]");
         if(stage>4){
             SymbolTable.generate();
             fileWriter.closeWriter();

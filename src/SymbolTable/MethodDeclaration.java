@@ -176,6 +176,7 @@ public class MethodDeclaration extends MemberDeclaration {
     }
 
     public boolean validStatements() throws CompilerException {
+        if(SymbolTable.stage<4) return true;
         return block.isCorrect();
     }
 

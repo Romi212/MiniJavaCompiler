@@ -35,7 +35,7 @@ public class DeclarationStatement extends StatementNode{
 
     public void setExpression(ExpressionNode expression){
         this.expression = expression;
-        expression.setParent(this);
+        if(expression != null) expression.setParent(this);
     }
     @Override
     public boolean isCorrect() throws CompilerException {

@@ -22,6 +22,7 @@ public class SymbolTable {
     static private HashMap<String, ClassDeclaration> symbolTable = new HashMap<>();
     static private ClassDeclaration currentClass;
 
+    static public int stage;
     private static boolean hasMain;
     private static MethodDeclaration mainMethod;
 
