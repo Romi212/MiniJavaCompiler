@@ -53,7 +53,7 @@ public class MainSintactico {
 
         SyntaxAnalyzer syntaxAnalyzer = new SyntaxAnalyzerImp(lexicalAnalyzer);
         try {
-            System.out.println(syntaxAnalyzer.analyzeSintax());
+            System.out.println(syntaxAnalyzer.analyzeSintax(2));
         } catch (CompilerException e) {
             System.out.println(e.getMessage());
             System.out.println(e.getLongMessage());

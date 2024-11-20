@@ -36,15 +36,17 @@ public class SyntaxAnalyzerImp implements SyntaxAnalyzer {
     }
 
     @Override
-    public String analyzeSintax() throws CompilerException{
+    public String analyzeSintax(int stage) throws CompilerException{
         getNewToken();
 
         initial();
 
-        if(SymbolTable.isCorrect(currentToken)) System.out.println("[SinErrores]");
-        SymbolTable.generate();
-        fileWriter.closeWriter();
-        fileWriter.printFilePath();
+        if(stage>3) if(SymbolTable.isCorrect(currentToken)) System.out.println("[SinErrores]");
+        if(stage>4){
+            SymbolTable.generate();
+            fileWriter.closeWriter();
+            fileWriter.printFilePath();
+        }
         return "[SinErrores]";
     }
 

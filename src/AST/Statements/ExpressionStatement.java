@@ -1,6 +1,7 @@
 package AST.Statements;
 
 import AST.Expressions.ExpressionNode;
+import SymbolTable.SymbolTable;
 import utils.Exceptions.CompilerException;
 import utils.Exceptions.SemanticalErrorException;
 import utils.fileWriter;
@@ -26,12 +27,14 @@ public class ExpressionStatement extends StatementNode{
     public boolean isCorrect() throws CompilerException {
         if(expression == null) throw new SemanticalErrorException(name,"Expression statement has no expression");
         expression.setParent(parent);
+        SymbolTable.setStar(false);
         if(expression.isCorrect()){
 
             if(!expression.isStatement()) {
                 throw new SemanticalErrorException(expression.getName(), "Expression is not a statement");
             }
         }
+        SymbolTable.setStar(true);
         return true;
     }
 

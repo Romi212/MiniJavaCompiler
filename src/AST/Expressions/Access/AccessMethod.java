@@ -28,6 +28,8 @@ public class AccessMethod extends AccessMember{
             }
         this.type = method.getType();
 
+        boolean star = SymbolTable.ImAStar();
+        SymbolTable.setStar(true);
         for( ExpressionNode e : parameters){
             e.setParent(parent);
 
@@ -36,6 +38,7 @@ public class AccessMethod extends AccessMember{
             int frame = !method.isStatic() ? 0 : 1;
             if(!type.conformsTo(method.getParameterType(parameters.size() - parameters.indexOf(e)-frame))) throw new SemanticalErrorException(name,"Method "+this.name.getLexeme()+" has parameter that does not conform to the method");
         }
+        SymbolTable.setStar(star);
         return true;
     }
     @Override

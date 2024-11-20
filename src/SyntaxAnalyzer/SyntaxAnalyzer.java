@@ -5,5 +5,5 @@ import utils.Exceptions.LexicalErrorException;
 import utils.Exceptions.SyntaxErrorException;
 
 public interface SyntaxAnalyzer {
-    String analyzeSintax() throws CompilerException;
+    String analyzeSintax(int stage) throws CompilerException;
 }

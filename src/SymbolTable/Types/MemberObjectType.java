@@ -46,9 +46,11 @@ public class MemberObjectType extends MemberType{
                 }
                 return true;
             } else {
-                throw new SemanticalErrorException(name, "Class "+name.getLexeme()+" has "+classType.genericParametersAmount()+" generic parameters, but "+attributes.size()+" were given");
+                if(attributes.size() == 0 && SymbolTable.ImAStar()) return true;
+            throw new SemanticalErrorException(name, "Class "+name.getLexeme()+" has "+classType.genericParametersAmount()+" generic parameters, but "+attributes.size()+" were given");
             }
         } else{
+            System.out.println("Checking "+name.getLexeme());
             if(validParametrictypes.containsKey(name.getLexeme())){
                 if(isStatic) throw new SemanticalErrorException(name, "Member is static so it cannot be declared of a generic type.");
                 if (attributes.size()>0) throw new SemanticalErrorException(name, "Generic type "+name.getLexeme()+" cannot have generic parameters");
@@ -95,7 +97,9 @@ public class MemberObjectType extends MemberType{
     }
 
     public boolean conformsTo(MemberType type) {
+
         if(type == null) return false;
+        if(type.getName()!= null &&type.getName().equals("WILD")) return  true;
         if(name.getLexeme().equals(type.getName())) {
             if(attributes.size()>0){
                 MemberObjectType obj = (MemberObjectType) type;

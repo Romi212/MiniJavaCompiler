@@ -1,6 +1,7 @@
 package SymbolTable;
 
 import AST.DefaultBlocks.BlockDebugPrint;
+import AST.DefaultBlocks.BlockRead;
 import AST.DefaultBlocks.BlockSysPrint;
 import AST.LocalVar;
 import AST.Statements.StatementNode;
@@ -28,11 +29,14 @@ public class SymbolTable {
 
     private static int index;
 
+    private static boolean star;
+
     public static void createTable(){
         symbolTable = new HashMap<>();
         hasMain = false;
         activeLocalVars = 0;
         index = 0;
+        star = true;
         try {
             ClassDeclaration object = new ClassDeclaration(new Token("pc_object", "Object", -1));
             MethodDeclaration debugPrint =  new MethodDeclaration(new Token("pc_object", "debugPrint", -1), new VoidType(new Token("pc_object", "void", -1)));
@@ -119,6 +123,13 @@ public class SymbolTable {
             printSln.setStatic(true);
             system.addMethod(printSln);
             system.setValidatedStatement(true);
+
+            MethodDeclaration read = new MethodDeclaration(new Token("pc_object", "read", -1), new WildCardType(new Token("WILD", "WILD", -1)));
+            read.setLabel("lblMetread@System");
+            read.addBlock(new BlockRead(null));
+            read.setStatic(true);
+            system.addMethod(read);
+
             symbolTable.put("System", system);
         } catch (SemanticalErrorException e) {
             e.printStackTrace();
@@ -378,5 +389,13 @@ public class SymbolTable {
         currentClass = symbolTable.get(parent.getLexeme());
         currentClass.validStatements();
         currentClass = child;
+    }
+
+    public static boolean ImAStar() {
+        return star;
+    }
+
+    public static void setStar(boolean okane) {
+        star = okane;
     }
 }

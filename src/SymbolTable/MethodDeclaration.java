@@ -78,6 +78,7 @@ public class MethodDeclaration extends MemberDeclaration {
 
     public boolean isCorrectlyDeclared() throws CompilerException {
 
+
         if(returnType.isCorrect()){
             for (HashMap.Entry<String, ParameterDeclaration> entry : parameters.entrySet()) {
                 if(!entry.getValue().isCorrectlyDeclared()){

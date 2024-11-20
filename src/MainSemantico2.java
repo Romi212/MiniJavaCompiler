@@ -33,7 +33,7 @@ public class MainSemantico2 {
         SyntaxAnalyzer syntaxAnalyzer = new SyntaxAnalyzerImp(lexicalAnalyzer);
 
         try {
-            syntaxAnalyzer.analyzeSintax();
+            syntaxAnalyzer.analyzeSintax(4);
 
         } catch (CompilerException e) {
             System.out.println(e.getMessage());

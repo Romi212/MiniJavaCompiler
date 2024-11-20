@@ -21,6 +21,7 @@ public abstract class MemberPrimitiveType extends MemberType {
     }
     public boolean conformsTo(MemberType other) throws SemanticalErrorException {
         if(other == null) return false;
+        if(other.getName().equals("WILD")) return  true;
         return name.getLexeme().equals(other.getName());
     }
     public boolean isOrdinal() {

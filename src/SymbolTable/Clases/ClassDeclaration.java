@@ -167,6 +167,7 @@ public class ClassDeclaration {
         for (int i = 0; i < sortedMethods.size(); i++) {
             MethodDeclaration method = sortedMethods.get(i);
             currentMethod = method;
+            currentMember = method;
             if(!method.isCorrectlyDeclared()) return false;
             //method.setOffset(i);
         }
